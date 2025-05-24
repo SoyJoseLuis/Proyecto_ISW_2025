@@ -2,6 +2,7 @@
 import User from "../entity/user.entity.js";
 import { AppDataSource } from "./configDb.js";
 import { encryptPassword } from "../helpers/bcrypt.helper.js";
+import TipoTransaccion from "../entity/tipo-transaccion.entity.js";
 
 async function createUsers() {
   try {
@@ -81,4 +82,29 @@ async function createUsers() {
   }
 }
 
-export { createUsers };
+async function createTiposTransaccion() {
+  try {
+    const tipoTransaccionRepository = AppDataSource.getRepository(TipoTransaccion);
+
+    const count = await tipoTransaccionRepository.count();
+    if (count > 0) return;
+
+    await Promise.all([
+      tipoTransaccionRepository.save(
+        tipoTransaccionRepository.create({
+          descripcionTransaccion: "Ingreso"
+        })
+      ),
+      tipoTransaccionRepository.save(
+        tipoTransaccionRepository.create({
+          descripcionTransaccion: "Salida"
+        })
+      )
+    ]);
+    console.log("* => Tipos de transacción creados exitosamente");
+  } catch (error) {
+    console.error("Error al crear tipos de transacción:", error);
+  }
+}
+
+export { createUsers, createTiposTransaccion };
