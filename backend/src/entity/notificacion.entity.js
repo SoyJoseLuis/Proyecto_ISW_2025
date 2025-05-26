@@ -35,7 +35,7 @@ const NotificacionSchema = new EntitySchema({
           name: "id_actividad",
           referencedColumnName: "idActividad",
           target: "Actividad"
-        }
+        } 
       }
     }
   }
