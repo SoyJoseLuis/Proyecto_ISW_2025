@@ -90,9 +90,11 @@ async function setupAPI() {
     await connectDB();
     await setupServer();
     await createUsers();
+
     await createTiposTransaccion();
     await createEstudiantes();
     await createTipoActividad();
+    
   } catch (error) {
     console.log("Error en index.js -> setupAPI(), el error es: ", error);
   }

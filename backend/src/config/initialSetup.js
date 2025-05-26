@@ -3,7 +3,7 @@ import { AppDataSource } from "./configDb.js";
 import { encryptPassword } from "../helpers/bcrypt.helper.js";
 
 import User from "../entity/user.entity.js";
-import TipoTransaccionSchema from "../entity/tipo-transaccion.entity.js";
+import TipoTransaccion from "../entity/tipo-transaccion.entity.js";
 import Estudiante from "../entity/estudiante.entity.js";
 import TipoActividad from "../entity/tipo-actividad.entity.js";
 
@@ -24,7 +24,7 @@ async function createUsers() {
           email: "administrador2024@gmail.cl",
           password: await encryptPassword("admin1234"),
           rol: "administrador",
-        }),
+        })
       ),
       userRepository.save(
         userRepository.create({
@@ -33,7 +33,7 @@ async function createUsers() {
           email: "usuario1.2024@gmail.cl",
           password: await encryptPassword("user1234"),
           rol: "usuario",
-        }),
+        })
       ),
       userRepository.save(
         userRepository.create({
@@ -42,7 +42,7 @@ async function createUsers() {
           email: "usuario2.2024@gmail.cl",
           password: await encryptPassword("user1234"),
           rol: "usuario",
-        }),
+        })
       ),
       userRepository.save(
         userRepository.create({
@@ -51,7 +51,7 @@ async function createUsers() {
           email: "usuario3.2024@gmail.cl",
           password: await encryptPassword("user1234"),
           rol: "usuario",
-        }),
+        })
       ),
       userRepository.save(
         userRepository.create({
@@ -60,7 +60,7 @@ async function createUsers() {
           email: "usuario4.2024@gmail.cl",
           password: await encryptPassword("user1234"),
           rol: "usuario",
-        }),
+        })
       ),
       userRepository.save(
         userRepository.create({
@@ -69,7 +69,7 @@ async function createUsers() {
           email: "usuario5.2024@gmail.cl",
           password: await encryptPassword("user1234"),
           rol: "usuario",
-        }),
+        })
       ),
       userRepository.save(
         userRepository.create({
@@ -78,7 +78,7 @@ async function createUsers() {
           email: "usuario6.2024@gmail.cl",
           password: await encryptPassword("user1234"),
           rol: "usuario",
-        }),
+        })
       ),
     ]);
     console.log("* => Usuarios creados exitosamente");
@@ -92,7 +92,7 @@ async function createUsers() {
  */
 async function createTiposTransaccion() {
   try {
-    const repo = AppDataSource.getRepository(TipoTransaccionSchema);
+    const repo = AppDataSource.getRepository(TipoTransaccion);
     const count = await repo.count();
     if (count > 0) return;
 
@@ -115,16 +115,47 @@ async function createEstudiantes() {
     const count = await repo.count();
     if (count > 0) return;
 
+    // Datos de ejemplo coherentes para Estudiante
     const sample = [
-      { rut: "21.457.999-5", nombre: "María Pérez", email: "maria.perez@alumnos.uni.cl" },
-      { rut: "19.876.543-2", nombre: "Juan Soto", email: "juan.soto@alumnos.uni.cl" },
-      { rut: "20.123.456-7", nombre: "Lucía Fernández", email: "lucia.fernandez@alumnos.uni.cl" },
-      { rut: "22.334.556-1", nombre: "Carlos Gómez", email: "carlos.gomez@alumnos.uni.cl" },
+      {
+        rutEstudiante: "21457999-5",
+        nombreEstudiante: "María Pérez",
+        correoEstudiante: "maria.perez@alumnos.uni.cl",
+        passEstudiante: await encryptPassword("pass1234"),
+        sesionEstudiante: true,
+        fechaDesactivacion: null,
+        generacionIngreso: 2025,
+      },
+      {
+        rutEstudiante: "21332767-4",
+        nombreEstudiante: "Juan Soto",
+        correoEstudiante: "juan.soto@alumnos.uni.cl",
+        passEstudiante: await encryptPassword("pass1234"),
+        sesionEstudiante: true,
+        fechaDesactivacion: null,
+        generacionIngreso: 2025,
+      },
+      {
+        rutEstudiante: "20123456-7",
+        nombreEstudiante: "Lucía Fernández",
+        correoEstudiante: "lucia.fernandez@alumnos.uni.cl",
+        passEstudiante: await encryptPassword("pass1234"),
+        sesionEstudiante: true,
+        fechaDesactivacion: null,
+        generacionIngreso: 2025,
+      },
+      {
+        rutEstudiante: "22334556-1",
+        nombreEstudiante: "Carlos Gómez",
+        correoEstudiante: "carlos.gomez@alumnos.uni.cl",
+        passEstudiante: await encryptPassword("pass1234"),
+        sesionEstudiante: true,
+        fechaDesactivacion: null,
+        generacionIngreso: 2025,
+      },
     ];
 
-    await Promise.all(
-      sample.map((e) => repo.save(repo.create(e)))
-    );
+    await Promise.all(sample.map((e) => repo.save(repo.create(e))));
     console.log("* => Estudiantes creados exitosamente");
   } catch (error) {
     console.error("Error al crear estudiantes:", error);
@@ -141,8 +172,8 @@ async function createTipoActividad() {
     if (count > 0) return;
 
     await Promise.all([
-      repo.save(repo.create({ idTipoActividad: 0, descripcionTipo: "Sin venta", finesDeLucro: false })),
-      repo.save(repo.create({ idTipoActividad: 1, descripcionTipo: "Con venta", finesDeLucro: true })),
+      repo.save(repo.create({ idTipoActividad: 0, descripcionTipoActividad: "Sin venta", finesDeLucro: false })),
+      repo.save(repo.create({ idTipoActividad: 1, descripcionTipoActividad: "Con venta", finesDeLucro: true })),
     ]);
     console.log("* => Tipos de actividad creados exitosamente");
   } catch (error) {
