@@ -4,6 +4,11 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import indexRoutes from "./routes/index.routes.js";
 import session from "express-session";
+
+// IMPORTO LO QUE CREÉ DE ASISTENCIAS
+import asistenciaRoutes from "./routes/asistencia.routes.js";
+
+
 import passport from "passport";
 import express, { json, urlencoded } from "express";
 import { cookieKey, HOST, PORT } from "./config/configEnv.js";
@@ -60,6 +65,9 @@ async function setupServer() {
     passportJwtSetup();
 
     app.use("/api", indexRoutes);
+
+    // Rutas de Asistencia (R3) NUEVO
+    app.use("/api/asistencia", asistenciaRoutes);
 
     app.listen(PORT, () => {
       console.log(`=> Servidor corriendo en ${HOST}:${PORT}/api`);
