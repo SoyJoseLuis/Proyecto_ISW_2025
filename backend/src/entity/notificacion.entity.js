@@ -19,26 +19,11 @@ const NotificacionSchema = new EntitySchema({
   },
   relations: {
     panelNotificaciones: {
-      type: "many-to-many",
-      target: "Estudiante",
-      joinTable: {
-        name: "panel_notificaciones",
-        joinColumn: {
-          name: "id_notificacion",
-          referencedColumnName: "idNotificacion",
-        },
-        inverseJoinColumn: {
-          name: "rut_estudiante",
-          referencedColumnName: "rutEstudiante",
-        },
-        joinTableColumn: {
-          name: "id_actividad",
-          referencedColumnName: "idActividad",
-          target: "Actividad"
-        }
-      }
+      type: "one-to-many",
+      target: "PanelNotificaciones",
+      inverseSide: "notificacion"
     }
   }
 });
 
-export default NotificacionSchema; 
+export default NotificacionSchema;
