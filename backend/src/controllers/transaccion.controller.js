@@ -2,9 +2,8 @@
 import {
   createTransaccionService,
   deleteTransaccionService,
-  getTransaccionService,
   getTransaccionesService,
-  updateTransaccionService,
+  getTransaccionService,
 } from "../services/transaccion.service.js";
 import {
   transaccionBodyValidation,
@@ -35,7 +34,7 @@ export async function createTransaccion(req, res) {
     handleErrorServer(res, 500, error.message);
   }
 }
-
+/*obtiene todas la transacciones sin necesidad de parametros  */ 
 export async function getTransacciones(req, res) {
   try {
     const [transacciones, errorTransacciones] = await getTransaccionesService();
@@ -68,41 +67,7 @@ export async function getTransaccion(req, res) {
   }
 }
 
-export async function updateTransaccion(req, res) {
-  try {
-    const { id } = req.query;
-    const { body } = req;
 
-    const { error: queryError } = transaccionQueryValidation.validate({ id });
-
-    if (queryError) {
-      return handleErrorClient(
-        res,
-        400,
-        "Error de validación en la consulta",
-        queryError.message,
-      );
-    }
-
-    const { error: bodyError } = transaccionBodyValidation.validate(body);
-
-    if (bodyError)
-      return handleErrorClient(
-        res,
-        400,
-        "Error de validación en los datos enviados",
-        bodyError.message,
-      );
-
-    const [transaccion, transaccionError] = await updateTransaccionService({ id }, body);
-
-    if (transaccionError) return handleErrorClient(res, 400, "Error modificando la transacción", transaccionError);
-
-    handleSuccess(res, 200, "Transacción modificada correctamente", transaccion);
-  } catch (error) {
-    handleErrorServer(res, 500, error.message);
-  }
-}
 
 export async function deleteTransaccion(req, res) {
   try {

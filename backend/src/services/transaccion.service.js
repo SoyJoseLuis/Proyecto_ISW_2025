@@ -2,20 +2,31 @@
 import { AppDataSource } from "../config/configDb.js";
 import Transaccion from "../entity/transaccion.entity.js";
 import BalanceCEE from "../entity/balance-cee.entity.js";
-import MetaFinanciera from "../entity/meta-financiera.entity.js";
+import { actualizarPorcentajeCrecimiento } from "./metaf.service.js";
 
 export async function createTransaccionService(transaccion) {
   try {
     const transaccionRepository = AppDataSource.getRepository(Transaccion);
     const balanceRepository = AppDataSource.getRepository(BalanceCEE);
-    const metaRepository = AppDataSource.getRepository(MetaFinanciera);
 
-    // Obtener el balance actual
-    const balance = await balanceRepository.findOne({
-      where: { idBalanceCEE: 1 }
+    // Extraer el año de la fecha de transacción (formato DD-MM-YYYY)
+    const añoTransaccion = transaccion.fechaTransaccion.split("-")[2];
+
+    // Buscar balance existente para el año de la transacción
+    let balance = await balanceRepository.findOne({
+      where: { periodo: añoTransaccion }
     });
 
-    if (!balance) return [null, "No se encontró el balance"];
+    // Si no existe balance para ese año, crear uno nuevo
+    if (!balance) {
+      balance = balanceRepository.create({
+        periodo: añoTransaccion,
+        montoActual: 0,
+        totalIngresos: 0,
+        totalSalidas: 0
+      });
+      await balanceRepository.save(balance);
+    }
 
     // Calcular el nuevo monto según el tipo de transacción
     let nuevoMonto;
@@ -34,22 +45,18 @@ export async function createTransaccionService(transaccion) {
     balance.montoActual = nuevoMonto;
     await balanceRepository.save(balance);
 
+    // Actualizar porcentajes de crecimiento
+    const [success, errorPorcentaje] = await actualizarPorcentajeCrecimiento();
+    if (errorPorcentaje) {
+      console.error("Error al actualizar porcentajes:", errorPorcentaje);
+    }
+
+    // Asignar balance a la transacción
+    transaccion.balance = balance;
+
     // Crear la transacción
     const newTransaccion = transaccionRepository.create(transaccion);
     await transaccionRepository.save(newTransaccion);
-
-    // Actualizar meta financiera si es un ingreso
-    if (transaccion.idTipoTransaccion === 1) {
-      const meta = await metaRepository.findOne({
-        order: { idMetaFinanciera: "DESC" }
-      });
-
-      if (meta) {
-        const porcentajeActual = (balance.totalIngresos / meta.metaFinanciera) * 100;
-        meta.porcentajeCrecimiento = Math.min(porcentajeActual, 100);
-        await metaRepository.save(meta);
-      }
-    }
 
     return [newTransaccion, null];
   } catch (error) {
@@ -94,58 +101,7 @@ export async function getTransaccionService(query) {
   }
 }
 
-export async function updateTransaccionService(query, body) {
-  try {
-    const { id } = query;
-    const transaccionRepository = AppDataSource.getRepository(Transaccion);
-    const balanceRepository = AppDataSource.getRepository(BalanceCEE);
 
-    const transaccion = await transaccionRepository.findOne({
-      where: { idTransaccion: id }
-    });
-
-    if (!transaccion) return [null, "Transacción no encontrada"];
-
-    // Obtener el balance actual
-    const balance = await balanceRepository.findOne({
-      where: { idBalanceCEE: 1 }
-    });
-
-    if (!balance) return [null, "No se encontró el balance"];
-
-    // Revertir la transacción anterior
-    if (transaccion.idTipoTransaccion === 1) {
-      balance.montoActual -= transaccion.montoTransaccion;
-      balance.totalIngresos -= transaccion.montoTransaccion;
-    } else {
-      balance.montoActual += transaccion.montoTransaccion;
-      balance.totalSalidas -= transaccion.montoTransaccion;
-    }
-
-    // Aplicar la nueva transacción
-    if (body.idTipoTransaccion === 1) {
-      balance.montoActual += body.montoTransaccion;
-      balance.totalIngresos += body.montoTransaccion;
-    } else {
-      if (balance.montoActual < body.montoTransaccion) {
-        return [null, "Fondos insuficientes para realizar la transacción"];
-      }
-      balance.montoActual -= body.montoTransaccion;
-      balance.totalSalidas += body.montoTransaccion;
-    }
-
-    await balanceRepository.save(balance);
-    
-    // Actualizar la transacción
-    Object.assign(transaccion, body);
-    await transaccionRepository.save(transaccion);
-
-    return [transaccion, null];
-  } catch (error) {
-    console.error("Error al actualizar la transacción:", error);
-    return [null, "Error interno del servidor"];
-  }
-}
 
 export async function deleteTransaccionService(query) {
   try {
@@ -153,20 +109,18 @@ export async function deleteTransaccionService(query) {
     const transaccionRepository = AppDataSource.getRepository(Transaccion);
     const balanceRepository = AppDataSource.getRepository(BalanceCEE);
 
+    // Obtener la transacción con su balance
     const transaccion = await transaccionRepository.findOne({
-      where: { idTransaccion: id }
+      where: { idTransaccion: id },
+      relations: ["balance"]
     });
 
     if (!transaccion) return [null, "Transacción no encontrada"];
 
-    // Obtener el balance actual
-    const balance = await balanceRepository.findOne({
-      where: { idBalanceCEE: 1 }
-    });
+    const balance = transaccion.balance;
+    if (!balance) return [null, "No se encontró el balance asociado"];
 
-    if (!balance) return [null, "No se encontró el balance"];
-
-    // Revertir la transacción
+    // Revertir la transacción del balance
     if (transaccion.idTipoTransaccion === 1) {
       balance.montoActual -= transaccion.montoTransaccion;
       balance.totalIngresos -= transaccion.montoTransaccion;
@@ -175,7 +129,14 @@ export async function deleteTransaccionService(query) {
       balance.totalSalidas -= transaccion.montoTransaccion;
     }
 
+    // Guardar los cambios en el balance usando el repositorio
     await balanceRepository.save(balance);
+
+    // Actualizar porcentajes de crecimiento
+    const [success, errorPorcentaje] = await actualizarPorcentajeCrecimiento();
+    if (errorPorcentaje) {
+      console.error("Error al actualizar porcentajes:", errorPorcentaje);
+    }
 
     // Eliminar la transacción
     await transaccionRepository.remove(transaccion);
@@ -185,4 +146,4 @@ export async function deleteTransaccionService(query) {
     console.error("Error al eliminar la transacción:", error);
     return [null, "Error interno del servidor"];
   }
-} 
+}

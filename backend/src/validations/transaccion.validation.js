@@ -38,10 +38,41 @@ export const transaccionBodyValidation = Joi.object({
       "any.required": "La fecha es requerida.",
     }),
   rutEstudiante: Joi.string()
-    .pattern(/^[0-9]{1,2}\.[0-9]{3}\.[0-9]{3}-[0-9kK]$/)
+    .pattern(/^[0-9]{7,8}-[0-9kK]$/)
+    .custom((value, helpers) => {
+      // Función para validar el dígito verificador
+      const validarRut = (rut) => {
+        const [numero, dv] = rut.split("-");
+        const dvCalculado = calcularDV(numero);
+        return dvCalculado.toLowerCase() === dv.toLowerCase();
+      };
+
+      const calcularDV = (numero) => {
+        let suma = 0;
+        let multiplicador = 2;
+        
+        // Recorre el número de derecha a izquierda
+        for (let i = numero.length - 1; i >= 0; i--) {
+          suma += parseInt(numero[i]) * multiplicador;
+          multiplicador = multiplicador === 7 ? 2 : multiplicador + 1;
+        }
+        
+        const resto = suma % 11;
+        const dv = 11 - resto;
+        
+        if (dv === 11) return "0";
+        if (dv === 10) return "k";
+        return dv.toString();
+      };
+
+      if (!validarRut(value)) {
+        return helpers.message("RUT inválido: dígito verificador no corresponde");
+      }
+      return value;
+    })
     .required()
     .messages({
-      "string.pattern.base": "El rut debe tener el formato XX.XXX.XXX-X.",
+      "string.pattern.base": "El rut debe tener el formato XXXXXXXX-X (sin puntos).",
       "string.empty": "El rut no puede estar vacío.",
       "any.required": "El rut es requerido.",
     }),
