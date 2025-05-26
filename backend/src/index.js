@@ -90,7 +90,7 @@ async function setupAPI() {
     await connectDB();
     await setupServer();
     await createUsers();
-
+    
     await createTiposTransaccion();
     await createEstudiantes();
     await createTipoActividad();
