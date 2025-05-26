@@ -8,8 +8,14 @@ const BalanceCEESchema = new EntitySchema({
     idBalanceCEE: {
       name: "id_balance_cee",
       type: "bigint",
-      primary: true,
+      primary: true,  
       generated: true,
+    },
+    periodo: {
+      name: "periodo",
+      type: "varchar",
+      length: 10,
+      nullable: false,
     },
     montoActual: {
       name: "monto_actual",
@@ -24,9 +30,10 @@ const BalanceCEESchema = new EntitySchema({
     totalSalidas: {
       name: "total_salidas",
       type: "int",
-      nullable: false,
+      nullable: false,  
     }
-  }
+  },
+
 });
 
 export default BalanceCEESchema; 
