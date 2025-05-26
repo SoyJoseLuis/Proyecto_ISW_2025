@@ -16,18 +16,19 @@ const MetaFinancieraSchema = new EntitySchema({
       type: "int",
       nullable: false,
     },
+    periodo: {           
+      name: "periodo",
+      type: "varchar",
+      length: 10,
+      nullable: false,
+    },
     descripcionMeta: {
       name: "descripcion_meta",
       type: "varchar",
       length: 50,
       nullable: false,
     },
-    fechaRegistro: {
-      name: "fecha_registro",
-      type: "date",
-      default: () => "CURRENT_DATE",
-      nullable: false,
-    },
+
     porcentajeCrecimiento: {
       name: "porcentaje_crecimiento",
       type: "int",
