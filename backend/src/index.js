@@ -19,6 +19,9 @@ import { createTiposTransaccion } from "./config/initialSetup.js";
 import { createEstudiantes } from "./config/initialSetup.js";
 import { createTipoActividad } from "./config/initialSetup.js";
 
+import { createEstadoActividad } from "./config/initialSetup.js";
+
+
 import { passportJwtSetup } from "./auth/passport.auth.js";
 
 
@@ -94,6 +97,8 @@ async function setupAPI() {
     await createTiposTransaccion();
     await createEstudiantes();
     await createTipoActividad();
+
+    await createEstadoActividad();
     
   } catch (error) {
     console.log("Error en index.js -> setupAPI(), el error es: ", error);
