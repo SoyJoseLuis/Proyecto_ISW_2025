@@ -3,6 +3,9 @@ import { AppDataSource } from "./configDb.js";
 import { encryptPassword } from "../helpers/bcrypt.helper.js";
 import TipoTransaccion from "../entity/tipo-transaccion.entity.js";
 
+import EstadoActividad from "../entity/estado-actividad.entity.js";
+
+
 /**
  * Crea usuarios por defecto si no existen.
  */
@@ -178,4 +181,26 @@ async function createTipoActividad() {
   }
 }
 
-export { createUsers, createTiposTransaccion, createEstudiantes, createTipoActividad };
+/**
+ * Crea datos de ejemplo para la tabla EstadoActividad.
+ */
+async function createEstadoActividad() {
+  try {
+    const repo = AppDataSource.getRepository(EstadoActividad);
+    const count = await repo.count();
+    if (count > 0) return;
+
+    await Promise.all([
+      repo.save(repo.create({ idEstadoActividad: 0, descripcionEstadoActividad: "En proceso" })),
+      repo.save(repo.create({ idEstadoActividad: 1, descripcionEstadoActividad: "Realizada" })),
+    ]);
+    console.log("* => Estados de actividad creados exitosamente");
+  } catch (error) {
+    console.error("Error al crear estados de actividad:", error);
+  }
+}
+
+
+
+
+export { createUsers, createTiposTransaccion, createEstudiantes, createTipoActividad,  createEstadoActividad };
