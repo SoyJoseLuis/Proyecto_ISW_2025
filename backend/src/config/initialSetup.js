@@ -1,13 +1,14 @@
 "use strict";
-import User from "../entity/user.entity.js";
 import { AppDataSource } from "./configDb.js";
 import { encryptPassword } from "../helpers/bcrypt.helper.js";
-import TipoTransaccionSchema from "../entity/tipo-transaccion.entity.js";
+import TipoTransaccion from "../entity/tipo-transaccion.entity.js";
 
+/**
+ * Crea usuarios por defecto si no existen.
+ */
 async function createUsers() {
   try {
     const userRepository = AppDataSource.getRepository(User);
-
     const count = await userRepository.count();
     if (count > 0) return;
 
@@ -19,7 +20,7 @@ async function createUsers() {
           email: "administrador2024@gmail.cl",
           password: await encryptPassword("admin1234"),
           rol: "administrador",
-        }),
+        })
       ),
       userRepository.save(
         userRepository.create({
@@ -30,14 +31,14 @@ async function createUsers() {
           rol: "usuario",
         })
       ),
-        userRepository.save(
-          userRepository.create({
-            nombreCompleto: "Alexander Benjamín Marcelo Carrasco Fuentes",
-            rut: "20.630.735-8",
-            email: "usuario2.2024@gmail.cl",
-            password: await encryptPassword("user1234"),
-            rol: "usuario",
-          }),
+      userRepository.save(
+        userRepository.create({
+          nombreCompleto: "Alexander Benjamín Marcelo Carrasco Fuentes",
+          rut: "20.630.735-8",
+          email: "usuario2.2024@gmail.cl",
+          password: await encryptPassword("user1234"),
+          rol: "usuario",
+        })
       ),
       userRepository.save(
         userRepository.create({
@@ -46,7 +47,7 @@ async function createUsers() {
           email: "usuario3.2024@gmail.cl",
           password: await encryptPassword("user1234"),
           rol: "usuario",
-        }),
+        })
       ),
       userRepository.save(
         userRepository.create({
@@ -55,7 +56,7 @@ async function createUsers() {
           email: "usuario4.2024@gmail.cl",
           password: await encryptPassword("user1234"),
           rol: "usuario",
-        }),
+        })
       ),
       userRepository.save(
         userRepository.create({
@@ -64,7 +65,7 @@ async function createUsers() {
           email: "usuario5.2024@gmail.cl",
           password: await encryptPassword("user1234"),
           rol: "usuario",
-        }),
+        })
       ),
       userRepository.save(
         userRepository.create({
@@ -73,7 +74,7 @@ async function createUsers() {
           email: "usuario6.2024@gmail.cl",
           password: await encryptPassword("user1234"),
           rol: "usuario",
-        }),
+        })
       ),
     ]);
     console.log("* => Usuarios creados exitosamente");
@@ -82,24 +83,19 @@ async function createUsers() {
   }
 }
 
+/**
+ * Crea los tipos de transacción ('Ingreso' y 'Salida') si no existen.
+ */
 async function createTiposTransaccion() {
   try {
-    const tipoTransaccionRepository = AppDataSource.getRepository(TipoTransaccionSchema);
+    const tipoTransaccionRepository = AppDataSource.getRepository(TipoTransaccion);
 
     const count = await tipoTransaccionRepository.count();
     if (count > 0) return;
 
     await Promise.all([
-      tipoTransaccionRepository.save(
-        tipoTransaccionRepository.create({
-          descripcionTransaccion: "Ingreso"
-        })
-      ),
-      tipoTransaccionRepository.save(
-        tipoTransaccionRepository.create({
-          descripcionTransaccion: "Salida"
-        })
-      )
+      repo.save(repo.create({ descripcionTransaccion: "Ingreso" })),
+      repo.save(repo.create({ descripcionTransaccion: "Salida" })),
     ]);
     console.log("* => Tipos de transacción creados exitosamente");
   } catch (error) {
@@ -107,4 +103,79 @@ async function createTiposTransaccion() {
   }
 }
 
-export { createUsers, createTiposTransaccion };
+/**
+ * Crea datos de ejemplo para la tabla Estudiante.
+ */
+async function createEstudiantes() {
+  try {
+    const repo = AppDataSource.getRepository(Estudiante);
+    const count = await repo.count();
+    if (count > 0) return;
+
+    // Datos de ejemplo coherentes para Estudiante
+    const sample = [
+      {
+        rutEstudiante: "21457999-5",
+        nombreEstudiante: "María Pérez",
+        correoEstudiante: "maria.perez@alumnos.uni.cl",
+        passEstudiante: await encryptPassword("pass1234"),
+        sesionEstudiante: true,
+        fechaDesactivacion: null,
+        generacionIngreso: 2025,
+      },
+      {
+        rutEstudiante: "21332767-4",
+        nombreEstudiante: "Juan Soto",
+        correoEstudiante: "juan.soto@alumnos.uni.cl",
+        passEstudiante: await encryptPassword("pass1234"),
+        sesionEstudiante: true,
+        fechaDesactivacion: null,
+        generacionIngreso: 2025,
+      },
+      {
+        rutEstudiante: "20123456-7",
+        nombreEstudiante: "Lucía Fernández",
+        correoEstudiante: "lucia.fernandez@alumnos.uni.cl",
+        passEstudiante: await encryptPassword("pass1234"),
+        sesionEstudiante: true,
+        fechaDesactivacion: null,
+        generacionIngreso: 2025,
+      },
+      {
+        rutEstudiante: "22334556-1",
+        nombreEstudiante: "Carlos Gómez",
+        correoEstudiante: "carlos.gomez@alumnos.uni.cl",
+        passEstudiante: await encryptPassword("pass1234"),
+        sesionEstudiante: true,
+        fechaDesactivacion: null,
+        generacionIngreso: 2025,
+      },
+    ];
+
+    await Promise.all(sample.map((e) => repo.save(repo.create(e))));
+    console.log("* => Estudiantes creados exitosamente");
+  } catch (error) {
+    console.error("Error al crear estudiantes:", error);
+  }
+}
+
+/**
+ * Crea datos de ejemplo para la tabla TipoActividad.
+ */
+async function createTipoActividad() {
+  try {
+    const repo = AppDataSource.getRepository(TipoActividad);
+    const count = await repo.count();
+    if (count > 0) return;
+
+    await Promise.all([
+      repo.save(repo.create({ idTipoActividad: 0, descripcionTipoActividad: "Sin venta", finesDeLucro: false })),
+      repo.save(repo.create({ idTipoActividad: 1, descripcionTipoActividad: "Con venta", finesDeLucro: true })),
+    ]);
+    console.log("* => Tipos de actividad creados exitosamente");
+  } catch (error) {
+    console.error("Error al crear tipos de actividad:", error);
+  }
+}
+
+export { createUsers, createTiposTransaccion, createEstudiantes, createTipoActividad };
