@@ -19,6 +19,7 @@ const NotificacionSchema = new EntitySchema({
   },
   relations: {
     panelNotificaciones: {
+
       type: "one-to-many",
       target: "PanelNotificaciones",
       inverseSide: "notificacion"

@@ -17,7 +17,7 @@ const EstudianteSchema = new EntitySchema({
       length: 15,
       nullable: false,
     },
-    passEstudiante: {
+    passEstudiante: { /*contrseña*/ 
       name: "pass_estudiante",
       type: "varchar",
       length: 84,
