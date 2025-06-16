@@ -10,6 +10,7 @@ import actividadRoutes from "./actividad.routes.js";
 import panelNotificacionesRoutes from "./panelNotificaciones.routes.js";
 import tipoActividadRoutes from "./tipoActividad.routes.js";
 import estadoActividadRoutes from "./estadoActividad.routes.js";
+import estudianteRoutes from "./estudiante.routes.js";
 
 
 
@@ -18,6 +19,7 @@ const router = Router();
 router
     .use("/auth", authRoutes)
     .use("/user", userRoutes)
+    .use("/estudiantes", estudianteRoutes)
     .use("/transaccion", transaccionRoutes)
 
     .use("/balance", balanceRoutes)
