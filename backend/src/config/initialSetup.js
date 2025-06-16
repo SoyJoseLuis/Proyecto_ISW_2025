@@ -6,8 +6,8 @@ import User from "../entity/user.entity.js";
 import TipoTransaccion from "../entity/tipo-transaccion.entity.js";
 import Estudiante from "../entity/estudiante.entity.js";
 import TipoActividad from "../entity/tipo-actividad.entity.js";
-
 import EstadoActividad from "../entity/estado-actividad.entity.js";
+import Notificacion from "../entity/notificacion.entity.js";
 
 
 /**
@@ -194,8 +194,10 @@ async function createEstadoActividad() {
     if (count > 0) return;
 
     await Promise.all([
-      repo.save(repo.create({ idEstadoActividad: 0, descripcionEstadoActividad: "En proceso" })),
-      repo.save(repo.create({ idEstadoActividad: 1, descripcionEstadoActividad: "Realizada" })),
+      repo.save(repo.create({ descripcionEstadoActividad: "En proceso" })),
+      repo.save(repo.create({ descripcionEstadoActividad: "Archivada" })),
+      repo.save(repo.create({ descripcionEstadoActividad: "Pendiente" })),
+      repo.save(repo.create({ descripcionEstadoActividad: "Finalizada" }))
     ]);
     console.log("* => Estados de actividad creados exitosamente");
   } catch (error) {
@@ -204,6 +206,35 @@ async function createEstadoActividad() {
 }
 
 
+/**
+ * Crea la notificación inicial (id=1) si no existe.
+ */
+async function createNotificacion() {
+  try {
+    const repo = AppDataSource.getRepository(Notificacion);
+    const count = await repo.count();
+    // Si ya existe alguna notificación, no hace nada (opcional: podrías buscar por ID si lo prefieres)
+    if (count > 0) return;
+
+    await repo.save(
+      repo.create({
+        idNotificacion: 1, // O el nombre que uses para la PK en el entity
+        descripcionNotificacion: "El CEE ICINF ha creado una actividad."
+      })
+    );
+    console.log("* => Notificación creada exitosamente");
+  } catch (error) {
+    console.error("Error al crear notificación:", error);
+  }
+}
 
 
-export { createUsers, createTiposTransaccion, createEstudiantes, createTipoActividad,  createEstadoActividad };
+
+export {
+  createEstudiantes,
+  createEstadoActividad,
+  createNotificacion,
+  createTipoActividad,
+  createTiposTransaccion,
+  createUsers
+};

@@ -29,14 +29,6 @@ export const metaBodyValidation = Joi.object({
       "number.positive": "La meta financiera debe ser un número positivo.",
       "any.required": "La meta financiera es requerida.",
     }),
-  periodo: Joi.string()
-    .pattern(/^\d{4}$/)
-    .required()
-    .messages({
-      "string.pattern.base": "El periodo debe ser un año en formato YYYY",
-      "string.empty": "El periodo no puede estar vacío.",
-      "any.required": "El periodo es requerido.",
-    }),
   descripcionMeta: Joi.string()
     .min(10)
     .max(50)
@@ -47,8 +39,18 @@ export const metaBodyValidation = Joi.object({
       "string.max": "La descripción debe tener como máximo 50 caracteres.",
       "any.required": "La descripción es requerida.",
     }),
+  porcentajeCrecimiento: Joi.number()
+    .integer()
+    .min(0)
+    .max(100)
+    .messages({
+      "number.base": "El porcentaje de crecimiento debe ser un número.",
+      "number.integer": "El porcentaje de crecimiento debe ser un número entero.",
+      "number.min": "El porcentaje de crecimiento no puede ser menor a 0.",
+      "number.max": "El porcentaje de crecimiento no puede ser mayor a 100.",
+    }),
 })
   .unknown(false)
   .messages({
     "object.unknown": "No se permiten propiedades adicionales.",
-  });
+  }); 

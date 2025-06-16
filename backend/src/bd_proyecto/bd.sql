@@ -151,3 +151,19 @@ CREATE TABLE ESTUDIANTE_ROL (
     CONSTRAINT FK_ESTUDIANTE_ROL_ESTUDIANTE FOREIGN KEY (RUT_ESTUDIANTE) REFERENCES ESTUDIANTE(RUT_ESTUDIANTE),
     CONSTRAINT FK_ESTUDIANTE_ROL_ROL FOREIGN KEY (ID_ROL) REFERENCES ROL(ID_ROL)
 );
+
+INSERT INTO notificacion (id_notificacion, descripcion_notificacion) VALUES
+(1, 'El CEE ICINF ha creado una actividad.');
+
+INSERT INTO estado_actividad (descripcion_estado_actividad) VALUES
+('En proceso'),
+('Archivada'),
+('Pendiente'),
+('Finalizada');
+
+
+INSERT INTO tipo_actividad (descripcion_tipo_actividad, fines_de_lucro) VALUES
+  ('Reunión', false),
+  ('Evento benéfico', false),
+  ('Charla pagada', true),
+  ('Taller gratuito', false);
