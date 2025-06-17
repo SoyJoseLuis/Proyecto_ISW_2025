@@ -18,9 +18,11 @@ const router = Router();
 router
     .use("/auth", authRoutes)
     .use("/user", userRoutes)
-    .use("/transaccion", transaccionRoutes)
 
+    .use("/transaccion", transaccionRoutes)
     .use("/metaf", metaRoutes)
+
+        
     .use("/actividades", actividadRoutes)
     .use("/panel-notificaciones", panelNotificacionesRoutes)
     .use("/tipo-actividad", tipoActividadRoutes)
