@@ -3,7 +3,7 @@ import { Router } from "express";
 import userRoutes from "./user.routes.js";
 import authRoutes from "./auth.routes.js";
 import transaccionRoutes from "./transaccion.routes.js";
-
+import balanceRoutes from "./balance.routes.js";
 
 import metaRoutes from "./metaf.routes.js";
 import actividadRoutes from "./actividad.routes.js"; 
@@ -20,6 +20,7 @@ router
     .use("/user", userRoutes)
 
     .use("/transaccion", transaccionRoutes)
+    .use("/balance", balanceRoutes)
     .use("/metaf", metaRoutes)
 
         
