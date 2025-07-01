@@ -1,3 +1,9 @@
+
+// ---> úultimo coentado
+
+
+/*
+
 "use strict";
 import Joi from "joi";
 
@@ -100,3 +106,5 @@ export const registerValidation = Joi.object({
   .messages({
   "object.unknown": "No se permiten propiedades adicionales.",
 });
+
+*/

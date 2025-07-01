@@ -1,3 +1,7 @@
+
+//Comentar igual por mientras
+
+/*
 "use strict";
 import { Router } from "express";
 import { login, logout, register } from "../controllers/auth.controller.js";
@@ -10,3 +14,5 @@ router
   .post("/logout", logout);
 
 export default router;
+
+*/

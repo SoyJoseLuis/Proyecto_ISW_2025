@@ -5,11 +5,12 @@ import cookieParser from "cookie-parser";
 import indexRoutes from "./routes/index.routes.js";
 import session from "express-session";
 
-// IMPORTO LO QUE CREÉ DE ASISTENCIAS
-import asistenciaRoutes from "./routes/asistencia.routes.js";
 
 
+//import passport from "passport";   Ver si borrar o no  .... ahora la descomentaremos
 import passport from "passport";
+
+
 import express, { json, urlencoded } from "express";
 import { cookieKey, HOST, PORT } from "./config/configEnv.js";
 import { connectDB } from "./config/configDb.js";
@@ -19,11 +20,16 @@ import {
   createNotificacion,
   createTipoActividad,
   createTiposTransaccion,
-  createUsers 
+  //createUsers,  comentado ya que borramos todo que ver con auth y users
 } from "./config/initialSetup.js";
 
-import { passportJwtSetup } from "./auth/passport.auth.js";
+//import { passportJwtSetup } from "./auth/passport.auth.js";  Ver si borrar o no
 
+// agregamos esta nueva linea para reemplazar lo de arriba
+import "./auth/jwtStrategy.auth.js";
+
+// y tmbn Agregamos para exponer el middleware de autenticación
+import { authenticateJwt } from "./middlewares/authentication.middleware.js";
 
 
 
@@ -70,15 +76,15 @@ async function setupServer() {
       }),
     );
 
+    //app.use(passport.initialize()); Ver si borrar o no... descomentaremos
     app.use(passport.initialize());
-    app.use(passport.session());
+    
+    //app.use(passport.session()); Ver si borrar o no
 
-    passportJwtSetup();
+    //passportJwtSetup(); Ver si borrar o no
 
     app.use("/api", indexRoutes);
 
-    // Rutas de Asistencia (R3) NUEVO
-    app.use("/api/asistencia", asistenciaRoutes);
 
     app.listen(PORT, () => {
       console.log(`=> Servidor corriendo en ${HOST}:${PORT}/api`);
@@ -92,7 +98,7 @@ async function setupAPI() {
   try {
     await connectDB();
     await setupServer();
-    await createUsers();
+    //await createUsers();  comentado ya que borramos todo que ver con auth y users
     await createTipoActividad();
     await createTiposTransaccion();
     await createEstadoActividad();

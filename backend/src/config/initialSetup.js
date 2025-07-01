@@ -2,7 +2,7 @@
 import { AppDataSource } from "./configDb.js";
 import { encryptPassword } from "../helpers/bcrypt.helper.js";
 
-import User from "../entity/user.entity.js";
+//import User from "../entity/user.entity.js";
 import TipoTransaccion from "../entity/tipo-transaccion.entity.js";
 import Estudiante from "../entity/estudiante.entity.js";
 import TipoActividad from "../entity/tipo-actividad.entity.js";
@@ -11,8 +11,8 @@ import Notificacion from "../entity/notificacion.entity.js";
 
 
 /**
- * Crea usuarios por defecto si no existen.
- */
+  Crea usuarios por defecto si no existen.     Comentado porque ya no sirve ya que borré todo lo que tiene que ver con auth y user
+ 
 async function createUsers() {
   try {
     const userRepository = AppDataSource.getRepository(User);
@@ -89,6 +89,8 @@ async function createUsers() {
     console.error("Error al crear usuarios:", error);
   }
 }
+
+*/
 
 /**
  * Crea los tipos de transacción ('Ingreso' y 'Salida') si no existen.
@@ -230,11 +232,13 @@ async function createNotificacion() {
 
 
 
+
+
 export {
   createEstudiantes,
   createEstadoActividad,
   createNotificacion,
   createTipoActividad,
   createTiposTransaccion,
-  createUsers
+  //createUsers,
 };

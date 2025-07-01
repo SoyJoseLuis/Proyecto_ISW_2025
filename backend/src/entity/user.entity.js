@@ -1,3 +1,9 @@
+
+
+//---> Ultimo comentadoo
+
+
+/*
 "use strict";
 import { EntitySchema } from "typeorm";
 
@@ -68,3 +74,6 @@ const UserSchema = new EntitySchema({
 });
 
 export default UserSchema;
+
+
+*/

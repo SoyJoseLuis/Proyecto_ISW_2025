@@ -1,3 +1,9 @@
+
+
+//último comentaddoooo
+
+/*
+
 "use strict";
 import Joi from "joi";
 
@@ -139,3 +145,6 @@ export const userBodyValidation = Joi.object({
     "object.missing":
       "Debes proporcionar al menos un campo: nombreCompleto, email, password, newPassword, rut o rol.",
   });
+
+
+  */
