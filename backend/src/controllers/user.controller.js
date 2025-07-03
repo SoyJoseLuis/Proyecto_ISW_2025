@@ -1,3 +1,10 @@
+
+
+// ---_> ULTIMO COMENTADOOO
+
+
+/*
+
 "use strict";
 import {
   deleteUserService,
@@ -123,3 +130,7 @@ export async function deleteUser(req, res) {
     handleErrorServer(res, 500, error.message);
   }
 }
+
+
+
+*/

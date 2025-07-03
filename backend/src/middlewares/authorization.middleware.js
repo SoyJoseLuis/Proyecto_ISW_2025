@@ -1,3 +1,8 @@
+
+
+//Comentar por mientras
+
+/*
 import EstudianteSchema from "../entity/estudiante.entity.js";
 import { AppDataSource } from "../config/configDb.js";
 import { handleErrorClient, handleErrorServer } from "../handlers/responseHandlers.js";
@@ -38,3 +43,5 @@ export async function isAdmin(req, res, next) {
     );
   }
 }
+
+*/

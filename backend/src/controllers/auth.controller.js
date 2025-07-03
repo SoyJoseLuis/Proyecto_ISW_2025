@@ -1,4 +1,7 @@
-"use strict";
+
+//Comentar por ahora
+
+/*"use strict";
 import { loginService, registerService } from "../services/auth.service.js";
 import {
   authValidation,
@@ -61,3 +64,4 @@ export async function logout(req, res) {
     handleErrorServer(res, 500, error.message);
   }
 }
+  */

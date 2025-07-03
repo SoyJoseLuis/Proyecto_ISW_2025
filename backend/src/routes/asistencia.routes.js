@@ -1,16 +1,28 @@
 // src/routes/asistencia.routes.js
 "use strict";
 
+
+//Ahora que jaxon agregó el login, tenemos que hacer que c/u de mis rutas tenga la autenticacion del logeo
+import { authenticateJwt } from "../middlewares/authentication.middleware.js";
+
+
+
 import { Router } from "express";
 import {
-  generateToken,
-  submitToken,
-  listPending,
   confirmAttendance,
-  listAll
+  generateToken,
+  listAll,
+  listPending,
+  submitToken
 } from "../controllers/asistencia.controller.js";
 
 const router = Router();
+
+
+// A partir de acá tooodas las rutas requieren un JWT válido. No lo hacemos uno por uno porque es más facilito el proteger todo de golpe
+router.use(authenticateJwt);
+
+
 
 /**
  * Gernera un token de asistencia para una actividad
