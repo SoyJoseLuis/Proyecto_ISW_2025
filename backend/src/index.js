@@ -5,8 +5,6 @@ import cookieParser from "cookie-parser";
 import indexRoutes from "./routes/index.routes.js";
 import session from "express-session";
 
-
-
 //import passport from "passport";   Ver si borrar o no  .... ahora la descomentaremos
 import passport from "passport";
 
