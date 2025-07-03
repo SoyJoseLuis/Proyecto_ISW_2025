@@ -10,6 +10,8 @@ import actividadRoutes from "./actividad.routes.js";
 import panelNotificacionesRoutes from "./panelNotificaciones.routes.js";
 import tipoActividadRoutes from "./tipoActividad.routes.js";
 import estadoActividadRoutes from "./estadoActividad.routes.js";
+import estudianteRoutes from "./estudiante.routes.js";
+import rolRoutes from "./rol.routes.js";
 
 
 
@@ -18,16 +20,15 @@ const router = Router();
 router
     .use("/auth", authRoutes)
     .use("/user", userRoutes)
-
+    .use("/estudiantes", estudianteRoutes)
     .use("/transaccion", transaccionRoutes)
     .use("/balance", balanceRoutes)
     .use("/metaf", metaRoutes)
-
-        
     .use("/actividades", actividadRoutes)
     .use("/panel-notificaciones", panelNotificacionesRoutes)
     .use("/tipo-actividad", tipoActividadRoutes)
-    .use("/estado-actividad", estadoActividadRoutes);
+    .use("/estado-actividad", estadoActividadRoutes)
+    .use("/roles", rolRoutes);
     
 
 

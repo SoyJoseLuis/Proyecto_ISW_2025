@@ -1,9 +1,15 @@
 "use strict";
 import { AppDataSource } from "./configDb.js";
 import { encryptPassword } from "../helpers/bcrypt.helper.js";
-import TipoTransaccion from "../entity/tipo-transaccion.entity.js";
 
+import User from "../entity/user.entity.js";
+import TipoTransaccion from "../entity/tipo-transaccion.entity.js";
+import Estudiante from "../entity/estudiante.entity.js";
+import TipoActividad from "../entity/tipo-actividad.entity.js";
 import EstadoActividad from "../entity/estado-actividad.entity.js";
+import Notificacion from "../entity/notificacion.entity.js";
+import Rol from "../entity/rol.entity.js";
+import EstudianteRol from "../entity/estudiante-rol.entity.js";
 
 
 /**
@@ -91,9 +97,8 @@ async function createUsers() {
  */
 async function createTiposTransaccion() {
   try {
-    const tipoTransaccionRepository = AppDataSource.getRepository(TipoTransaccion);
-
-    const count = await tipoTransaccionRepository.count();
+    const repo = AppDataSource.getRepository(TipoTransaccion);
+    const count = await repo.count();
     if (count > 0) return;
 
     await Promise.all([
@@ -103,6 +108,55 @@ async function createTiposTransaccion() {
     console.log("* => Tipos de transacción creados exitosamente");
   } catch (error) {
     console.error("Error al crear tipos de transacción:", error);
+  }
+}
+
+/**
+ * Crea los 4 roles específicos para el CEE si no existen.
+ */
+async function createRoles() {
+  try {
+    const rolRepository = AppDataSource.getRepository(Rol);
+    const count = await rolRepository.count();
+    if (count > 0) return;
+
+    await Promise.all([
+      rolRepository.save(rolRepository.create({ descripcionRol: "Tesorero" })),
+      rolRepository.save(rolRepository.create({ descripcionRol: "Presidente" })),
+      rolRepository.save(rolRepository.create({ descripcionRol: "Secretario" })),
+      rolRepository.save(rolRepository.create({ descripcionRol: "Inactivo" })),
+    ]);
+    console.log("* => Roles del CEE creados exitosamente");
+  } catch (error) {
+    console.error("Error al crear roles:", error);
+  }
+}
+
+/**
+ * Asigna roles de ejemplo a algunos estudiantes.
+ */
+async function assignSampleRoles() {
+  try {
+    const estudianteRolRepository = AppDataSource.getRepository(EstudianteRol);
+    const count = await estudianteRolRepository.count();
+    if (count > 0) return;
+
+    // Asignar roles a los estudiantes de ejemplo
+    const rolesAsignaciones = [
+      { rutEstudiante: "21457999-5", idRol: 2 }, // María Pérez - Presidente
+      { rutEstudiante: "21332767-4", idRol: 1 }, // Juan Soto - Tesorero
+      { rutEstudiante: "20123456-7", idRol: 3 }, // Lucía Fernández - Secretario
+      { rutEstudiante: "22334556-1", idRol: 4 }, // Carlos Gómez - Inactivo
+    ];
+
+    await Promise.all(
+      rolesAsignaciones.map((asignacion) =>
+        estudianteRolRepository.save(estudianteRolRepository.create(asignacion))
+      )
+    );
+    console.log("* => Roles de ejemplo asignados a estudiantes exitosamente");
+  } catch (error) {
+    console.error("Error al asignar roles a estudiantes:", error);
   }
 }
 
@@ -191,8 +245,10 @@ async function createEstadoActividad() {
     if (count > 0) return;
 
     await Promise.all([
-      repo.save(repo.create({ idEstadoActividad: 0, descripcionEstadoActividad: "En proceso" })),
-      repo.save(repo.create({ idEstadoActividad: 1, descripcionEstadoActividad: "Realizada" })),
+      repo.save(repo.create({ descripcionEstadoActividad: "En proceso" })),
+      repo.save(repo.create({ descripcionEstadoActividad: "Archivada" })),
+      repo.save(repo.create({ descripcionEstadoActividad: "Pendiente" })),
+      repo.save(repo.create({ descripcionEstadoActividad: "Finalizada" }))
     ]);
     console.log("* => Estados de actividad creados exitosamente");
   } catch (error) {
@@ -201,6 +257,37 @@ async function createEstadoActividad() {
 }
 
 
+/**
+ * Crea la notificación inicial (id=1) si no existe.
+ */
+async function createNotificacion() {
+  try {
+    const repo = AppDataSource.getRepository(Notificacion);
+    const count = await repo.count();
+    // Si ya existe alguna notificación, no hace nada (opcional: podrías buscar por ID si lo prefieres)
+    if (count > 0) return;
+
+    await repo.save(
+      repo.create({
+        idNotificacion: 1, // O el nombre que uses para la PK en el entity
+        descripcionNotificacion: "El CEE ICINF ha creado una actividad."
+      })
+    );
+    console.log("* => Notificación creada exitosamente");
+  } catch (error) {
+    console.error("Error al crear notificación:", error);
+  }
+}
 
 
-export { createUsers, createTiposTransaccion, createEstudiantes, createTipoActividad,  createEstadoActividad };
+
+export {
+  assignSampleRoles,
+  createEstudiantes,
+  createEstadoActividad,
+  createNotificacion,
+  createRoles,
+  createTipoActividad,
+  createTiposTransaccion,
+  createUsers
+};
