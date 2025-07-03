@@ -7,38 +7,47 @@ import Register from '@pages/Register';
 import Error404 from '@pages/Error404';
 import Root from '@pages/Root';
 import ProtectedRoute from '@components/ProtectedRoute';
+import Actividades from '@pages/Actividades';      // 👈 ¡IMPORTANTE!
 import '@styles/styles.css';
+import '@styles/LoginScreen.css';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Root/>,
-    errorElement: <Error404/>,
+    element: <Root />,
+    errorElement: <Error404 />,
     children: [
       {
         path: '/home',
-        element: <Home/>
+        element: <Home />
+      },
+      {
+        path: '/actividades',         // 👈 ¡AQUÍ AGREGA LA PAGE!
+        element: <Actividades />
+      },{
+        path: '/finanzas',         // 👈 ¡AQUÍ AGREGA LA PAGE!
+        element: <Actividades />
       },
       {
         path: '/users',
         element: (
-        <ProtectedRoute allowedRoles={['administrador']}>
-          <Users />
-        </ProtectedRoute>
+          <ProtectedRoute allowedRoles={['administrador']}>
+            <Users />
+          </ProtectedRoute>
         ),
-    }
+      }
     ]
   },
   {
     path: '/auth',
-    element: <Login/>
+    element: <Login />
   },
   {
     path: '/register',
-    element: <Register/>
+    element: <Register />
   }
-])
+]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <RouterProvider router={router}/>
-)
+  <RouterProvider router={router} />
+);

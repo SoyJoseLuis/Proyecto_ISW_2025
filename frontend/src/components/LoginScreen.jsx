@@ -1,42 +1,44 @@
-import { useNavigate } from 'react-router-dom';
-import { Form, Input, Button } from 'antd';
+
+import { Form, Input, Checkbox, Button } from 'antd';
 import { MailOutlined, LockOutlined, EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
-import animationData from '../assets/Animacion-login.json';
-import Lottie from 'lottie-react';
-import '../styles/LoginScreen.css';
+
+import logo from '@/ui-kit/assets/logo.svg';
+import '@/ui-kit/styles/LoginScreen.css';
 
 export default function LoginScreen() {
-  const navigate = useNavigate();
-
-  // Función de login falso
-  const onFinish = (values) => {
-   
-    localStorage.setItem('fake_isLogged', '1');
-    navigate('/home');
-  };
-
   return (
     <div className="login-screen">
-      {/* IZQUIERDA: animación */}
+      {/* COLUMNA IZQUIERDA */}
       <div className="login-left">
-        <div className="login-animation">
-          <Lottie 
-            animationData={animationData} 
-            loop={true} 
-            autoplay={true} 
-          />
-        </div>
+        <img src={logo} alt="iDURAR" className="login-logo" />
+        <h2 className="login-tagline">Administre su empresa con:</h2>
+        <ul className="login-features">
+          <li>
+            Herramienta todo en uno
+            <p className="login-feature-desc">
+              Ejecute y amplíe sus aplicaciones de ERP CRM
+            </p>
+          </li>
+          <li>
+            Agregue y administre fácilmente sus servicios
+            <p className="login-feature-desc">
+              Reúne tus facturas, clientes y oportunidades
+            </p>
+          </li>
+        </ul>
       </div>
 
-      {/* DERECHA: formulario */}
+      {/* COLUMNA DERECHA */}
       <div className="login-right">
         <h1 className="login-title">Iniciar sesión</h1>
+
         <Form
           name="login"
           layout="vertical"
           className="login-form"
-          onFinish={onFinish}
+          // onFinish aquí iría la lógica, pero la omitimos
         >
+          {/* EMAIL */}
           <Form.Item
             label="Correo electrónico"
             name="email"
@@ -49,6 +51,7 @@ export default function LoginScreen() {
             />
           </Form.Item>
 
+          {/* PASSWORD */}
           <Form.Item
             label="Contraseña"
             name="password"
@@ -64,18 +67,24 @@ export default function LoginScreen() {
             />
           </Form.Item>
 
+          {/* RECÚERDAME + OLVIDASTE */}
           <div className="login-extra">
+            <Form.Item name="remember" valuePropName="checked" noStyle>
+              <Checkbox>Recuérdame</Checkbox>
+            </Form.Item>
             <a href="/forgetpassword" className="login-forgot">
               ¿Olvidaste tu contraseña?
             </a>
           </div>
 
+          {/* BOTÓN */}
           <Form.Item>
             <Button type="primary" htmlType="submit" block size="large">
               Iniciar sesión
             </Button>
           </Form.Item>
 
+          {/* LINK A REGISTRO */}
           <div className="login-register">
             O <a href="/register">Registrarse ahora!</a>
           </div>
