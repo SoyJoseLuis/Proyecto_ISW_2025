@@ -1,3 +1,7 @@
+//Comentar por mientras
+
+
+/*
 "use strict";
 import User from "../entity/user.entity.js";
 import jwt from "jsonwebtoken";
@@ -93,3 +97,7 @@ export async function registerService(user) {
     return [null, "Error interno del servidor"];
   }
 }
+
+
+
+*/

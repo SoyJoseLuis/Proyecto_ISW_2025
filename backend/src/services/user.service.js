@@ -1,3 +1,8 @@
+
+
+// ---> Ultimo comentado
+
+/* 
 "use strict";
 import User from "../entity/user.entity.js";
 import { AppDataSource } from "../config/configDb.js";
@@ -127,3 +132,6 @@ export async function deleteUserService(query) {
     return [null, "Error interno del servidor"];
   }
 }
+
+
+*/

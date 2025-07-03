@@ -1,3 +1,7 @@
+
+//Comentamos esto por ahora, ver si luego borrar
+
+/*
 "use strict";
 import passport from "passport";
 import EstudianteSchema from "../entity/estudiante.entity.js";
@@ -34,3 +38,10 @@ passport.use(
 export function passportJwtSetup() {
   passport.initialize();
 }
+
+
+// Este es el middleware que usaremos en las rutas:
+export const authenticateJwt = passport.authenticate("jwt", { session: false });    //<--Nuebo
+
+
+*/

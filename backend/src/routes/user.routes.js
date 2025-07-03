@@ -1,3 +1,7 @@
+//COMENTAR NIENTRAS
+
+/* 
+
 "use strict";
 import { Router } from "express";
 import { isAdmin } from "../middlewares/authorization.middleware.js";
@@ -22,3 +26,5 @@ router
   .delete("/detail/", deleteUser);
 
 export default router;
+
+*/
