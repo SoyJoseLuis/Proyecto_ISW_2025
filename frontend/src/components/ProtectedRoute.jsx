@@ -1,18 +1,21 @@
-import { useAuth } from '@context/AuthContext';
 import { Navigate } from 'react-router-dom';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
-    const { isAuthenticated, user } = useAuth();
-    
-    if (!isAuthenticated) {
-        return <Navigate to="/auth" />;
-    }
+  // Solo lee la bandera del login falso
+  const isAuthenticated = localStorage.getItem('fake_isLogged') === '1';
 
-    if (allowedRoles && !allowedRoles.includes(user?.rol)) {
-        return <Navigate to="/home" />;
-    }
+  // Si NO está autenticado, manda a login
+  if (!isAuthenticated) {
+    return <Navigate to="/auth" />;
+  }
 
-    return children;
+  // Puedes eliminar la lógica de roles, o dejarla así para pruebas
+  // const userRole = localStorage.getItem('fake_role'); // si quieres roles de prueba
+  // if (allowedRoles && !allowedRoles.includes(userRole)) {
+  //   return <Navigate to="/home" />;
+  // }
+
+  return children;
 };
 
 export default ProtectedRoute;

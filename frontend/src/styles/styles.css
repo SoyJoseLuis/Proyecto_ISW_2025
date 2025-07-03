@@ -1,18 +1,211 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap");
-@import url("animations.css");
-html,
-body {
+:root {
+	font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+	line-height: 1.5;
+	font-weight: 400;
+	color-scheme: light dark;
+	color: #213547;
+	background-color: #f5f7fa;
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+  }
+  
+  body {
 	margin: 0;
-	display: flex;
-	flex-direction: column;
-	place-items: center;
-	min-width: 100%;
+	min-width: 320px;
 	min-height: 100vh;
 	overflow-x: hidden;
-	font-family: "Montserrat", sans-serif;
-}
-#root {
-	min-width: 100%;
+	background: #f5f7fa;
+  }
+  
+  /* Enlaces */
+  a {
+	font-weight: 500;
+	color: #646cff;
+	text-decoration: inherit;
+  }
+  a:hover {
+	color: #535bf2;
+  }
+  
+  /* Titulos */
+  h1, h2, h3 {
+	color: #1a2138;
+	font-weight: 700;
+	margin-top: 0;
+  }
+  
+  h1 {
+	font-size: 2.4em;
+	line-height: 1.1;
+  }
+  
+  /* Botones */
+  button {
+	border-radius: 8px;
+	border: 1px solid transparent;
+	padding: 0.6em 1.2em;
+	font-size: 1em;
+	font-weight: 500;
+	font-family: inherit;
+	background-color: #1a1a1a;
+	color: #fff;
+	cursor: pointer;
+	transition: border-color 0.25s, background 0.2s;
+  }
+  button:hover {
+	border-color: #646cff;
+	background: #2323a3;
+  }
+  button:focus,
+  button:focus-visible {
+	outline: 4px auto -webkit-focus-ring-color;
+  }
+  
+  /* Layout principal */
+  .app-container {
+	display: flex;
 	min-height: 100vh;
-	margin: 0 auto;
-}
+	background: #f5f7fa;
+  }
+  
+  /* Sidebar flotante */
+  .sidebar {
+	position: fixed;
+	top: 32px;
+	left: 32px;
+	width: 220px;
+	height: calc(100vh - 64px);
+	background: #fff;
+	border-radius: 18px;
+	box-shadow: 0 8px 32px 0 rgba(60, 60, 150, 0.10), 0 1.5px 3px #e7e8f3;
+	display: flex;
+	flex-direction: column;
+	padding: 32px 0 24px 0;
+	z-index: 100;
+	border: none;
+  }
+  
+  .nav-list {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+  }
+  
+  .nav-item {
+	display: flex;
+	align-items: center;
+	padding: 12px 28px;
+	color: #222e3a;
+	text-decoration: none;
+	font-size: 1.04rem;
+	border-radius: 12px;
+	transition: background 0.14s, color 0.14s;
+  }
+  
+  .nav-item .nav-icon {
+	font-size: 19px;
+	margin-right: 14px;
+	color: #8796ab;
+  }
+  
+  .nav-item .nav-label {
+	flex: 1;
+  }
+  
+  .nav-item:hover {
+	background: #f2f7fc;
+	color: #1556d7;
+  }
+  
+  .nav-item.active {
+	background: #e9f3ff;
+	color: #1565c0;
+	font-weight: 600;
+  }
+  
+  .nav-item.active .nav-icon,
+  .nav-item:hover .nav-icon {
+	color: #1565c0;
+  }
+  
+  .nav-settings {
+	border-top: 1px solid #f3f3f6;
+	padding-top: 12px;
+	margin: 0 24px;
+  }
+  .nav-caret {
+	margin-left: auto;
+	color: #bbb;
+	font-size: 11px;
+  }
+  
+  /* Layout contenido a la derecha del sidebar */
+  .content-container {
+	flex: 1;
+	margin-left: 264px;   /* 220px ancho sidebar + 32px izq + margen */
+	padding: 48px 48px 24px 24px;
+	display: flex;
+	flex-direction: column;
+  }
+  
+  /* Card central flotante */
+  .outlet-wrapper {
+	flex: 1;
+	overflow: auto;
+	padding: 40px 48px 32px 48px;
+	background-color: #fff;
+	border-radius: 22px;
+	box-shadow: 0 6px 32px 0 rgba(60, 60, 150, 0.10), 0 1.5px 3px #e7e8f3;
+	margin-top: 32px;
+	color: #17223a;
+  }
+  
+  .outlet-wrapper h1,
+  .outlet-wrapper h2,
+  .outlet-wrapper h3 {
+	color: #1a2138;
+  }
+  
+  .outlet-wrapper p {
+	color: #283146;
+	font-size: 1.2rem;
+  }
+  
+  /* Responsive sidebar/card */
+  @media (max-width: 900px) {
+	.sidebar {
+	  left: 0;
+	  top: 0;
+	  height: 100vh;
+	  border-radius: 0;
+	  width: 140px;
+	  padding: 12px 0 12px 0;
+	}
+	.content-container {
+	  margin-left: 140px;
+	  padding: 18px 8px 8px 8px;
+	}
+	.outlet-wrapper {
+	  padding: 16px 4vw;
+	  margin-top: 16px;
+	}
+  }
+  
+  /* Tema claro */
+  @media (prefers-color-scheme: light) {
+	:root {
+	  color: #213547;
+	  background-color: #f5f7fa;
+	}
+	a:hover {
+	  color: #747bff;
+	}
+	button {
+	  background-color: #f9f9f9;
+	  color: #212124;
+	}
+  }
+  
