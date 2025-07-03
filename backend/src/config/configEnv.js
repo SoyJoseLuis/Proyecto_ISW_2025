@@ -16,5 +16,9 @@ export const HOST = process.env.HOST;
 export const DB_USERNAME = process.env.DB_USERNAME;
 export const PASSWORD = process.env.PASSWORD;
 export const DATABASE = process.env.DATABASE;
-export const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
+
+//export const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
+//Cambié lo de arriba por el que se usará ahora que es:
+export const JWT_SECRET = process.env.JWT_SECRET;
+
 export const cookieKey = process.env.cookieKey;

@@ -1,22 +1,21 @@
 import { Outlet } from 'react-router-dom';
-import Navbar from '@components/Navbar';
-import { AuthProvider } from '@context/AuthContext';
+import Sidebar from '../components/Sidebar';
 
-function Root()  {
-return (
-    <AuthProvider>
-        <PageRoot/>
-    </AuthProvider>
-);
+export default function Root() {
+  return (
+    <PageRoot />
+  );
 }
 
 function PageRoot() {
-return (
-    <>
-        <Navbar />
-        <Outlet />
-    </>
-);
+  return (
+    <div className="app-container">
+      <Sidebar />
+      <div className="content-container">
+        <div className="outlet-wrapper">
+          <Outlet />
+        </div>
+      </div>
+    </div>
+  );
 }
-
-export default Root;
