@@ -8,6 +8,8 @@ import Estudiante from "../entity/estudiante.entity.js";
 import TipoActividad from "../entity/tipo-actividad.entity.js";
 import EstadoActividad from "../entity/estado-actividad.entity.js";
 import Notificacion from "../entity/notificacion.entity.js";
+import Rol from "../entity/rol.entity.js";
+import EstudianteRol from "../entity/estudiante-rol.entity.js";
 
 
 /**
@@ -26,6 +28,55 @@ async function createTiposTransaccion() {
     console.log("* => Tipos de transacción creados exitosamente");
   } catch (error) {
     console.error("Error al crear tipos de transacción:", error);
+  }
+}
+
+/**
+ * Crea los 4 roles específicos para el CEE si no existen.
+ */
+async function createRoles() {
+  try {
+    const rolRepository = AppDataSource.getRepository(Rol);
+    const count = await rolRepository.count();
+    if (count > 0) return;
+
+    await Promise.all([
+      rolRepository.save(rolRepository.create({ descripcionRol: "Tesorero" })),
+      rolRepository.save(rolRepository.create({ descripcionRol: "Presidente" })),
+      rolRepository.save(rolRepository.create({ descripcionRol: "Secretario" })),
+      rolRepository.save(rolRepository.create({ descripcionRol: "Inactivo" })),
+    ]);
+    console.log("* => Roles del CEE creados exitosamente");
+  } catch (error) {
+    console.error("Error al crear roles:", error);
+  }
+}
+
+/**
+ * Asigna roles de ejemplo a algunos estudiantes.
+ */
+async function assignSampleRoles() {
+  try {
+    const estudianteRolRepository = AppDataSource.getRepository(EstudianteRol);
+    const count = await estudianteRolRepository.count();
+    if (count > 0) return;
+
+    // Asignar roles a los estudiantes de ejemplo
+    const rolesAsignaciones = [
+      { rutEstudiante: "21457999-5", idRol: 2 }, // María Pérez - Presidente
+      { rutEstudiante: "21332767-4", idRol: 1 }, // Juan Soto - Tesorero
+      { rutEstudiante: "20123456-7", idRol: 3 }, // Lucía Fernández - Secretario
+      { rutEstudiante: "22334556-1", idRol: 4 }, // Carlos Gómez - Inactivo
+    ];
+
+    await Promise.all(
+      rolesAsignaciones.map((asignacion) =>
+        estudianteRolRepository.save(estudianteRolRepository.create(asignacion))
+      )
+    );
+    console.log("* => Roles de ejemplo asignados a estudiantes exitosamente");
+  } catch (error) {
+    console.error("Error al asignar roles a estudiantes:", error);
   }
 }
 
@@ -153,9 +204,11 @@ async function createNotificacion() {
 
 
 export {
+  assignSampleRoles,
   createEstudiantes,
   createEstadoActividad,
   createNotificacion,
+  createRoles,
   createTipoActividad,
   createTiposTransaccion,
 };

@@ -13,9 +13,11 @@ import express, { json, urlencoded } from "express";
 import { cookieKey, HOST, PORT } from "./config/configEnv.js";
 import { connectDB } from "./config/configDb.js";
 import { 
+  assignSampleRoles,
   createEstadoActividad,
   createEstudiantes,
   createNotificacion,
+  createRoles,
   createTipoActividad,
   createTiposTransaccion,
   //createUsers,  comentado ya que borramos todo que ver con auth y users
@@ -101,7 +103,9 @@ async function setupAPI() {
     await createTiposTransaccion();
     await createEstadoActividad();
     await createNotificacion();
+    await createRoles();
     await createEstudiantes();
+    await assignSampleRoles();
   } catch (error) {
     console.log("Error en index.js -> setupAPI(), el error es: ", error);
   }
