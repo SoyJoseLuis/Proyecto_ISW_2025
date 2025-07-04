@@ -9,11 +9,7 @@ import {
 } from "../controllers/metaf.controller.js";
 
 const router = Router();
-/*
-router
-  .use(authenticateJwt)
-  .use(isAdmin);
-  */
+
 
 router
   .post("/", createMeta)/*analizar el tema de cuando poder crear una meta financiera */ 

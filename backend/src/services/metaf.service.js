@@ -8,6 +8,11 @@ export async function createMetaService(meta) {
     const metaRepository = AppDataSource.getRepository(MetaFinanciera);
     const balanceRepository = AppDataSource.getRepository(BalanceCEE);
 
+    // Asignar periodo actual si no se proporciona
+    if (!meta.periodo) {
+      meta.periodo = new Date().getFullYear().toString();
+    }
+
     // Obtener el balance del periodo correspondiente
     const balance = await balanceRepository.findOne({
       where: { periodo: meta.periodo }
@@ -16,7 +21,7 @@ export async function createMetaService(meta) {
     if (!balance) return [null, "No se encontró el balance para el periodo especificado"];
 
     const porcentajeInicial = (balance.totalIngresos / meta.metaFinanciera) * 100;
-    meta.porcentajeCrecimiento = Math.min(porcentajeInicial, 100);
+    meta.porcentajeCrecimiento = Math.min(Math.round(porcentajeInicial), 100);
 
     const newMeta = metaRepository.create(meta);
     await metaRepository.save(newMeta);
