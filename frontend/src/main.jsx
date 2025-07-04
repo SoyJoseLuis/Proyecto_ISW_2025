@@ -8,6 +8,7 @@ import Error404 from '@pages/Error404';
 import Root from '@pages/Root';
 import ProtectedRoute from '@components/ProtectedRoute';
 import Actividades from '@pages/Actividades';      // 👈 ¡IMPORTANTE!
+import Finanzas from '@pages/Finanzas';
 import '@styles/styles.css';
 import '@styles/LoginScreen.css';
 
@@ -26,7 +27,7 @@ const router = createBrowserRouter([
         element: <Actividades />
       },{
         path: '/finanzas',         // 👈 ¡AQUÍ AGREGA LA PAGE!
-        element: <Actividades />
+        element: <Finanzas />
       },
       {
         path: '/users',
