@@ -7,9 +7,12 @@ export async function getCurrentBalanceService() {
   try {
     const balanceRepository = AppDataSource.getRepository(BalanceCEE);
 
-    const currentBalance = await balanceRepository.findOne({
-      order: { periodo: "DESC" }
+    const balances = await balanceRepository.find({
+      order: { periodo: "DESC" },
+      take: 1
     });
+
+    const currentBalance = balances[0] || null;
 
     if (!currentBalance) {
       return [null, "No se encontró ningún balance registrado"];

@@ -2,6 +2,8 @@
 import {
   createMetaService,
   deleteMetaService,
+  getAllMetasService,
+  getMetasByYearService,
   getMetaService,
   updateMetaService,
 } from "../services/metaf.service.js";
@@ -35,8 +37,6 @@ export async function createMeta(req, res) {
   }
 }
 
-
-
 export async function getMeta(req, res) {
   try {
     const { id } = req.query;
@@ -50,6 +50,36 @@ export async function getMeta(req, res) {
     if (errorMeta) return handleErrorClient(res, 404, errorMeta);
 
     handleSuccess(res, 200, "Meta financiera encontrada", meta);
+  } catch (error) {
+    handleErrorServer(res, 500, error.message);
+  }
+}
+
+export async function getAllMetas(req, res) {
+  try {
+    const [metas, errorMetas] = await getAllMetasService();
+
+    if (errorMetas) return handleErrorClient(res, 404, "Error obteniendo las metas financieras", errorMetas);
+
+    handleSuccess(res, 200, "Metas financieras obtenidas con éxito", metas);
+  } catch (error) {
+    handleErrorServer(res, 500, error.message);
+  }
+}
+
+export async function getMetasByYear(req, res) {
+  try {
+    const { year } = req.query;
+
+    if (!year) {
+      return handleErrorClient(res, 400, "El año es requerido");
+    }
+
+    const [metas, errorMetas] = await getMetasByYearService(year);
+
+    if (errorMetas) return handleErrorClient(res, 404, "Error obteniendo las metas financieras por año", errorMetas);
+
+    handleSuccess(res, 200, `Metas financieras del año ${year} obtenidas con éxito`, metas);
   } catch (error) {
     handleErrorServer(res, 500, error.message);
   }
