@@ -1,50 +1,57 @@
-import { Modal, Form, Input, DatePicker, Select, InputNumber } from 'antd';
+import { Modal, Form, Input, InputNumber } from 'antd';
+import useCreateMeta from '../hooks/metaf/useCreateMeta.jsx';
 
-export default function ModalCrearMetaFinanciera({ visible, onClose }) {
-  // Opciones para los select de metas financieras
-  const tiposMeta = [
-    { id: 1, nombre: 'Ahorro' },
-    { id: 2, nombre: 'Inversión' },
-    { id: 3, nombre: 'Equipamiento' },
-    { id: 4, nombre: 'Eventos' }
-  ];
-  
-  const prioridades = [
-    { id: 1, nombre: 'Alta' },
-    { id: 2, nombre: 'Media' },
-    { id: 3, nombre: 'Baja' }
-  ];
+export default function ModalCrearMetaFinanciera({ visible, onClose, onMetaCreated }) {
+  const [form] = Form.useForm();
+  const { loading, handleCreateMeta } = useCreateMeta(onMetaCreated);
 
-  const estados = [
-    { id: 1, nombre: 'Activa' },
-    { id: 2, nombre: 'En progreso' },
-    { id: 3, nombre: 'Completada' },
-    { id: 4, nombre: 'Pausada' }
-  ];
+  const handleSubmit = async () => {
+    try {
+      const values = await form.validateFields();
+      const result = await handleCreateMeta(values);
+      
+      if (result.success) {
+        form.resetFields();
+        onClose();
+      }
+    } catch (error) {
+      console.error('Error en validación del formulario:', error);
+    }
+  };
+
+  const handleCancel = () => {
+    form.resetFields();
+    onClose();
+  };
 
   return (
     <Modal
       open={visible}
       title="Crear nueva meta financiera"
-      onCancel={onClose}
-      onOk={onClose}
+      onCancel={handleCancel}
+      onOk={handleSubmit}
       okText="Crear"
       cancelText="Cancelar"
       centered
       destroyOnClose
+      confirmLoading={loading}
     >
       <Form
+        form={form}
         layout="vertical"
         name="crear_meta_financiera_form"
         style={{ marginTop: 8 }}
       >
-        <Form.Item label="Nombre de la meta" name="NOMBRE_META">
-          <Input placeholder="Ej: Compra de equipos audiovisuales" maxLength={50} />
-        </Form.Item>
-
-        <Form.Item label="Monto objetivo" name="MONTO_OBJETIVO">
+        <Form.Item 
+          label="Monto de la meta financiera" 
+          name="metaFinanciera"
+          rules={[
+            { required: true, message: 'El monto es requerido' },
+            { type: 'number', min: 1, message: 'El monto debe ser mayor a 0' }
+          ]}
+        >
           <InputNumber
-            placeholder="Monto que deseas alcanzar"
+            placeholder="Ingresa el monto objetivo"
             style={{ width: '100%' }}
             min={0}
             formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
@@ -52,45 +59,14 @@ export default function ModalCrearMetaFinanciera({ visible, onClose }) {
           />
         </Form.Item>
 
-        <Form.Item label="Monto actual" name="MONTO_ACTUAL">
-          <InputNumber
-            placeholder="Monto ya reunido (opcional)"
-            style={{ width: '100%' }}
-            min={0}
-            formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-            parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
-          />
-        </Form.Item>
-
-        <Form.Item label="Fecha límite" name="FECHA_LIMITE">
-          <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
-        </Form.Item>
-
-        <Form.Item label="Tipo de meta" name="ID_TIPO_META">
-          <Select placeholder="Selecciona tipo">
-            {tiposMeta.map(t => (
-              <Select.Option key={t.id} value={t.id}>{t.nombre}</Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-
-        <Form.Item label="Prioridad" name="ID_PRIORIDAD">
-          <Select placeholder="Selecciona prioridad">
-            {prioridades.map(p => (
-              <Select.Option key={p.id} value={p.id}>{p.nombre}</Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-
-        <Form.Item label="Estado" name="ID_ESTADO">
-          <Select placeholder="Selecciona estado">
-            {estados.map(e => (
-              <Select.Option key={e.id} value={e.id}>{e.nombre}</Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-
-        <Form.Item label="Descripción" name="DESCRIPCION_META">
+        <Form.Item 
+          label="Descripción de la meta" 
+          name="descripcionMeta"
+          rules={[
+            { required: true, message: 'La descripción es requerida' },
+            { max: 200, message: 'La descripción no puede exceder 200 caracteres' }
+          ]}
+        >
           <Input.TextArea 
             placeholder="Describe la meta financiera y su propósito" 
             rows={3} 
