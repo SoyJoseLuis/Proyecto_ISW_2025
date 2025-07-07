@@ -2,7 +2,7 @@
 import { Router } from "express";
 //import { isAdmin } from "../middlewares/authorization.middleware.js";
 
-import { authenticateJwt } from "../middlewares/authentication.middleware.js";
+//import { authenticateJwt } from "../middlewares/authentication.middleware.js";
 import {
   getAllBalances,
   getBalanceById,
@@ -19,5 +19,4 @@ router
   .get("/detail/", getBalanceById)
   .get("/periodo/", getBalanceByPeriod);
   
-
-export default router; 
+export default router;

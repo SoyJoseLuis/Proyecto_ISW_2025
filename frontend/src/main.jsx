@@ -4,6 +4,7 @@ import Login from '@pages/Login';
 import Home from '@pages/Home';
 import Users from '@pages/Users';
 import Register from '@pages/Register';
+import Asistencias from '@pages/Asistencia'; // 👈 ¡IMPORTANTE!
 import Error404 from '@pages/Error404';
 import Root from '@pages/Root';
 import ProtectedRoute from '@components/ProtectedRoute';
@@ -28,6 +29,11 @@ const router = createBrowserRouter([
       },{
         path: '/finanzas',         // 👈 ¡AQUÍ AGREGA LA PAGE!
         element: <Finanzas />
+      },
+      {
+        path: '/asistencia',         // 👈 ¡AQUÍ AGREGA LA PAGE!
+        element: <Asistencias />
+
       },
       {
         path: '/users',
