@@ -3,6 +3,8 @@ import { PlusOutlined, UnorderedListOutlined, CalendarOutlined } from '@ant-desi
 import DashboardTabs from '../components/DashboardTabs';
 import ModalCrearActividad from '../components/ModalCrearActividad';
 import '../styles/Actividades.css';
+import TablaActividades from '../components/TablaActividades';
+import CalendarioActividades from '../components/CalendarioActividades';
 
 export default function Actividades() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -38,20 +40,20 @@ export default function Actividades() {
       label: 'Listado',
       icon: <UnorderedListOutlined />,
       content: (
-        <div>
-          <p>Listado de actividades aquí...</p>
+        <div style={{ margin: '24px 0' }}>
+          <TablaActividades />
         </div>
-      ),
+      )
     },
     {
       key: '3',
       label: 'Calendario',
       icon: <CalendarOutlined />,
       content: (
-        <div>
-          <p>Calendario de actividades aquí...</p>
+        <div style={{ margin: '20px 0' }}>
+          <CalendarioActividades />
         </div>
-      ),
+      )
     },
     {
       key: '4',

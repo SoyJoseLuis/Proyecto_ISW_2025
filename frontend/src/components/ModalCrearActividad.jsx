@@ -1,73 +1,135 @@
-// src/components/ModalCrearActividad.jsx
-import { Modal, Form, Input, DatePicker, TimePicker, Select } from 'antd';
+import { useState } from 'react';
+import { Modal, Form, Input, Select, DatePicker, TimePicker, message } from 'antd';
+import { crearActividad } from '../services/actividad.service';
 
-export default function ModalCrearActividad({ visible, onClose }) {
-  // Simula los select (puedes dejar vacío si quieres)
-  const estados = [
-    { id: 1, nombre: 'Pendiente' },
-    { id: 2, nombre: 'En curso' },
-    { id: 3, nombre: 'Finalizada' }
-  ];
-  const tipos = [
-    { id: 1, nombre: 'Reunión' },
-    { id: 2, nombre: 'Tarea' },
-    { id: 3, nombre: 'Recordatorio' }
-  ];
+const estados = [
+  { label: 'En proceso', value: 1 },
+  { label: 'Pendiente', value: 3 },
+];
+
+const tipos = [
+  { label: 'Sin venta', value: 1 },
+  { label: 'Con venta', value: 2 },
+];
+
+export default function ModalCrearActividad({ visible, onClose, onCreated }) {
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+
+  const handleOk = async () => {
+    try {
+      const values = await form.validateFields();
+
+      // Formatea valores
+      const payload = {
+        descripcionActividad: values.descripcionActividad,
+        tituloActividad: values.tituloActividad,
+        fechaActividad: values.fechaActividad.format('YYYY-MM-DD'),
+        horaInicioActividad: values.horaInicioActividad.format('HH:mm:ss'),
+        horaTerminoActividad: values.horaTerminoActividad.format('HH:mm:ss'),
+        ubicacionActividad: values.ubicacionActividad,
+        idEstadoActividad: Number(values.idEstadoActividad),
+        idTipoActividad: Number(values.idTipoActividad),
+      };
+
+      // Muestra en consola lo que vas a enviar
+      console.log("Enviando a la API:", payload);
+
+      setLoading(true);
+      await crearActividad(payload);
+      message.success('Actividad creada exitosamente');
+      form.resetFields();
+      setLoading(false);
+      if (onCreated) onCreated(payload);
+      onClose();
+    } catch (err) {
+      setLoading(false);
+      if (err?.errorFields) return; // Error de validación de formulario
+      message.error(err.message || 'Ocurrió un error');
+    }
+  };
 
   return (
     <Modal
-      open={visible}
       title="Crear nueva actividad"
+      open={visible}
       onCancel={onClose}
-      onOk={onClose}
+      onOk={handleOk}
+      confirmLoading={loading}
       okText="Crear"
-      cancelText="Cancelar"
-      centered
       destroyOnClose
+      className="modal-crear-actividad"
     >
       <Form
+        form={form}
         layout="vertical"
-        name="crear_actividad_demo"
-        style={{ marginTop: 8 }}
+        initialValues={{
+          idEstadoActividad: 3,
+          idTipoActividad: 1,
+        }}
       >
-        <Form.Item label="Título" name="TITULO_ACTIVIDAD">
-          <Input placeholder="Título corto" maxLength={25} />
+        <Form.Item
+          name="tituloActividad"
+          label="Título"
+          rules={[{ required: true, message: 'Ingresa un título' }]}
+        >
+          <Input maxLength={25} />
         </Form.Item>
 
-        <Form.Item label="Descripción" name="DESCRIPCION_ACTIVIDAD">
-          <Input.TextArea placeholder="Descripción de la actividad" rows={2} maxLength={50} />
+        <Form.Item
+          name="descripcionActividad"
+          label="Descripción"
+          rules={[{ required: true, message: 'Ingresa una descripción' }]}
+        >
+          <Input.TextArea rows={2} maxLength={50} />
         </Form.Item>
 
-        <Form.Item label="Fecha" name="FECHA_ACTIVIDAD">
+        <Form.Item
+          name="fechaActividad"
+          label="Fecha"
+          rules={[{ required: true, message: 'Selecciona una fecha' }]}
+        >
           <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
         </Form.Item>
 
-        <Form.Item label="Hora de inicio" name="HORA_INICIO_ACTIVIDAD">
-          <TimePicker format="HH:mm" style={{ width: '100%' }} minuteStep={5} />
+        <Form.Item
+          name="horaInicioActividad"
+          label="Hora de inicio"
+          rules={[{ required: true, message: 'Selecciona la hora de inicio' }]}
+        >
+          <TimePicker format="HH:mm:ss" style={{ width: '100%' }} />
         </Form.Item>
 
-        <Form.Item label="Hora de término" name="HORA_TERMINO_ACTIVIDAD">
-          <TimePicker format="HH:mm" style={{ width: '100%' }} minuteStep={5} />
+        <Form.Item
+          name="horaTerminoActividad"
+          label="Hora de término"
+          rules={[{ required: true, message: 'Selecciona la hora de término' }]}
+        >
+          <TimePicker format="HH:mm:ss" style={{ width: '100%' }} />
         </Form.Item>
 
-        <Form.Item label="Ubicación" name="UBICACION_ACTIVIDAD">
-          <Input placeholder="Ej: Oficina central" maxLength={40} />
+        <Form.Item
+          name="ubicacionActividad"
+          label="Ubicación"
+          rules={[{ required: true, message: 'Ingresa la ubicación' }]}
+        >
+          <Input maxLength={40} />
         </Form.Item>
 
-        <Form.Item label="Estado" name="ID_ESTADO_ACTIVIDAD">
-          <Select placeholder="Selecciona estado">
-            {estados.map(e => (
-              <Select.Option key={e.id} value={e.id}>{e.nombre}</Select.Option>
-            ))}
-          </Select>
+        <Form.Item
+          name="idEstadoActividad"
+          label="Estado"
+          rules={[{ required: true, message: 'Selecciona un estado' }]}
+        >
+          <Select options={estados} />
         </Form.Item>
 
-        <Form.Item label="Tipo" name="ID_TIPO_ACTIVIDAD">
-          <Select placeholder="Selecciona tipo">
-            {tipos.map(t => (
-              <Select.Option key={t.id} value={t.id}>{t.nombre}</Select.Option>
-            ))}
-          </Select>
+        <Form.Item
+          name="idTipoActividad"
+          label="Tipo de actividad"
+          rules={[{ required: true, message: 'Selecciona un tipo' }]}
+        >
+          <Select options={tipos} />
         </Form.Item>
       </Form>
     </Modal>
