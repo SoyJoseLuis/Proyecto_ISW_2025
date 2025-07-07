@@ -55,19 +55,6 @@ export default function Actividades() {
         </div>
       )
     },
-    {
-      key: '4',
-      label: 'Transacciones',
-      icon: <CalendarOutlined />,
-      content: (
-        <div>
-          <p>INGRESA</p>
-          <p>Salida de dinero
-
-          </p>
-        </div>
-      ),
-    },
   ];
 
   return (
