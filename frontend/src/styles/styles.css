@@ -73,18 +73,19 @@
   /* Sidebar flotante */
   .sidebar {
 	position: fixed;
-	top: 32px;
+	top: 90px;
 	left: 32px;
-	width: 220px;
-	height: calc(100vh - 64px);
+	width: 200px;
+	height: calc(100vh - 150px);
 	background: #fff;
 	border-radius: 18px;
 	box-shadow: 0 8px 32px 0 rgba(60, 60, 150, 0.10), 0 1.5px 3px #e7e8f3;
 	display: flex;
 	flex-direction: column;
-	padding: 32px 0 24px 0;
+	padding: 25px 0 20px 0;
 	z-index: 100;
 	border: none;
+	margin-bottom: 20px;
   }
   
   .nav-list {
@@ -97,17 +98,17 @@
   .nav-item {
 	display: flex;
 	align-items: center;
-	padding: 12px 28px;
+	padding: 8px 24px;
 	color: #222e3a;
 	text-decoration: none;
-	font-size: 1.04rem;
+	font-size: 0.9rem;
 	border-radius: 12px;
 	transition: background 0.14s, color 0.14s;
   }
   
   .nav-item .nav-icon {
-	font-size: 19px;
-	margin-right: 14px;
+	font-size: 16px;
+	margin-right: 12px;
 	color: #8796ab;
   }
   
@@ -133,8 +134,8 @@
   
   .nav-settings {
 	border-top: 1px solid #f3f3f6;
-	padding-top: 12px;
-	margin: 0 24px;
+	padding-top: 10px;
+	margin: 0 20px;
   }
   .nav-caret {
 	margin-left: auto;
@@ -145,8 +146,8 @@
   /* Layout contenido a la derecha del sidebar */
   .content-container {
 	flex: 1;
-	margin-left: 264px;   /* 220px ancho sidebar + 32px izq + margen */
-	padding: 48px 48px 24px 24px;
+	margin-left: 250px;
+	padding: 40px 40px 20px 20px;
 	display: flex;
 	flex-direction: column;
   }
