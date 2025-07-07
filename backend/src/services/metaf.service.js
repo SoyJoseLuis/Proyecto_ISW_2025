@@ -8,15 +8,24 @@ export async function createMetaService(meta) {
     const metaRepository = AppDataSource.getRepository(MetaFinanciera);
     const balanceRepository = AppDataSource.getRepository(BalanceCEE);
 
+    // Asignar periodo actual si no se proporciona
+    if (!meta.periodo) {
+      meta.periodo = new Date().getFullYear().toString();
+    }
+
     // Obtener el balance del periodo correspondiente
     const balance = await balanceRepository.findOne({
       where: { periodo: meta.periodo }
     });
 
-    if (!balance) return [null, "No se encontró el balance para el periodo especificado"];
-
-    const porcentajeInicial = (balance.totalIngresos / meta.metaFinanciera) * 100;
-    meta.porcentajeCrecimiento = Math.min(porcentajeInicial, 100);
+    // Si no existe balance, inicializar el porcentaje en 0
+    if (!balance) {
+      meta.porcentajeCrecimiento = 0;
+    } else {
+      // Si existe balance, calcular el porcentaje inicial
+      const porcentajeInicial = (balance.totalIngresos / meta.metaFinanciera) * 100;
+      meta.porcentajeCrecimiento = Math.min(Math.round(porcentajeInicial), 100);
+    }
 
     const newMeta = metaRepository.create(meta);
     await metaRepository.save(newMeta);
@@ -138,5 +147,45 @@ export async function actualizarPorcentajeCrecimiento() {
   } catch (error) {
     console.error("Error al actualizar porcentajes de crecimiento:", error);
     return [null, `Error interno del servidor: ${error.message}`];
+  }
+}
+
+export async function getAllMetasService() {
+  try {
+    const metaRepository = AppDataSource.getRepository(MetaFinanciera);
+
+    const metas = await metaRepository.find({
+      order: {
+        periodo: "DESC",
+        idMetaFinanciera: "DESC"
+      }
+    });
+
+    return [metas, null];
+  } catch (error) {
+    console.error("Error al obtener todas las metas financieras:", error);
+    return [null, "Error interno del servidor"];
+  }
+}
+
+export async function getMetasByYearService(year) {
+  try {
+    const metaRepository = AppDataSource.getRepository(MetaFinanciera);
+
+    const metas = await metaRepository.find({
+      where: { periodo: year.toString() },
+      order: {
+        idMetaFinanciera: "DESC"
+      }
+    });
+
+    if (metas.length === 0) {
+      return [null, `No se encontraron metas financieras para el año ${year}`];
+    }
+
+    return [metas, null];
+  } catch (error) {
+    console.error("Error al obtener las metas financieras por año:", error);
+    return [null, "Error interno del servidor"];
   }
 } 

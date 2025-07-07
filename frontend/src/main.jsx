@@ -4,10 +4,12 @@ import Login from '@pages/Login';
 import Home from '@pages/Home';
 import Users from '@pages/Users';
 import Register from '@pages/Register';
+import Asistencias from '@pages/Asistencia'; // 👈 ¡IMPORTANTE!
 import Error404 from '@pages/Error404';
 import Root from '@pages/Root';
 import ProtectedRoute from '@components/ProtectedRoute';
 import Actividades from '@pages/Actividades';      // 👈 ¡IMPORTANTE!
+import Finanzas from '@pages/Finanzas';
 import '@styles/styles.css';
 import '@styles/LoginScreen.css';
 
@@ -26,7 +28,12 @@ const router = createBrowserRouter([
         element: <Actividades />
       },{
         path: '/finanzas',         // 👈 ¡AQUÍ AGREGA LA PAGE!
-        element: <Actividades />
+        element: <Finanzas />
+      },
+      {
+        path: '/asistencia',         // 👈 ¡AQUÍ AGREGA LA PAGE!
+        element: <Asistencias />
+
       },
       {
         path: '/users',

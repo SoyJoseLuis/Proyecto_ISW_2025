@@ -39,6 +39,12 @@ export const metaBodyValidation = Joi.object({
       "string.max": "La descripción debe tener como máximo 50 caracteres.",
       "any.required": "La descripción es requerida.",
     }),
+  periodo: Joi.string()
+    .pattern(/^\d{4}$/)
+    .messages({
+      "string.base": "El periodo debe ser una cadena de texto.",
+      "string.pattern.base": "El periodo debe ser un año de 4 dígitos (ej: 2025).",
+    }),
   porcentajeCrecimiento: Joi.number()
     .integer()
     .min(0)

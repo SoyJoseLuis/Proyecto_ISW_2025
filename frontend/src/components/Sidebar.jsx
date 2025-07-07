@@ -16,7 +16,7 @@ const navItems = [
   { to: '/home', label: 'Inicio', icon: <DashboardOutlined /> },
   { to: '/actividades',      label: 'Actividades',      icon: <UserOutlined /> },
   { to: '/finanzas',     label: 'Finanzas',     icon: <FileTextOutlined /> },
-  { to: '/asistencias',  label: 'Asistecia',  icon: <TeamOutlined /> },
+  { to: '/asistencia',  label: 'Asistecia',  icon: <TeamOutlined /> },
 ];
 
 export default function Sidebar() {

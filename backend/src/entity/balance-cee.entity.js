@@ -15,7 +15,7 @@ const BalanceCEESchema = new EntitySchema({
       name: "periodo",
       type: "varchar",
       length: 10,
-      nullable: false,
+      nullable: true,
     },
     montoActual: {
       name: "monto_actual",
