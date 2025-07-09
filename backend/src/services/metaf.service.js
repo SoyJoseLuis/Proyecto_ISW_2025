@@ -136,7 +136,7 @@ export async function actualizarPorcentajeCrecimiento() {
         }
         
         const nuevoPorcentaje = (balanceCorrespondiente.totalIngresos / meta.metaFinanciera) * 100;
-        meta.porcentajeCrecimiento = Math.min(nuevoPorcentaje, 100);
+        meta.porcentajeCrecimiento = Math.min(Math.round(nuevoPorcentaje), 100);
         return meta;
       });
       
