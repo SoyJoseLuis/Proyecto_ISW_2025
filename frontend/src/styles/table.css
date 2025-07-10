@@ -12,3 +12,15 @@
 .tabulator .tabulator-footer .tabulator-page.active {
     color: #E4332C;
 }
+
+.sidebar-user {
+    display: flex;
+    align-items: center;
+    padding: 20px 24px 12px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #444;
+    border-bottom: 1px solid #eee;
+    min-height: 52px;
+  }
+  
