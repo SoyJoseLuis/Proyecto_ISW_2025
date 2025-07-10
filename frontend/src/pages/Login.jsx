@@ -27,19 +27,20 @@ export default function LoginScreen() {
 
       const data = await response.json();
 
-      if (response.ok) {
-        // Guardar en localStorage lo que corresponda (ej: token)
+      if (response.ok && data.status === "Success" && data.data) {
+        // Guardar el token JWT
+        localStorage.setItem('token', data.data.token);
+        // Guardar el objeto completo del usuario
+        localStorage.setItem('userData', JSON.stringify(data.data));
+        // (opcional) Bandera para saber que hay sesión
         localStorage.setItem('isLogged', '1');
-        // Si el backend devuelve token, puedes guardarlo también:
-        // localStorage.setItem('token', data.token);
 
         message.success('¡Login exitoso!');
         navigate('/home');
       } else {
-        // Manejar error del backend
         message.error(data.message || 'Correo o contraseña incorrectos');
       }
-    } catch {
+    } catch  {
       message.error('Error de red o servidor');
     } finally {
       setLoading(false);
@@ -71,7 +72,10 @@ export default function LoginScreen() {
           <Form.Item
             label="Correo electrónico"
             name="email"
-            rules={[{ required: true, message: 'Ingresa tu correo' }, { type: 'email' }]}
+            rules={[
+              { required: true, message: 'Ingresa tu correo' },
+              { type: 'email', message: 'Correo no válido' }
+            ]}
           >
             <Input
               size="large"
