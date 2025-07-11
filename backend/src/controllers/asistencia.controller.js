@@ -1,5 +1,6 @@
 // src/controllers/asistencia.controller.js
 import * as asistenciaService from "../services/asistencia.service.js";
+import { getCurrentTokenService } from "../services/asistencia.service.js";
 
 /**
  * POST /api/asistencia/:idActividad/token
@@ -89,5 +90,48 @@ export const listAll = async (req, res) => {
     return res.json({ asistencia: all });
   } catch {
     return res.status(500).json({ error: "Error interno al listar asistencias" });
+  }
+};
+
+
+
+
+ /**
+  * GET /api/asistencia/:idActividad/token
+  * Devuelve { token } o 404 si no hay token activo */
+  
+ export const getCurrentToken = async (req, res) => {
+   const { idActividad } = req.params;
+   try {
+    // implementación antigua o inexistente
+    const code = await getCurrentTokenService(idActividad);
+    return res.json({ token: code });
+   } catch (err) {
+     if (err.message === "TOKEN_NOT_FOUND") {
+       return res.status(404).json({ error: "No hay token activo" });
+     }
+     return res.status(500).json({ error: "Error interno al leer token" });
+   }
+ };  
+
+
+
+
+
+ /**
+ * POST /api/asistencia/submit-token
+ * Body: { token }
+ * Autenticado con req.user.rutEstudiante
+ */
+export const submitTokenByCode = async (req, res) => {
+  const { token } = req.body;
+  const { rutEstudiante } = req.user;
+  try {
+    await asistenciaService.submitTokenByCodeService(token, rutEstudiante);
+    return res.json({ message: "Asistencia marcada correctamente" });
+  } catch (err) {
+    if (err.message === "INVALID_TOKEN")
+      return res.status(401).json({ error: "Token inválido o expirado" });
+    return res.status(500).json({ error: "Error interno al enviar token" });
   }
 };

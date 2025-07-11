@@ -1,75 +1,68 @@
-import React, { useEffect } from "react";
-import { useVerActividades }   from "../hooks/asistencia/useVerActividades"; //Mi hook que llama las actividaddes que estén en proceso
+import React, { useEffect, useState } from "react";
+import { useVerActividades } from "../hooks/asistencia/useVerActividades";
 import {
   generateToken,
   getCurrentToken
-} from "../services/asistencia.service";  //Acá llamo al backend para generar el token y obtener el token actual aunque hay que mejorarlo
+} from "../services/asistencia.service";
+import "../styles/Asistencia.css";   // Asegúrate de importar tu css
 
 export default function GenerarTokenTab() {
-
   const { actividades, loading, error } = useVerActividades();
-  const [activeTokens, setActiveTokens] = React.useState({});
+  const [activeTokens, setActiveTokens] = useState({});
 
-  // cuando se ejecuta buscamos los tokens que ya existan, si hay tokens se lo pasamos a active tokens
+  // Al montar, intenta leer el token activo de cada actividad
   useEffect(() => {
-    actividades.forEach(async act => {
+    actividades.forEach(async (act) => {
       try {
         const code = await getCurrentToken(act.idActividad);
-        setActiveTokens(prev => ({ ...prev, [act.idActividad]: code }));
+        setActiveTokens((prev) => ({ ...prev, [act.idActividad]: code }));
       } catch {
-        // 404: no hay token activo 
+        // 404: no hay token activo → nada
       }
     });
   }, [actividades]);
 
   if (loading) return <p>Cargando actividades…</p>;
-  if (error)   return <p style={{ color: "red" }}>{error}</p>;
+  if (error) return <p className="error">{error}</p>;
 
   return (
-    <div>
-      {actividades.map(act => { //Acá recorreremos las actividaddes en proceso que nos devolvieron
+    <div className="generar-token-container">
+      {actividades.map((act) => {
         const token = activeTokens[act.idActividad];
 
         return (
-          <div
-            key={act.idActividad}
-            style={{
-              border: "1px solid #ccc",
-              padding: 12,
-              marginBottom: 12,
-              borderRadius: 4
-            }}
-          >
-            {/* Título y fecha */}
-            <h4 style={{ margin: 0 }}>{act.tituloActividad}</h4>
-            <p style={{ margin: "4px 0", fontSize: 14, color: "#555" }}>
-              Fecha: {new Date(act.fechaActividad).toLocaleDateString()}
-            </p>
+          <div key={act.idActividad} className="actividad-card">
+            <div className="actividad-info">
+              <h3 className="actividad-titulo">{act.tituloActividad}</h3>
+              <p className="actividad-descripcion">{act.descripcion}</p>
+              <p className="actividad-fecha">
+                {new Date(act.fechaActividad).toLocaleDateString()} ·{" "}
+                {act.horaActividad}
+              </p>
+            </div>
 
-            {/* Botón Dinámico */}
-            {!token ? (
-              <button
-                onClick={async () => {
+            <button
+              className="actividad-btn"
+              onClick={async () => {
+                if (!token) {
+                  // Generar nuevo token
                   try {
                     const code = await generateToken(act.idActividad);
-                    setActiveTokens(prev => ({
+                    setActiveTokens((prev) => ({
                       ...prev,
-                      [act.idActividad]: code
+                      [act.idActividad]: code,
                     }));
                   } catch (err) {
                     alert(err.response?.data?.error || err.message);
                   }
-                }}
-              >
-                Generar token
-              </button>
-            ) : (
-              <button
-                onClick={() => alert(`Token: ${token}`)}
-              >
-                Ver token
-              </button>
-            )}
+                } else {
+                  // Mostrar token existente
+                  alert(`Token: ${token}`);
+                }
+              }}
+            >
+              {token ? "👁️" : "+"}
+            </button>
           </div>
         );
       })}

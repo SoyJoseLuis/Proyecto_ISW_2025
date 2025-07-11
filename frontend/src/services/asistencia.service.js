@@ -2,7 +2,7 @@
 import axios from "axios";
 
 // Base c todos los endpoints de Asistencia
-const BASE_URL = "http://146.83.198.35:1293/api/asistencia";
+const BASE_URL = "http://localhost:4000/api/asistencia";
 
 /**
  * Genera un token de asistencia.
@@ -16,13 +16,13 @@ export async function generateToken(idActividad) {
 
 
 /**
- * Obtiene el token activo de una actividad pero tenemos que mejorarli
- */
+ * Pregunta al backend por el token activo */
+ 
 export async function getCurrentToken(idActividad) {
   const { data } = await axios.get(`${BASE_URL}/${idActividad}/token`);
   // data === { token: 1234 }
   return data.token;
-}
+}   
 
 
 /**
@@ -65,4 +65,17 @@ export async function listAll(idActividad) {
   const { data } = await axios.get(`${BASE_URL}/${idActividad}`);
   // data === { asistencia: [...] }
   return data.asistencia;
+}
+
+
+
+/**
+ * Envia un token globalmente (sin idActividad).
+ */
+export async function submitTokenGlobal(tokenCode) {
+  const { data } = await axios.post(
+    `${BASE_URL}/submit-token`,
+    { token: tokenCode }
+  );
+  return data.message;
 }

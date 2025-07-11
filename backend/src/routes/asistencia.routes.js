@@ -11,9 +11,10 @@ import { Router } from "express";
 import {
   confirmAttendance,
   generateToken,
+  getCurrentToken,
   listAll,
-  listPending,
-  submitToken
+  listPending, submitTokenByCode
+  //submitToken 
 } from "../controllers/asistencia.controller.js";
 
 const router = Router();
@@ -21,6 +22,23 @@ const router = Router();
 
 // A partir de acá tooodas las rutas requieren un JWT válido. No lo hacemos uno por uno porque es más facilito el proteger todo de golpe
 //router.use(authenticateJwt);
+
+
+
+/**  
+ * 1) Obtener token activo  
+ */
+// GET token activo (público o protegido según decidas)
+
+
+router.get( "/:idActividad/token",getCurrentToken);
+
+
+
+
+
+
+
 
 
 
@@ -36,7 +54,17 @@ router.post("/:idActividad/token", generateToken);
  *    Body{ rutEstudiante, token }
  *    crea un registro en AsistenciaActividad con dobleConfirmacion =falso
  */
-router.post("/:idActividad/submit-token",authenticateJwt, submitToken);
+router.post("/:idActividad/submit-token",authenticateJwt, submitTokenByCode);
+
+//router.post("/:idActividad/submit-token", submitToken);
+ //servicio existente que usaba idActividad directo:
+//router.post("/:idActividad/submit-token", submitToken);
+ // Nueva ruta “global”:
+ router.post("/submit-token",submitTokenByCode);
+
+
+
+
 
 /**
  * Presidente ve la lista de tokens entregados (pendientes de colocar true en dobleConfirmacio)
