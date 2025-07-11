@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_URL || "http://146.83.198.35:1293/api";
+const BASE_URL = import.meta.env.VITE_BASE_URL || "http://146.83.198.35:1293/api";
 
 export async function crearActividad(data) {
     const API_URL = `${BASE_URL}/actividades/`;

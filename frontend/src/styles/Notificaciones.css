@@ -1,0 +1,176 @@
+.notificaciones-main-bg {
+    width: 100%;
+    min-height: 100vh;
+    background: #fff; /* Fondo blanco */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 36px;
+  }
+  
+  .notificaciones-container {
+    width: 100%;
+    max-width: 860px;
+    background: #fff;
+    border-radius: 22px;
+    box-shadow: 0 4px 28px 0 rgba(110,130,230,0.08);
+    padding: 38px 32px 44px 32px;
+    margin: 0 auto 38px auto;
+  }
+  
+  .notif-title {
+    margin-bottom: 38px;
+    color: #1d2341;
+    font-weight: 800;
+    text-align: left;
+    font-size: 2.1rem;
+    letter-spacing: -0.5px;
+  }
+  
+  .notif-item {
+    background: #f8fafd;
+    border-radius: 16px;
+    margin-bottom: 18px;
+    box-shadow: 0 2px 9px 0 rgba(80,110,255,0.06);
+    padding: 16px 28px;
+    border: none !important;
+    display: flex;
+    align-items: flex-start;
+    transition: box-shadow .13s, transform .13s;
+    position: relative;
+  }
+  .notif-item:hover, .notif-item:focus {
+    box-shadow: 0 6px 20px 0 rgba(70,110,255,0.13);
+    transform: translateY(-2px) scale(1.012);
+  }
+  
+  .notif-avatar-section {
+    margin-right: 20px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    height: 100%;
+  }
+  
+  .notif-content-section {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .notif-title-row {
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .notif-title-item {
+    font-weight: 700;
+    color: #233060;
+    font-size: 20px;
+    line-height: 1.2;
+    letter-spacing: -0.2px;
+  }
+  
+  .notif-desc-item {
+    color: #5d6690;
+    font-size: 15.8px;
+    line-height: 1.57;
+    margin-top: 3px;
+    margin-bottom: 10px;
+    display: block;
+  }
+  
+  .notif-extra-info {
+    margin-top: 5px;
+    font-size: 1.05em;
+    color: #4061a0;
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    margin-bottom: 2px;
+  }
+  
+  .notif-extra-info > div {
+    min-width: 122px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .notif-extra-info strong {
+    color: #1976ff;
+    font-weight: 700;
+    font-size: 1em;
+  }
+  
+  .ant-avatar {
+    border-radius: 13px !important;
+    border: 1.5px solid #e9f0ff;
+    box-shadow: 0 1.5px 7px 0 rgba(80,110,255,0.04);
+  }
+  
+  @media (max-width: 1000px) {
+    .notificaciones-container {
+      max-width: 98vw;
+      padding: 30px 3vw 34px 3vw;
+    }
+  }
+  @media (max-width: 650px) {
+    .notificaciones-container {
+      padding: 10px 2vw 16px 2vw;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .notif-title {
+      font-size: 1.18rem;
+      margin-bottom: 13px;
+    }
+    .notif-item {
+      flex-direction: column;
+      align-items: stretch;
+      padding: 10px 7px;
+      margin-bottom: 11px;
+      border-radius: 9px;
+    }
+    .notif-avatar-section {
+      margin-right: 0;
+      margin-bottom: 7px;
+      justify-content: flex-start;
+    }
+    .notif-title-item {
+      font-size: 1.01em;
+    }
+    .notif-desc-item {
+      font-size: 13.9px;
+    }
+    .notif-extra-info {
+      gap: 11px;
+      font-size: 0.95em;
+    }
+  }
+  
+
+  @media (max-width: 650px) {
+    .notificaciones-main-bg {
+      padding-top: 90px; /* suficiente espacio para nav superior + sidebar */
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center; /* centra vertical */
+    }
+    .notificaciones-container {
+      margin-top: 0;
+      padding-top: 22px;
+      border-radius: 10px;
+    }
+    .ant-empty {
+      margin-top: 38vh; /* si quieres que el mensaje vacío quede más centrado */
+    }
+  }
+  
