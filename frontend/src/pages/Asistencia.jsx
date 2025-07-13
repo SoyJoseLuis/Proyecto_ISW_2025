@@ -1,15 +1,15 @@
- import React from 'react';
+
  import DashboardTabs from '../components/DashboardTabs';
-import ActividadesTokenTable from '../components/ActividadesTokenTable';
  import SubmitTokenTab from '../components/SubmitTokenTab';
+ import ActivitiesControlTable from '../components/ActivitiesControlTable';
  import '../styles/Actividades.css';
 
  export default function Asistencia() {
    const tabs = [
      {
        key: '1',
-       label: 'Control de tokens',
-       content: <ActividadesTokenTable />
+       label: 'Sala de control',
+       content: <ActivitiesControlTable />
      },
      {
             key: '2',
@@ -17,7 +17,7 @@ import ActividadesTokenTable from '../components/ActividadesTokenTable';
              content: <SubmitTokenTab />
 
      },
-     // …otras pestañas (pendientes, listado)
+
    ];
    return <DashboardTabs tabs={tabs} />;
  }

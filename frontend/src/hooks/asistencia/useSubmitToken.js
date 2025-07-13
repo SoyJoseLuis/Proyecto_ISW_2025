@@ -9,7 +9,7 @@ export function useSubmitToken() {
     setLoading(true);
     setError(null);
     try {
-      const msg = await submitTokenGlobal(code);
+      const msg = await submitTokenGlobal(code); // hace POST /submit-token con el código
       return msg;
     } catch (err) {
       setError(err.response?.data?.error || err.message);

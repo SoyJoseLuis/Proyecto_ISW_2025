@@ -105,7 +105,7 @@ export async function confirmAttendanceService(idActividad, rutEstudiante, confi
 /** Devuelve la lista completa de asistencias para la actividad */
 export async function listAllService(idActividad) {
   return asistenciaRepo.find({
-    where: { idActividad },
+    where: { idActividad, dobleConfirmacion: true },
     relations: ["estudiante"],
   });
 }

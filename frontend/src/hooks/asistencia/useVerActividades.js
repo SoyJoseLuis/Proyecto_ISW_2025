@@ -23,6 +23,5 @@ export function useVerActividades() {
       .finally(() => setLoading(false));
   }, []);
 
-    console.log("Actividades en useVerActividades:", actividades);
   return { actividades, loading, error };
 }

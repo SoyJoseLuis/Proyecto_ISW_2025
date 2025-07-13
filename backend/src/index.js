@@ -81,7 +81,7 @@ async function setupServer() {
     
     //app.use(passport.session()); Ver si borrar o no
 
-    //passportJwtSetup(); Ver si borrar o no
+    //passportJwtSetup();
 
     app.use("/api", indexRoutes);
 
