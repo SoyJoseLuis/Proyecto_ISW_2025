@@ -105,7 +105,32 @@ export async function confirmAttendanceService(idActividad, rutEstudiante, confi
 /** Devuelve la lista completa de asistencias para la actividad */
 export async function listAllService(idActividad) {
   return asistenciaRepo.find({
-    where: { idActividad },
+    where: { idActividad, dobleConfirmacion: true },
     relations: ["estudiante"],
   });
+}
+
+
+/**
+ * Devuelve el token activo (estadoToken=true) de una actividad, o lanza si no existe.
+ * @throws {Error("TOKEN_NOT_FOUND")}
+ */
+export async function getCurrentTokenService(idActividad) {
+  const tok = await tokenRepo.findOneBy({ idActividad, estadoToken: true });
+  if (!tok) throw new Error("TOKEN_NOT_FOUND");
+  return tok.codigoToken;
+}
+
+
+/**
+ * Registra un envío de token sin necesidad de pasar la actividad:
+ * 1) Busca el token activo por código.
+ * 2) Extrae idActividad y llama a submitTokenService.
+ */
+export async function submitTokenByCodeService(tokenCode, rutEstudiante) {
+  // 1) Busca token activo
+  const tok = await tokenRepo.findOneBy({ codigoToken: tokenCode, estadoToken: true });
+  if (!tok) throw new Error("INVALID_TOKEN");
+  // 2) Reutiliza el service existente
+  await submitTokenService(tok.idActividad, rutEstudiante, tokenCode);
 }

@@ -1,0 +1,63 @@
+/* Contenedor de todas las tarjetas */
+.generar-token-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+/* Cada tarjeta de actividad */
+.actividad-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #d9d9d9;
+  padding: 16px;
+  border-radius: 4px;
+  background: #fff;
+  transition: box-shadow .2s;
+}
+.actividad-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Información textual dentro de la tarjeta */
+.actividad-info {
+  flex: 1;
+}
+.actividad-titulo {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+.actividad-descripcion,
+.actividad-fecha {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: #666;
+}
+
+/* Botón flotante a la derecha */
+.actividad-btn {
+  background: #1890ff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.actividad-btn:disabled {
+  background: #ccc;
+  cursor: default;
+}
+
+/* Mensajes de error */
+.error {
+  color: red;
+  padding: 16px;
+}
