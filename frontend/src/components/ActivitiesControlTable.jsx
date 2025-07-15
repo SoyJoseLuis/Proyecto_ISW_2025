@@ -4,9 +4,7 @@ import { Table, Button, Modal } from 'antd';
 import {
   PlusOutlined,
   EyeOutlined,
-  FormOutlined,
-  UnorderedListOutlined,
-} from '@ant-design/icons';
+  FormOutlined, UnorderedListOutlined,} from '@ant-design/icons';
 import { useVerActividades } from '../hooks/asistencia/useVerActividades';
 import {
   generateToken,
