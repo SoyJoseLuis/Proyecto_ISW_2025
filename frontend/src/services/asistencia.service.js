@@ -4,7 +4,7 @@ import axios from "axios";
  import { getCurrentJwt } from "../helpers/auth.js";
 
 // Base c todos los endpoints de Asistencia
-const BASE_URL = "http://localhost:4000/api/asistencia";
+const BASE_URL = "http://146.83.198.35:1293/api/asistencia";
 
 
 // Crea una instancia de axios para Asistencia
