@@ -13,16 +13,11 @@ const TransaccionesViewerTable = forwardRef((props, ref) => {
   // Columnas para la tabla de transacciones
   const columnsTransacciones = [
     {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-      width: 60,
-    },
-    {
       title: 'Tipo',
       dataIndex: 'tipoTransaccionDescripcion',
       key: 'tipoTransaccionDescripcion',
-      width: 80,
+      width: 100,
+      align: 'center',
       render: (descripcion, record) => (
         <Tag color={record.idTipoTransaccion === '1' ? 'green' : 'red'}>
           {descripcion}
@@ -34,19 +29,22 @@ const TransaccionesViewerTable = forwardRef((props, ref) => {
       dataIndex: 'montoTransaccion',
       key: 'montoTransaccion',
       width: 120,
+      align: 'center',
       render: (monto) => `$${monto?.toLocaleString('es-CL')}`,
     },
     {
       title: 'Fecha',
       dataIndex: 'fechaTransaccion',
       key: 'fechaTransaccion',
-      width: 100,
+      width: 120,
+      align: 'center',
     },
     {
       title: 'Estudiante',
       dataIndex: 'nombreEstudiante',
       key: 'nombreEstudiante',
       width: 150,
+      align: 'center',
       render: (nombre, record) => (
         <div>
           <div style={{ fontWeight: 500 }}>{nombre}</div>
@@ -57,24 +55,13 @@ const TransaccionesViewerTable = forwardRef((props, ref) => {
     {
       title: 'Motivo',
       dataIndex: 'motivoTransaccion',
+      width: 300,
       key: 'motivoTransaccion',
+      align: 'center',
       ellipsis: true,
       render: (motivo) => (
         <span title={motivo}>{motivo}</span>
       ),
-    },
-    {
-      title: 'ID Actividad',
-      dataIndex: 'idActividad',
-      key: 'idActividad',
-      width: 100,
-      render: (idActividad) => idActividad || 'N/A',
-    },
-    {
-      title: 'Balance',
-      dataIndex: 'idBalance',
-      key: 'idBalance',
-      width: 80,
     },
   ];
 
@@ -95,7 +82,10 @@ const TransaccionesViewerTable = forwardRef((props, ref) => {
           margin: 0,
           fontSize: '16px',
           fontWeight: '600',
-          color: '#223266'
+            background: 'linear-gradient(135deg, #1976ff 85%, #6dd3fa 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text'
         }}>
           Historial de Transacciones
         </h3>
