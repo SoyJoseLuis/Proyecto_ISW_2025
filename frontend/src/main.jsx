@@ -12,6 +12,7 @@ import Actividades from '@pages/Actividades';      // 👈 ¡IMPORTANTE!
 import Finanzas from '@pages/Finanzas';
 import '@styles/styles.css';
 import '@styles/LoginScreen.css';
+import Notificaciones from '@pages/Notificaciones';
 
 const router = createBrowserRouter([
   {
@@ -33,7 +34,10 @@ const router = createBrowserRouter([
       {
         path: '/asistencia',         // 👈 ¡AQUÍ AGREGA LA PAGE!
         element: <Asistencias />
-
+      },
+      {
+        path: '/notificaciones',
+        element: <Notificaciones />
       },
       {
         path: '/users',
@@ -52,7 +56,8 @@ const router = createBrowserRouter([
   {
     path: '/register',
     element: <Register />
-  }
+  },
+  
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(

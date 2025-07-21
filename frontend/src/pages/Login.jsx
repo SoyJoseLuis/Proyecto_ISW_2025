@@ -1,18 +1,50 @@
 import { useNavigate } from 'react-router-dom';
-import { Form, Input, Button } from 'antd';
+import { useState } from 'react';
+import { Form, Input, Button, message } from 'antd';
 import { MailOutlined, LockOutlined, EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import animationData from '../assets/Animacion-login.json';
 import Lottie from 'lottie-react';
 import '../styles/LoginScreen.css';
 
+const BASE_URL = import.meta.env.VITE_BASE_URL || "http://146.83.198.35:1293/api";
+
 export default function LoginScreen() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
-  // Función de login falso
-  const onFinish = (values) => {
-   
-    localStorage.setItem('fake_isLogged', '1');
-    navigate('/home');
+  // Nuevo login real
+  const onFinish = async (values) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${BASE_URL}/estudiantes/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          correoEstudiante: values.email,
+          passEstudiante: values.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.status === "Success" && data.data) {
+        // Guardar el token JWT
+        localStorage.setItem('token', data.data.token);
+        // Guardar el objeto completo del usuario
+        localStorage.setItem('userData', JSON.stringify(data.data));
+        // (opcional) Bandera para saber que hay sesión
+        localStorage.setItem('isLogged', '1');
+
+        message.success('¡Login exitoso!');
+        navigate('/home');
+      } else {
+        message.error(data.message || 'Correo o contraseña incorrectos');
+      }
+    } catch  {
+      message.error('Error de red o servidor');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -40,7 +72,10 @@ export default function LoginScreen() {
           <Form.Item
             label="Correo electrónico"
             name="email"
-            rules={[{ required: true, message: 'Ingresa tu correo' }, { type: 'email' }]}
+            rules={[
+              { required: true, message: 'Ingresa tu correo' },
+              { type: 'email', message: 'Correo no válido' }
+            ]}
           >
             <Input
               size="large"
@@ -71,7 +106,7 @@ export default function LoginScreen() {
           </div>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" block size="large">
+            <Button type="primary" htmlType="submit" block size="large" loading={loading}>
               Iniciar sesión
             </Button>
           </Form.Item>
