@@ -8,8 +8,6 @@ export default function useGetMetasWithFilter(selectedYear) {
   const [error, setError] = useState(null);
 
   const fetchMetas = async (year) => {
-    console.log('useGetMetasWithFilter - fetchMetas called with year:', year);
-    
     setLoading(true);
     setError(null);
     
@@ -17,25 +15,30 @@ export default function useGetMetasWithFilter(selectedYear) {
       let response;
       
       if (year === 'all') {
-        console.log('useGetMetasWithFilter - Fetching all metas');
         response = await getAllMetas();
       } else {
-        console.log('useGetMetasWithFilter - Fetching metas for year:', year);
         response = await getMetasByYear(year);
       }
       
-      console.log('useGetMetasWithFilter - API response:', response);
-      
       if (response.status === 'Success') {
-        console.log('useGetMetasWithFilter - Setting metas:', response.data || []);
         setMetas(response.data || []);
       } else {
-        console.log('useGetMetasWithFilter - Error response:', response.message);
-        setError(response.message || 'Error al obtener las metas financieras');
-        setMetas([]);
+        // Identificar si es un error de "no hay datos" vs un error real
+        const isNoDataError = response.message && (
+          response.message.includes('Error obteniendo las metas financieras por año') ||
+          response.message.includes('No se encontraron') ||
+          response.message.includes('no hay metas') ||
+          response.statusCode === 404
+        );
         
-        // Solo mostrar alerta si es un error real, no si simplemente no hay datos
-        if (response.message && !response.message.includes('No se encontraron')) {
+        if (isNoDataError) {
+          // Si es un error de "no hay datos", simplemente setear array vacío sin mostrar alerta
+          setMetas([]);
+          setError(null); // No establecer error para evitar mostrar estado de error
+        } else {
+          // Si es un error real, mostrar alerta
+          setError(response.message || 'Error al obtener las metas financieras');
+          setMetas([]);
           showErrorAlert('Error', response.message || 'Error al obtener las metas financieras');
         }
       }
@@ -67,4 +70,4 @@ export default function useGetMetasWithFilter(selectedYear) {
     error,
     refreshMetas
   };
-} 
+}

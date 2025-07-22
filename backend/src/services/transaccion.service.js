@@ -2,7 +2,7 @@
 import { AppDataSource } from "../config/configDb.js";
 import Transaccion from "../entity/transaccion.entity.js";
 import BalanceCEE from "../entity/balance-cee.entity.js";
-import { actualizarPorcentajeCrecimiento } from "./metaf.service.js";
+import { actualizarPorcentajePorPeriodo } from "./metaf.service.js"; // Importar la nueva función
 
 export async function createTransaccionService(transaccion) {
   try {
@@ -45,8 +45,8 @@ export async function createTransaccionService(transaccion) {
     balance.montoActual = nuevoMonto;
     await balanceRepository.save(balance);
 
-    // Actualizar porcentajes de crecimiento
-    const [success, errorPorcentaje] = await actualizarPorcentajeCrecimiento();
+    // CAMBIO: Solo actualizar metas del periodo afectado
+    const [success, errorPorcentaje] = await actualizarPorcentajePorPeriodo(añoTransaccion);
     if (errorPorcentaje) {
       console.error("Error al actualizar porcentajes:", errorPorcentaje);
     }
@@ -120,6 +120,9 @@ export async function deleteTransaccionService(query) {
     const balance = transaccion.balance;
     if (!balance) return [null, "No se encontró el balance asociado"];
 
+    // Obtener el periodo antes de hacer cambios
+    const periodoAfectado = balance.periodo;
+
     // Revertir la transacción del balance
     if (transaccion.idTipoTransaccion === 1) {
       balance.montoActual -= transaccion.montoTransaccion;
@@ -132,8 +135,8 @@ export async function deleteTransaccionService(query) {
     // Guardar los cambios en el balance usando el repositorio
     await balanceRepository.save(balance);
 
-    // Actualizar porcentajes de crecimiento
-    const [success, errorPorcentaje] = await actualizarPorcentajeCrecimiento();
+    // CAMBIO: Solo actualizar metas del periodo afectado
+    const [success, errorPorcentaje] = await actualizarPorcentajePorPeriodo(periodoAfectado);
     if (errorPorcentaje) {
       console.error("Error al actualizar porcentajes:", errorPorcentaje);
     }

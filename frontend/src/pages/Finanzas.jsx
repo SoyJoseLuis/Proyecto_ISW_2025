@@ -34,30 +34,24 @@ export default function Finanzas() {
 
   const handleTransaccionCreated = () => {
     // Actualizar TODOS los componentes afectados cuando se crea una transacción
-    console.log('🔄 Coordinando actualización de componentes después de crear transacción');
     
-    // 1. Actualizar tabla de transacciones
+    // Actualizar tabla de transacciones
     if (transaccionesViewerRef.current && transaccionesViewerRef.current.refreshTransacciones) {
-      console.log('📊 Actualizando tabla de transacciones');
       transaccionesViewerRef.current.refreshTransacciones();
     }
     
-    // 2. Actualizar balance (ya que una nueva transacción afecta el balance)
+    // Actualizar balance (ya que una nueva transacción afecta el balance)
     if (balanceViewerRef.current && balanceViewerRef.current.refreshBalance) {
-      console.log('💰 Actualizando balance');
       balanceViewerRef.current.refreshBalance();
     }
     
-    // 3. Actualizar metas financieras (ya que el balance afecta el porcentaje de cumplimiento)
+    // Actualizar metas financieras (ya que el balance afecta el porcentaje de cumplimiento)
     if (metaViewerRef.current && metaViewerRef.current.refreshMetas) {
-      console.log('🎯 Actualizando metas financieras');
       metaViewerRef.current.refreshMetas();
     }
     
-    // 4. Actualizar metas en este componente para mantener sincronía
+    // Actualizar metas en este componente para mantener sincronía
     refreshMetas();
-    
-    console.log('✅ Actualización coordinada completada');
   };
 
   const handleOpenTransaccionModal = () => {
@@ -271,5 +265,4 @@ export default function Finanzas() {
       <DashboardTabs tabs={tabs} />
     </div>
   );
-} 
-
+}

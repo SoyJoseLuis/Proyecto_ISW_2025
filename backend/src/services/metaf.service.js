@@ -2,6 +2,7 @@
 import { AppDataSource } from "../config/configDb.js";
 import MetaFinanciera from "../entity/meta-financiera.entity.js";
 import BalanceCEE from "../entity/balance-cee.entity.js";
+import { In } from "typeorm"; // Importar In para el operador de TypeORM
 
 export async function createMetaService(meta) {
   try {
@@ -150,6 +151,47 @@ export async function actualizarPorcentajeCrecimiento() {
   }
 }
 
+export async function actualizarPorcentajePorPeriodo(periodo) {
+  try {
+    const metaRepository = AppDataSource.getRepository(MetaFinanciera);
+    const balanceRepository = AppDataSource.getRepository(BalanceCEE);
+
+    // Solo buscar el balance del periodo específico
+    const balance = await balanceRepository.findOne({
+      where: { periodo: periodo }
+    });
+
+    if (!balance) {
+      return [null, `No existe balance para el periodo ${periodo}`];
+    }
+
+    // Solo buscar las metas de ese periodo
+    const metas = await metaRepository.find({
+      where: { periodo: periodo }
+    });
+
+    if (metas.length === 0) {
+      return [true, null]; // No hay metas para actualizar, pero no es error
+    }
+
+    // Actualizar solo las metas de este periodo
+    await AppDataSource.transaction(async transactionalEntityManager => {
+      const actualizaciones = metas.map(meta => {
+        const nuevoPorcentaje = (balance.totalIngresos / meta.metaFinanciera) * 100;
+        meta.porcentajeCrecimiento = Math.min(Math.round(nuevoPorcentaje), 100);
+        return meta;
+      });
+      
+      await transactionalEntityManager.save(MetaFinanciera, actualizaciones);
+    });
+
+    return [true, null];
+  } catch (error) {
+    console.error(`Error al actualizar porcentajes del periodo ${periodo}:`, error);
+    return [null, `Error interno del servidor: ${error.message}`];
+  }
+}
+
 export async function getAllMetasService() {
   try {
     const metaRepository = AppDataSource.getRepository(MetaFinanciera);
@@ -187,5 +229,53 @@ export async function getMetasByYearService(year) {
   } catch (error) {
     console.error("Error al obtener las metas financieras por año:", error);
     return [null, "Error interno del servidor"];
+  }
+} 
+
+export async function actualizarPorcentajeMultiplesPeriodos(periodos) {
+  try {
+    const metaRepository = AppDataSource.getRepository(MetaFinanciera);
+    const balanceRepository = AppDataSource.getRepository(BalanceCEE);
+
+    // Buscar balances solo de los periodos especificados
+    const balances = await balanceRepository.find({
+      where: { periodo: In(periodos) } // Usando In operator de TypeORM
+    });
+
+    // Buscar metas solo de los periodos especificados
+    const metas = await metaRepository.find({
+      where: { periodo: In(periodos) }
+    });
+
+    if (metas.length === 0) {
+      return [true, null];
+    }
+
+    // Crear mapa de balances por periodo
+    const balancesPorPeriodo = balances.reduce((acc, balance) => {
+      acc[balance.periodo] = balance;
+      return acc;
+    }, {});
+
+    // Actualizar solo las metas de los periodos especificados
+    await AppDataSource.transaction(async transactionalEntityManager => {
+      const actualizaciones = metas.map(meta => {
+        const balanceCorrespondiente = balancesPorPeriodo[meta.periodo];
+        if (!balanceCorrespondiente) {
+          throw new Error(`No existe balance para el periodo ${meta.periodo}`);
+        }
+        
+        const nuevoPorcentaje = (balanceCorrespondiente.totalIngresos / meta.metaFinanciera) * 100;
+        meta.porcentajeCrecimiento = Math.min(Math.round(nuevoPorcentaje), 100);
+        return meta;
+      });
+      
+      await transactionalEntityManager.save(MetaFinanciera, actualizaciones);
+    });
+
+    return [true, null];
+  } catch (error) {
+    console.error("Error al actualizar porcentajes de múltiples periodos:", error);
+    return [null, `Error interno del servidor: ${error.message}`];
   }
 } 
