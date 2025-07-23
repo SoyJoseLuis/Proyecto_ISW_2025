@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Modal, Form, Input, InputNumber, Alert } from 'antd';
 import useCreateMeta from '../hooks/metaf/useCreateMeta.jsx';
 import { getMetasByYear } from '../services/metaf.service.js';
+import '../styles/ModalCrearMetaFinanciera.css';
 
 export default function ModalCrearMetaFinanciera({ visible, onClose, onMetaCreated }) {
   const [form] = Form.useForm();
@@ -76,6 +77,7 @@ export default function ModalCrearMetaFinanciera({ visible, onClose, onMetaCreat
       destroyOnClose
       confirmLoading={loading || checkingMeta}
       okButtonProps={{ disabled: existingMeta || checkingMeta }}
+      className="modal-crear-meta"
     >
       {existingMeta && (
         <Alert

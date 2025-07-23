@@ -1,0 +1,89 @@
+/* Estilos para el Modal de Crear Meta Financiera */
+
+/* Botón primario del modal */
+.modal-crear-meta .ant-btn-primary {
+  background-color: #66f5fa !important;
+  border-color: #66f5fa !important;
+  box-shadow: 0 2px 0 rgba(102, 245, 250, 0.1) !important;
+}
+
+.modal-crear-meta .ant-btn-primary:hover {
+  background-color: #44c7f7 !important;
+  border-color: #44c7f7 !important;
+  box-shadow: 0 4px 8px rgba(68, 199, 247, 0.2) !important;
+}
+
+.modal-crear-meta .ant-btn-primary:focus {
+  background-color: #66f5fa !important;
+  border-color: #66f5fa !important;
+  box-shadow: 0 0 0 2px rgba(102, 245, 250, 0.2) !important;
+}
+
+.modal-crear-meta .ant-btn-primary:active {
+  background-color: #1976ff !important;
+  border-color: #1976ff !important;
+}
+
+/* Botón primario deshabilitado */
+.modal-crear-meta .ant-btn-primary:disabled {
+  background-color: #f0f0f0 !important;
+  border-color: #d9d9d9 !important;
+  color: #00000040 !important;
+  box-shadow: none !important;
+}
+
+/* Input focus states */
+.modal-crear-meta .ant-input:focus,
+.modal-crear-meta .ant-input-focused {
+  border-color: #66f5fa !important;
+  box-shadow: 0 0 0 2px rgba(102, 245, 250, 0.2) !important;
+}
+
+.modal-crear-meta .ant-input-number:focus,
+.modal-crear-meta .ant-input-number-focused {
+  border-color: #66f5fa !important;
+  box-shadow: 0 0 0 2px rgba(102, 245, 250, 0.2) !important;
+}
+
+/* Textarea focus */
+.modal-crear-meta .ant-input:focus,
+.modal-crear-meta .ant-input.ant-input:focus {
+  border-color: #66f5fa !important;
+  box-shadow: 0 0 0 2px rgba(102, 245, 250, 0.2) !important;
+}
+
+/* Alert de warning personalizado */
+.modal-crear-meta .ant-alert-warning {
+  border: 1px solid #44c7f7;
+  background-color: rgba(68, 199, 247, 0.1);
+}
+
+.modal-crear-meta .ant-alert-warning .ant-alert-icon {
+  color: #1976ff;
+}
+
+/* Alert de info personalizado */
+.modal-crear-meta .ant-alert-info {
+  border: 1px solid #66f5fa;
+  background-color: rgba(102, 245, 250, 0.1);
+}
+
+.modal-crear-meta .ant-alert-info .ant-alert-icon {
+  color: #1976ff;
+}
+
+/* Contador de caracteres */
+.modal-crear-meta .ant-input-data-count {
+  color: #1976ff;
+}
+
+/* Título del modal */
+.modal-crear-meta .ant-modal-title {
+  color: #1976ff;
+  font-weight: 600;
+}
+
+/* Loading state */
+.modal-crear-meta .ant-spin-dot-item {
+  background-color: #66f5fa;
+} 

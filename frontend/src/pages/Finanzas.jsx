@@ -108,14 +108,14 @@ export default function Finanzas() {
               style={{
                 width: '48px',
                 height: '48px',
-                background: 'linear-gradient(135deg, #ff6b35 85%, #ffa726 100%)',
+                background: 'linear-gradient(135deg, #3487cf 85%, #44c7f7 100%)',
                 borderRadius: '12px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: '#fff',
                 marginBottom: '12px',
-                boxShadow: '0 3px 16px 0 rgba(255,107,53,0.20)'
+                boxShadow: '0 3px 16px 0 rgba(102, 245, 250, 0.20)'
               }}
             >
               <TrophyOutlined style={{ fontSize: 24 }} />
@@ -144,7 +144,7 @@ export default function Finanzas() {
                 margin: 0
               }}
             >
-               Total de dinero ingresado al centro de estudiantes en un años academico .
+               Progreso de SOLO los Ingresos del Centro de estudiantes .
             </div>
           </button>
           <ModalCrearMetaFinanciera

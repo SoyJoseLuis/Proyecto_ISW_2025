@@ -79,9 +79,6 @@ const ViewerBalance = forwardRef((props, ref) => {
               -{formatCurrency(balance.totalSalidas)}
             </div>
           </div>
-          
-          <div className="balance-separator"></div>
-          
           <div className="balance-item total">
             <div className="balance-label">Monto Actual</div>
             <div className={`balance-amount ${balance.montoActual >= 0 ? 'positive' : 'negative'}`}>
@@ -90,13 +87,6 @@ const ViewerBalance = forwardRef((props, ref) => {
           </div>
         </div>
         
-        <div className="balance-footer">
-          <div className="balance-meta">
-            <span className="balance-date">
-              Balance ID: {balance.idBalanceCEE}
-            </span>
-          </div>
-        </div>
       </div>
     </div>
   );

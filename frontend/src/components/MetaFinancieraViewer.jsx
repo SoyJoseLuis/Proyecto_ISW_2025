@@ -69,7 +69,7 @@ const MetaFinancieraViewer = forwardRef((props, ref) => {
       <div className="meta-viewer-container">
         <div className="meta-viewer-header">
           <div className="meta-viewer-title">
-            <TrophyOutlined style={{ marginRight: '8px', color: '#ff6b35' }} />
+            <TrophyOutlined style={{ marginRight: '8px', color: '#ffffff' }} />
             Metas Financieras
           </div>
           <Select
@@ -96,7 +96,7 @@ const MetaFinancieraViewer = forwardRef((props, ref) => {
     <div className="meta-viewer-container">
       <div className="meta-viewer-header">
         <div className="meta-viewer-title">
-          <TrophyOutlined style={{ marginRight: '8px', color: '#ff6b35' }} />
+          <TrophyOutlined style={{ marginRight: '8px', color: '#ffffff' }} />
           Metas Financieras
         </div>
         <Select
@@ -161,8 +161,8 @@ const MetaFinancieraViewer = forwardRef((props, ref) => {
                   <Progress
                     percent={meta.porcentajeCrecimiento || 0}
                     strokeColor={{
-                      '0%': '#ff6b35',
-                      '100%': '#ffa726',
+                      '0%': '#1976ff',
+                      '100%': '#44c7f7',
                     }}
                     trailColor="#f0f0f0"
                     showInfo={false}
