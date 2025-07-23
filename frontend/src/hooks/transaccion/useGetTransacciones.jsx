@@ -17,6 +17,7 @@ export function useGetTransacciones() {
           id: transaccion.idTransaccion,
           montoTransaccion: transaccion.montoTransaccion,
           fechaTransaccion: transaccion.fechaTransaccion,
+          fechaCreacion: transaccion.fechaCreacion, // Campo necesario para validar eliminación
           rutEstudiante: transaccion.rutEstudiante,
           nombreEstudiante: transaccion.estudiante?.nombreEstudiante || '',
           idTipoTransaccion: transaccion.idTipoTransaccion,

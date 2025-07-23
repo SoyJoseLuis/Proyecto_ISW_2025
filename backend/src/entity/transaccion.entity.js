@@ -22,6 +22,12 @@ const TransaccionSchema = new EntitySchema({
       length: 10,
       nullable: false,
     },
+    fechaCreacion: {
+      name: "fecha_creacion",
+      type: "timestamp",
+      default: () => "CURRENT_TIMESTAMP",
+      nullable: false,
+    },
     rutEstudiante: {
       name: "rut_estudiante",
       type: "varchar",
@@ -36,7 +42,7 @@ const TransaccionSchema = new EntitySchema({
     motivoTransaccion: {
       name: "motivo_transaccion",
       type: "varchar",
-      length: 30,
+      length: 70,
       nullable: false,
     },
     idActividad: {
@@ -47,6 +53,12 @@ const TransaccionSchema = new EntitySchema({
     idBalance: {
       name: "id_balance",
       type: "bigint",
+      nullable: false,
+    },
+    activo: {
+      name: "activo",
+      type: "boolean",
+      default: true,
       nullable: false,
     }
   },

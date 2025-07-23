@@ -1,14 +1,38 @@
 import { forwardRef, useImperativeHandle } from 'react';
-import { Table, Tag } from 'antd';
+import { Table, Tag, Button, Popconfirm } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
+import dayjs from 'dayjs';
 import { useGetTransacciones } from '../hooks/transaccion';
+import { useDeleteTransaccion } from '../hooks/transaccion';
 
 const TransaccionesViewerTable = forwardRef((props, ref) => {
   const { transacciones, isLoading, refetch } = useGetTransacciones();
+  const { deleteTransaccion, isLoading: deleteLoading } = useDeleteTransaccion();
 
   // Exponemos el método refresh para que el componente padre pueda llamarlo
   useImperativeHandle(ref, () => ({
     refreshTransacciones: refetch
   }));
+
+  // Función para verificar si una transacción puede ser eliminada (dentro de 5 minutos)
+  const canDeleteTransaction = (fechaCreacion) => {
+    if (!fechaCreacion) return false;
+    
+    const creationDate = dayjs(fechaCreacion);
+    const now = dayjs();
+    const diffInMinutes = now.diff(creationDate, 'minute');
+    return diffInMinutes <= 5;
+  };
+
+  // Función para manejar la eliminación
+  const handleDelete = async (record) => {
+    try {
+      await deleteTransaccion(record);
+      refetch(); // Actualizar la tabla después de eliminar
+    } catch (error) {
+      console.error('Error al eliminar transacción:', error);
+    }
+  };
 
   // Columnas para la tabla de transacciones
   const columnsTransacciones = [
@@ -62,6 +86,39 @@ const TransaccionesViewerTable = forwardRef((props, ref) => {
       render: (motivo) => (
         <span title={motivo}>{motivo}</span>
       ),
+    },
+    {
+      title: 'Acciones',
+      key: 'actions',
+      width: 80,
+      align: 'center',
+      render: (_, record) => {
+        const canDelete = canDeleteTransaction(record.fechaCreacion);
+        
+        return (
+          <Popconfirm
+            title="¿Estás seguro de eliminar esta transacción?"
+            description="Esta acción no se puede deshacer."
+            onConfirm={() => handleDelete(record)}
+            okText="Sí, eliminar"
+            cancelText="Cancelar"
+            disabled={!canDelete}
+          >
+            <Button
+              type="text"
+              icon={<DeleteOutlined />}
+              size="small"
+              loading={deleteLoading}
+              disabled={!canDelete}
+              style={{
+                color: canDelete ? '#ff4d4f' : '#d9d9d9',
+                cursor: canDelete ? 'pointer' : 'not-allowed'
+              }}
+              title={canDelete ? 'Eliminar transacción' : 'Solo se puede eliminar durante los primeros 5 minutos'}
+            />
+          </Popconfirm>
+        );
+      },
     },
   ];
 
