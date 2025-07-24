@@ -17,6 +17,7 @@ export function useGetTransacciones() {
           id: transaccion.idTransaccion,
           montoTransaccion: transaccion.montoTransaccion,
           fechaTransaccion: transaccion.fechaTransaccion,
+          fechaCreacion: transaccion.fechaCreacion, // Campo necesario para validar eliminación
           rutEstudiante: transaccion.rutEstudiante,
           nombreEstudiante: transaccion.estudiante?.nombreEstudiante || '',
           idTipoTransaccion: transaccion.idTipoTransaccion,
@@ -27,10 +28,25 @@ export function useGetTransacciones() {
         }));
         setTransacciones(transaccionesMapeadas);
       } else {
-        showErrorAlert('Error', response.message || 'Error al cargar las transacciones');
-        setTransacciones([]);
+        // Identificar si es un error de "no hay datos" vs un error real
+        const isNoDataError = response.message && (
+          response.message.includes('No hay transacciones') ||
+          response.message.includes('No se encontraron transacciones') ||
+          response.message.includes('Error obteniendo las transacciones') ||
+          response.statusCode === 404
+        );
+        
+        if (isNoDataError) {
+          // Si es un error de "no hay datos", simplemente setear array vacío sin mostrar alerta
+          setTransacciones([]);
+        } else {
+          // Si es un error real, mostrar alerta
+          showErrorAlert('Error', response.message || 'Error al cargar las transacciones');
+          setTransacciones([]);
+        }
       }
     } catch (error) {
+      console.error('useGetTransacciones - Error:', error);
       showErrorAlert('Error', error.message || 'Error al cargar las transacciones');
       setTransacciones([]);
     } finally {
@@ -47,4 +63,4 @@ export function useGetTransacciones() {
     isLoading,
     refetch: fetchTransacciones
   };
-} 
+}

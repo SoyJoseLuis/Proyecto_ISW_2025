@@ -16,7 +16,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  background: linear-gradient(135deg, #ff6b35 0%, #ffa726 100%);
+  background: linear-gradient(135deg, #3487cf 0%, #44c7f7 100%);
   color: white;
   border-bottom: 1px solid #e7e8f3;
 }
@@ -68,8 +68,8 @@
 }
 
 .meta-card:hover {
-  border-color: #ff6b35;
-  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.1);
+  border-color: #66f5fa;
+  box-shadow: 0 4px 12px rgba(102, 245, 250, 0.1);
   transform: translateY(-2px);
 }
 
@@ -139,7 +139,7 @@
 
 .progress-percentage {
   font-size: 11px;
-  color: #ff6b35;
+  color: #1976ff;
   font-weight: 600;
   text-align: right;
 }

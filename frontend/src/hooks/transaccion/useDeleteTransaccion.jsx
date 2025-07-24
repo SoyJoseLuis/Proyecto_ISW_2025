@@ -5,12 +5,19 @@ import { showSuccessAlert, showErrorAlert } from '../../helpers/sweetAlert.js';
 export function useDeleteTransaccion() {
   const [isLoading, setIsLoading] = useState(false);
 
-  const deleteTransaccionHandler = async (id) => {
+  const deleteTransaccionHandler = async (transaccion) => { // ✅ Recibir objeto completo
+    console.log('🗑️ ELIMINANDO TRANSACCIÓN:', {
+      id: transaccion.id,
+      tipo: transaccion.idTipoTransaccion,
+      tipoDescripcion: transaccion.tipoTransaccionDescripcion,
+      monto: transaccion.montoTransaccion
+    });
+    
     setIsLoading(true);
     try {
-      const response = await deleteTransaccion(id);
+      const response = await deleteTransaccion(transaccion.id); // Usar solo el ID para la API
       
-      if (response.state === 'Success') {
+      if (response.status === 'Success') {
         showSuccessAlert('¡Éxito!', 'Transacción eliminada correctamente');
         return response.data;
       } else {

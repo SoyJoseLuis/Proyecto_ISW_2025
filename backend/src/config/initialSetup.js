@@ -10,6 +10,7 @@ import EstadoActividad from "../entity/estado-actividad.entity.js";
 import Notificacion from "../entity/notificacion.entity.js";
 import Rol from "../entity/rol.entity.js";
 import EstudianteRol from "../entity/estudiante-rol.entity.js";
+import BalanceCee from "../entity/balance-cee.entity.js";
 
 
 /**
@@ -199,12 +200,57 @@ async function createNotificacion() {
   }
 }
 
-
-
+/**
+ * Crea balances históricos para años anteriores si no existen.
+ * Verifica año por año y crea los que falten de los últimos 5 años.
+ */
+async function createBalancesHistoricos() {
+  try {
+    console.log(" Iniciando creación de balances históricos...");
+    const repo = AppDataSource.getRepository(BalanceCee);
+    const añoActual = new Date().getFullYear();
+    
+    // Verificar y crear balances para los últimos 5 años (excluyendo el año actual)
+    for (let i = 5; i >= 1; i--) {
+      const año = añoActual - i;
+      const periodoStr = año.toString();
+      
+      // Verificar si ya existe un balance para este año
+      const existeBalance = await repo.findOne({
+        where: { periodo: periodoStr }
+      });
+      
+      if (!existeBalance) {
+        console.log(`Creando balance para el año ${año}...`);
+        
+        // Generar valores realistas asegurando que el balance sea positivo
+        const totalIngresos = Math.floor(Math.random() * 500000) + 100000; // 100k - 600k
+        const totalSalidas = Math.floor(Math.random() * (totalIngresos * 0.8)) + Math.floor(totalIngresos * 0.1);
+        const montoActual = totalIngresos - totalSalidas;
+        
+        const nuevoBalance = {
+          periodo: periodoStr,
+          montoActual: montoActual,
+          totalIngresos: totalIngresos,
+          totalSalidas: totalSalidas
+        };
+        
+        await repo.save(repo.create(nuevoBalance));
+      } else {
+        console.log(`Ya existe balance para el año ${año}, saltando...`);
+      }
+    }
+    
+    console.log("* => Balances históricos creados exitosamente");
+  } catch (error) {
+    console.error("Error al crear balances históricos:", error);
+  }
+}
 
 
 export {
   assignSampleRoles,
+  createBalancesHistoricos,
   createEstudiantes,
   createEstadoActividad,
   createNotificacion,

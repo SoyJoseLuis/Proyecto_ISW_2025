@@ -6,6 +6,7 @@ import ModalCrearMetaFinanciera from '../components/ModalCrearMetaFinanciera';
 import MetaFinancieraViewer from '../components/MetaFinancieraViewer';
 import TransaccionesViewerTable from '../components/TransaccionesViewerTable';
 import ViewerBalance from '../components/ViewerBalance';
+import BalancesAnterioresViewer from '../components/BalancesAnterioresViewer';
 import useGetMetas from '../hooks/metaf/useGetMetas';
 import { showErrorAlert } from '../helpers/sweetAlert';
 import '../styles/Actividades.css';
@@ -21,6 +22,7 @@ export default function Finanzas() {
   const transaccionesViewerRef = useRef(null);
   const balanceViewerRef = useRef(null);
   
+ 
   const { metas, refreshMetas } = useGetMetas();
 
   const handleMetaCreated = () => {
@@ -34,30 +36,24 @@ export default function Finanzas() {
 
   const handleTransaccionCreated = () => {
     // Actualizar TODOS los componentes afectados cuando se crea una transacción
-    console.log('🔄 Coordinando actualización de componentes después de crear transacción');
     
-    // 1. Actualizar tabla de transacciones
+    // Actualizar tabla de transacciones
     if (transaccionesViewerRef.current && transaccionesViewerRef.current.refreshTransacciones) {
-      console.log('📊 Actualizando tabla de transacciones');
       transaccionesViewerRef.current.refreshTransacciones();
     }
     
-    // 2. Actualizar balance (ya que una nueva transacción afecta el balance)
+    // Actualizar balance (ya que una nueva transacción afecta el balance)
     if (balanceViewerRef.current && balanceViewerRef.current.refreshBalance) {
-      console.log('💰 Actualizando balance');
       balanceViewerRef.current.refreshBalance();
     }
     
-    // 3. Actualizar metas financieras (ya que el balance afecta el porcentaje de cumplimiento)
+    // Actualizar metas financieras (ya que el balance afecta el porcentaje de cumplimiento)
     if (metaViewerRef.current && metaViewerRef.current.refreshMetas) {
-      console.log('🎯 Actualizando metas financieras');
       metaViewerRef.current.refreshMetas();
     }
     
-    // 4. Actualizar metas en este componente para mantener sincronía
+    // Actualizar metas en este componente para mantener sincronía
     refreshMetas();
-    
-    console.log('✅ Actualización coordinada completada');
   };
 
   const handleOpenTransaccionModal = () => {
@@ -114,14 +110,14 @@ export default function Finanzas() {
               style={{
                 width: '48px',
                 height: '48px',
-                background: 'linear-gradient(135deg, #ff6b35 85%, #ffa726 100%)',
+                background: 'linear-gradient(135deg, #3487cf 85%, #44c7f7 100%)',
                 borderRadius: '12px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: '#fff',
                 marginBottom: '12px',
-                boxShadow: '0 3px 16px 0 rgba(255,107,53,0.20)'
+                boxShadow: '0 3px 16px 0 rgba(102, 245, 250, 0.20)'
               }}
             >
               <TrophyOutlined style={{ fontSize: 24 }} />
@@ -150,7 +146,7 @@ export default function Finanzas() {
                 margin: 0
               }}
             >
-               Total de dinero ingresado al centro de estudiantes en un años academico .
+               Progreso de SOLO los Ingresos del Centro de estudiantes .
             </div>
           </button>
           <ModalCrearMetaFinanciera
@@ -261,6 +257,17 @@ export default function Finanzas() {
       content: (
         <div style={{ padding: '20px' }}>
           <ViewerBalance ref={balanceViewerRef} />
+          
+        </div>
+      ),
+    },
+    {
+      key: '4',
+      label: 'Balances anteriores',
+      icon: <BarChartOutlined />,
+      content: (
+        <div style={{ padding: '20px' }}>
+          <BalancesAnterioresViewer />
         </div>
       ),
     },
@@ -271,5 +278,4 @@ export default function Finanzas() {
       <DashboardTabs tabs={tabs} />
     </div>
   );
-} 
-
+}

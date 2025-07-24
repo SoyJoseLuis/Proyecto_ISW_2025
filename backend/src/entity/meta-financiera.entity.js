@@ -28,11 +28,11 @@ const MetaFinancieraSchema = new EntitySchema({
       length: 50,
       nullable: false,
     },
-
-    porcentajeCrecimiento: {
-      name: "porcentaje_crecimiento",
+    montoFullCrecimiento: {
+      name: "monto_full_crecimiento",
       type: "int",
       nullable: false,
+      default: 0, // Valor por defecto, se actualizará desde el servicio
     }
   }
 });

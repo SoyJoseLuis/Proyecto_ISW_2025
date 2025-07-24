@@ -15,7 +15,7 @@ export default function useDeleteMeta() {
 
     setLoading(true);
     try {
-      const response = await deleteMeta(id);
+      const response = await deleteMeta(Number(id));
       if (response.status === 'Success') {
         showSuccessAlert('¡Meta eliminada!', 'La meta financiera se ha eliminado exitosamente.');
         return { success: true, data: response };

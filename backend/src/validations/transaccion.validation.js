@@ -31,6 +31,18 @@ export const transaccionBodyValidation = Joi.object({
     }),
   fechaTransaccion: Joi.string()
     .pattern(/^\d{2}-\d{2}-\d{4}$/)
+    .custom((value, helpers) => {
+      // Validar que la fecha sea del año actual
+      const [dia, mes, año] = value.split("-");
+      const añoActual = new Date().getFullYear();
+      const añoTransaccion = parseInt(año);
+
+      if (añoTransaccion !== añoActual) {
+        return helpers.message(`La transacción debe ser creada en el año actual (${añoActual})`);
+      }
+
+      return value;
+    })
     .required()
     .messages({
       "string.pattern.base": "La fecha debe tener el formato DD-MM-YYYY.",
@@ -87,13 +99,13 @@ export const transaccionBodyValidation = Joi.object({
       "any.required": "El tipo de transacción es requerido.",
     }),
   motivoTransaccion: Joi.string()
-    .min(5)
-    .max(30)
+    .min(15) 
+    .max(70) 
     .required()
     .messages({
+      "string.max": "El motivo de la transacción no puede exceder los 100 caracteres",
       "string.empty": "El motivo no puede estar vacío.",
-      "string.min": "El motivo debe tener al menos 5 caracteres.",
-      "string.max": "El motivo debe tener como máximo 30 caracteres.",
+      "string.min": "El motivo debe tener al menos 15 caracteres.",
       "any.required": "El motivo es requerido.",
     }),
   idActividad: Joi.number()

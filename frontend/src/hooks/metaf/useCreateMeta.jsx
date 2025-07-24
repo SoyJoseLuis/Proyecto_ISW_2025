@@ -10,7 +10,7 @@ export default function useCreateMeta(onSuccess) {
     try {
       const response = await createMeta(data);
       if (response.status === 'Success') {
-        showSuccessAlert('¡Meta financiera creada!', 'La meta financiera se ha creado exitosamente.');
+        showSuccessAlert('Meta financiera creada', 'La meta financiera se ha creado exitosamente.');
         
         // Llamar callback de éxito si existe
         if (onSuccess && typeof onSuccess === 'function') {

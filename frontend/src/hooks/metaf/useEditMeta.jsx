@@ -4,13 +4,13 @@ import { showErrorAlert, showSuccessAlert } from '../../helpers/sweetAlert.js';
 
 export default function useEditMeta() {
   const [loading, setLoading] = useState(false);
-
+// al final no se ocupa o igual si 
   const handleUpdateMeta = async (id, data) => {
     setLoading(true);
     try {
       const response = await updateMeta(id, data);
       if (response.status === 'Success') {
-        showSuccessAlert('¡Meta actualizada!', 'La meta financiera se ha actualizado exitosamente.');
+        showSuccessAlert('Meta actualizada', 'La meta financiera se ha actualizado exitosamente.');
         return { success: true, data: response };
       } else {
         showErrorAlert('Error', response.message || 'Error al actualizar la meta financiera');
