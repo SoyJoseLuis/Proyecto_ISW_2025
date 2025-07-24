@@ -2,7 +2,7 @@
 import { AppDataSource } from "../config/configDb.js";
 import Transaccion from "../entity/transaccion.entity.js";
 import BalanceCEE from "../entity/balance-cee.entity.js";
-import { actualizarPorcentajePorPeriodo } from "./metaf.service.js"; // Importar la nueva función
+
 
 export async function createTransaccionService(transaccion) {
   try {
@@ -34,23 +34,25 @@ export async function createTransaccionService(transaccion) {
     if (tipoTransaccion === 1) { // Ingreso
       nuevoMonto = balance.montoActual + transaccion.montoTransaccion;
       balance.totalIngresos += transaccion.montoTransaccion;
+
+      // ACTUALIZAR ingresoFullBalance SOLO EN INGRESOS
+      if (balance.ingresoFullBalance == null) {
+        balance.ingresoFullBalance = 0;
+      }
+      balance.ingresoFullBalance += transaccion.montoTransaccion;
     } else { // Salida
       if (balance.montoActual < transaccion.montoTransaccion) {
         return [null, "Fondos insuficientes para realizar la transacción"];
       }
       nuevoMonto = balance.montoActual - transaccion.montoTransaccion;
       balance.totalSalidas += transaccion.montoTransaccion;
+      // NO SE MODIFICA ingresoFullBalance
     }
 
     // Actualizar el balance
     balance.montoActual = nuevoMonto;
     await balanceRepository.save(balance);
 
-    // CAMBIO: Solo actualizar metas del periodo afectado
-    const [success, errorPorcentaje] = await actualizarPorcentajePorPeriodo(añoTransaccion);
-    if (errorPorcentaje) {
-      console.error("Error al actualizar porcentajes:", errorPorcentaje);
-    }
 
     // Asignar balance a la transacción
     transaccion.balance = balance;
@@ -161,20 +163,21 @@ export async function deleteTransaccionService(query) {
     if (tipoTransaccion === 1) { // Era un ingreso
       balance.montoActual -= transaccion.montoTransaccion;
       balance.totalIngresos -= transaccion.montoTransaccion;
+      // También revertir ingresoFullBalance
+      if (balance.ingresoFullBalance == null) {
+        balance.ingresoFullBalance = 0;
+      }
+      balance.ingresoFullBalance -= transaccion.montoTransaccion;
     } else if (tipoTransaccion === 2) { // Era una salida
       balance.montoActual += transaccion.montoTransaccion;
       balance.totalSalidas -= transaccion.montoTransaccion;
+      // NO modificar ingresoFullBalance
     }
 
     // Guardar los cambios en el balance
     await balanceRepository.save(balance);
 
-    // Actualizar metas del periodo afectado
-    const [success, errorPorcentaje] = await actualizarPorcentajePorPeriodo(periodoAfectado);
-    if (errorPorcentaje) {
-      console.error("Error al actualizar porcentajes:", errorPorcentaje);
-    }
-
+   
     // SOFT DELETE: Marcar como inactiva en lugar de eliminar físicamente
     transaccion.activo = false;
     await transaccionRepository.save(transaccion);

@@ -48,12 +48,12 @@ export default function MetaFinancieraChart() {
 
   // Tomar la primera meta del año (asumiendo que hay una por año)
   const metaActual = metas[0];
-  const porcentaje = metaActual.porcentajeCrecimiento;
+  // Nuevo cálculo del porcentaje y uso de montoFullCrecimiento
+  const porcentaje = Math.round((metaActual.montoFullCrecimiento / metaActual.metaFinanciera) * 100);
 
   // Determinar el color según el porcentaje
   const getColorByPercentage = (percent) => {
     if (percent >= 50) return '#52c41a'; // Verde
-  
     if (percent >= 30) return '#fa8c16'; // Naranja
     return '#ff4d4f'; // Rojo
   };
@@ -115,7 +115,7 @@ export default function MetaFinancieraChart() {
               fontWeight: 'bold',
               fontSize: '16px'
             }}>
-              Avance: {porcentaje}%
+              Avance: {formatMoney(metaActual.montoFullCrecimiento)} / {formatMoney(metaActual.metaFinanciera)} ({porcentaje}%)
             </span>
           </div>
         </div>

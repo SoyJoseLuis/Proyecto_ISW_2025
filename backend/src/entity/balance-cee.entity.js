@@ -31,6 +31,11 @@ const BalanceCEESchema = new EntitySchema({
       name: "total_salidas",
       type: "int",
       nullable: false,  
+    },
+    ingresoFullBalance: {
+      name: "ingreso_full_balance",
+      type: "int",
+      nullable: true, // Puede ser nulo
     }
   },
 
