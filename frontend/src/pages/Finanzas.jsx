@@ -6,6 +6,7 @@ import ModalCrearMetaFinanciera from '../components/ModalCrearMetaFinanciera';
 import MetaFinancieraViewer from '../components/MetaFinancieraViewer';
 import TransaccionesViewerTable from '../components/TransaccionesViewerTable';
 import ViewerBalance from '../components/ViewerBalance';
+import BalancesAnterioresViewer from '../components/BalancesAnterioresViewer';
 import useGetMetas from '../hooks/metaf/useGetMetas';
 import { showErrorAlert } from '../helpers/sweetAlert';
 import '../styles/Actividades.css';
@@ -21,6 +22,7 @@ export default function Finanzas() {
   const transaccionesViewerRef = useRef(null);
   const balanceViewerRef = useRef(null);
   
+ 
   const { metas, refreshMetas } = useGetMetas();
 
   const handleMetaCreated = () => {
@@ -255,6 +257,17 @@ export default function Finanzas() {
       content: (
         <div style={{ padding: '20px' }}>
           <ViewerBalance ref={balanceViewerRef} />
+          
+        </div>
+      ),
+    },
+    {
+      key: '4',
+      label: 'Balances anteriores',
+      icon: <BarChartOutlined />,
+      content: (
+        <div style={{ padding: '20px' }}>
+          <BalancesAnterioresViewer />
         </div>
       ),
     },

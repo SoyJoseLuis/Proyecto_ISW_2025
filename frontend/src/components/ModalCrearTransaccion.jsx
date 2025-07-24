@@ -161,17 +161,6 @@ export default function ModalCrearTransaccion({ visible, onClose, onSuccess }) {
           />
         </Form.Item>
 
-        <Form.Item 
-          label="ID de actividad (opcional)" 
-          name="idActividad"
-        >
-          <InputNumber
-            placeholder="ID de actividad relacionada"
-            style={{ width: '100%' }}
-            min={1}
-          />
-        </Form.Item>
-
         {/* Texto informativo sobre eliminación */}
         <div style={{
           marginTop: '16px',

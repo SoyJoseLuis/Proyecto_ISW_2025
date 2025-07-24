@@ -14,6 +14,7 @@ import { cookieKey, HOST, PORT } from "./config/configEnv.js";
 import { connectDB } from "./config/configDb.js";
 import { 
   assignSampleRoles,
+  createBalancesHistoricos,
   createEstadoActividad,
   createEstudiantes,
   createNotificacion,
@@ -105,6 +106,7 @@ async function setupAPI() {
     await createNotificacion();
     await createRoles();
     await createEstudiantes();
+    await createBalancesHistoricos();
     await assignSampleRoles();
   } catch (error) {
     console.log("Error en index.js -> setupAPI(), el error es: ", error);

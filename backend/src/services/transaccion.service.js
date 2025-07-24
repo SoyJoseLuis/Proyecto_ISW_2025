@@ -72,7 +72,7 @@ export async function getTransaccionesService() {
 
     const transacciones = await transaccionRepository.find({
       where: { activo: true }, // Solo obtener transacciones activas
-      relations: ["estudiante", "tipoTransaccion", "actividad"]
+      relations: ["estudiante", "tipoTransaccion"]
     });
 
     if (!transacciones || transacciones.length === 0) return [null, "No hay transacciones"];
@@ -94,7 +94,7 @@ export async function getTransaccionService(query) {
         idTransaccion: id,
         activo: true // Solo obtener si está activa
       },
-      relations: ["estudiante", "tipoTransaccion", "actividad"]
+      relations: ["estudiante", "tipoTransaccion"]
     });
 
     if (!transaccion) return [null, "Transacción no encontrada"];
@@ -193,7 +193,7 @@ export async function getTransaccionesEliminadasService() {
 
     const transacciones = await transaccionRepository.find({
       where: { activo: false }, // Solo transacciones eliminadas
-      relations: ["estudiante", "tipoTransaccion", "actividad"]
+      relations: ["estudiante", "tipoTransaccion"]
     });
 
     if (!transacciones || transacciones.length === 0) return [null, "No hay transacciones eliminadas"];

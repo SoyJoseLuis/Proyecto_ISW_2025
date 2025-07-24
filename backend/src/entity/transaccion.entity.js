@@ -45,11 +45,6 @@ const TransaccionSchema = new EntitySchema({
       length: 70,
       nullable: false,
     },
-    idActividad: {
-      name: "id_actividad",
-      type: "bigint",
-      nullable: true,
-    },
     idBalance: {
       name: "id_balance",
       type: "bigint",
@@ -75,13 +70,6 @@ const TransaccionSchema = new EntitySchema({
       target: "TipoTransaccion",
       joinColumn: {
         name: "id_tipo_transaccion",
-      }
-    },
-    actividad: {
-      type: "many-to-one",
-      target: "Actividad",
-      joinColumn: {
-        name: "id_actividad",
       }
     },
     balance: {
