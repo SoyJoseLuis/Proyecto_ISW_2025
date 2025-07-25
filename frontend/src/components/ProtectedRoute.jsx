@@ -15,6 +15,7 @@ const ACCESS_BY_ROLE = {
   [ROLES.SECRETARIO]: ['asistencia', 'home', 'notificaciones', 'calendario'],
 };
 
+
 const LIBERADOS = ['home', 'calendario', 'notificaciones'];
 
 export default function ProtectedRoute({ children }) {
