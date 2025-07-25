@@ -1,0 +1,12 @@
+.calendario-page-wrapper {
+    padding: 32px;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+  }
+  
+  .calendar-badge-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  

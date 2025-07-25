@@ -6,7 +6,8 @@ import {
   FileTextOutlined,
   TeamOutlined,
   BellOutlined,
-  LogoutOutlined
+  LogoutOutlined,
+  CalendarOutlined
 } from '@ant-design/icons';
 import '../styles/Sidebar.css';
 
@@ -15,6 +16,7 @@ const BASE_URL = import.meta.env.VITE_BASE_URL || "http://146.83.198.35:1293/api
 const navItems = [
   { to: '/home', label: 'Inicio', icon: <DashboardOutlined />, key: 'home' },
   { to: '/actividades', label: 'Actividades', icon: <UserOutlined />, key: 'actividades' },
+  { to: '/calendario', label: 'Calendario', icon: <CalendarOutlined />, key: 'calendario' }, 
   { to: '/finanzas', label: 'Finanzas', icon: <FileTextOutlined />, key: 'finanzas' },
   { to: '/asistencia', label: 'Asistencia', icon: <TeamOutlined />, key: 'asistencia' },
   { to: '/notificaciones', label: 'Notificaciones', icon: <BellOutlined />, key: 'notificaciones' },

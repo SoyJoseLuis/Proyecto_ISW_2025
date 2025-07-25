@@ -8,11 +8,13 @@ import Asistencias from '@pages/Asistencia'; // 👈 ¡IMPORTANTE!
 import Error404 from '@pages/Error404';
 import Root from '@pages/Root';
 import ProtectedRoute from '@components/ProtectedRoute';
-import Actividades from '@pages/Actividades';      // 👈 ¡IMPORTANTE!
+import Actividades from '@pages/Actividades';      
 import Finanzas from '@pages/Finanzas';
 import '@styles/styles.css';
 import '@styles/LoginScreen.css';
 import Notificaciones from '@pages/Notificaciones';
+import CalendarioPage from '@pages/CalendarioPage'; 
+
 
 const router = createBrowserRouter([
   {
@@ -25,14 +27,14 @@ const router = createBrowserRouter([
         element: <Home />
       },
       {
-        path: '/actividades',         // 👈 ¡AQUÍ AGREGA LA PAGE!
+        path: '/actividades',         
         element: <Actividades />
       },{
-        path: '/finanzas',         // 👈 ¡AQUÍ AGREGA LA PAGE!
+        path: '/finanzas',       
         element: <Finanzas />
       },
       {
-        path: '/asistencia',         // 👈 ¡AQUÍ AGREGA LA PAGE!
+        path: '/asistencia',         
         element: <Asistencias />
       },
       {
@@ -46,7 +48,11 @@ const router = createBrowserRouter([
             <Users />
           </ProtectedRoute>
         ),
-      }
+      },
+      {
+        path: '/calendario',
+        element: <CalendarioPage />
+      }      
     ]
   },
   {
