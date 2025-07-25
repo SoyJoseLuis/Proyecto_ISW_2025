@@ -12,7 +12,6 @@ export default function LoginScreen() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  // Nuevo login real
   const onFinish = async (values) => {
     setLoading(true);
     try {
@@ -28,11 +27,9 @@ export default function LoginScreen() {
       const data = await response.json();
 
       if (response.ok && data.status === "Success" && data.data) {
-        // Guardar el token JWT
-        localStorage.setItem('token', data.data.token);
-        // Guardar el objeto completo del usuario
+        // ✅ Guardar el JWT como 'jwt' para que ProtectedRoute lo detecte
+        localStorage.setItem('jwt', data.data.token);
         localStorage.setItem('userData', JSON.stringify(data.data));
-        // (opcional) Bandera para saber que hay sesión
         localStorage.setItem('isLogged', '1');
 
         message.success('¡Login exitoso!');
@@ -40,7 +37,7 @@ export default function LoginScreen() {
       } else {
         message.error(data.message || 'Correo o contraseña incorrectos');
       }
-    } catch  {
+    } catch {
       message.error('Error de red o servidor');
     } finally {
       setLoading(false);
@@ -49,26 +46,15 @@ export default function LoginScreen() {
 
   return (
     <div className="login-screen">
-      {/* IZQUIERDA: animación */}
       <div className="login-left">
         <div className="login-animation">
-          <Lottie 
-            animationData={animationData} 
-            loop={true} 
-            autoplay={true} 
-          />
+          <Lottie animationData={animationData} loop autoplay />
         </div>
       </div>
 
-      {/* DERECHA: formulario */}
       <div className="login-right">
         <h1 className="login-title">Iniciar sesión</h1>
-        <Form
-          name="login"
-          layout="vertical"
-          className="login-form"
-          onFinish={onFinish}
-        >
+        <Form name="login" layout="vertical" className="login-form" onFinish={onFinish}>
           <Form.Item
             label="Correo electrónico"
             name="email"
@@ -77,11 +63,7 @@ export default function LoginScreen() {
               { type: 'email', message: 'Correo no válido' }
             ]}
           >
-            <Input
-              size="large"
-              prefix={<MailOutlined />}
-              placeholder="Correo electrónico"
-            />
+            <Input size="large" prefix={<MailOutlined />} placeholder="Correo electrónico" />
           </Form.Item>
 
           <Form.Item
@@ -93,16 +75,12 @@ export default function LoginScreen() {
               size="large"
               prefix={<LockOutlined />}
               placeholder="Contraseña"
-              iconRender={visible =>
-                visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-              }
+              iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
             />
           </Form.Item>
 
           <div className="login-extra">
-            <a href="/forgetpassword" className="login-forgot">
-              ¿Olvidaste tu contraseña?
-            </a>
+            <a href="/forgetpassword" className="login-forgot">¿Olvidaste tu contraseña?</a>
           </div>
 
           <Form.Item>

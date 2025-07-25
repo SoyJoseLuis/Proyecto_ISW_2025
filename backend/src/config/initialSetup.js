@@ -128,6 +128,15 @@ async function createEstudiantes() {
         fechaDesactivacion: null,
         generacionIngreso: 2025,
       },
+      {
+        rutEstudiante: "22334556-3",
+        nombreEstudiante: "Carlos Cadiz",
+        correoEstudiante: "carlos.cadiz@alumnos.uni.cl",
+        passEstudiante: await encryptPassword("pass1234"),
+        sesionEstudiante: true,
+        fechaDesactivacion: null,
+        generacionIngreso: 2025,
+      },
     ];
 
     await Promise.all(sample.map((e) => repo.save(repo.create(e))));
