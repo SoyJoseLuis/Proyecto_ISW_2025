@@ -12,16 +12,7 @@ export default function ModalCrearTransaccion({ visible, onClose, onSuccess }) {
     { id: 2, nombre: 'Salida' }
   ];
 
-  // Función para validar formato RUT
-  const validateRUT = (_, value) => {
-    if (!value) return Promise.resolve();
-    
-    const rutRegex = /^\d{7,8}-[\dkK]$/;
-    if (!rutRegex.test(value)) {
-      return Promise.reject(new Error('El formato del RUT debe ser XXXXXXXX-X (ej: 12345678-9)'));
-    }
-    return Promise.resolve();
-  };
+
 
   // Función para validar que la fecha sea del año actual
   const validateFechaAñoActual = (_, value) => {
@@ -44,10 +35,23 @@ export default function ModalCrearTransaccion({ visible, onClose, onSuccess }) {
 
   const handleSubmit = async (values) => {
     try {
+      // Obtener RUT desde localStorage
+      let rut = '';
+      try {
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        rut = userData?.student?.rutEstudiante || '';
+      } catch {
+        rut = '';
+      }
+      if (!rut) {
+        // Si no hay rut, mostrar error y no continuar
+        window?.message?.error?.("No se encontró usuario logueado.");
+        return;
+      }
       const transaccionData = {
         montoTransaccion: values.montoTransaccion,
         fechaTransaccion: values.fechaTransaccion.format('DD-MM-YYYY'),
-        rutEstudiante: values.rutEstudiante,
+        rutEstudiante: rut, // Usar el rut obtenido
         idTipoTransaccion: values.idTipoTransaccion,
         motivoTransaccion: values.motivoTransaccion,
         idActividad: values.idActividad || null
@@ -134,17 +138,6 @@ export default function ModalCrearTransaccion({ visible, onClose, onSuccess }) {
         </Form.Item>
 
         <Form.Item 
-          label="RUT del estudiante" 
-          name="rutEstudiante"
-          rules={[
-            { required: true, message: 'Ingresa el RUT del estudiante' },
-            { validator: validateRUT }
-          ]}
-        >
-          <Input placeholder="Ej: 21332767-4" maxLength={12} />
-        </Form.Item>
-
-        <Form.Item 
           label="Motivo de la transacción" 
           name="motivoTransaccion"
           rules={[
@@ -152,6 +145,7 @@ export default function ModalCrearTransaccion({ visible, onClose, onSuccess }) {
             { min: 15, message: 'El motivo debe tener al menos 15 caracteres' },
             { max: 70, message: 'El motivo no puede exceder 70 caracteres' }
           ]}
+          style={{ marginBottom: 32 }}
         >
           <Input.TextArea 
             placeholder="Describe el motivo de la transacción" 
@@ -174,6 +168,7 @@ export default function ModalCrearTransaccion({ visible, onClose, onSuccess }) {
           <strong>💡 Información:</strong> Podrás eliminar esta transacción únicamente durante los primeros 5 minutos después de crearla.
         </div>
       </Form>
+      
     </Modal>
   );
 } 

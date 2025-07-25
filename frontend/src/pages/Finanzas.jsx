@@ -5,7 +5,6 @@ import ModalCrearTransaccion from '../components/ModalCrearTransaccion';
 import ModalCrearMetaFinanciera from '../components/ModalCrearMetaFinanciera';
 import MetaFinancieraViewer from '../components/MetaFinancieraViewer';
 import TransaccionesViewerTable from '../components/TransaccionesViewerTable';
-import ViewerBalance from '../components/ViewerBalance';
 import BalancesAnterioresViewer from '../components/BalancesAnterioresViewer';
 import useGetMetas from '../hooks/metaf/useGetMetas';
 import { showErrorAlert } from '../helpers/sweetAlert';
@@ -45,6 +44,10 @@ export default function Finanzas() {
     // Actualizar balance (ya que una nueva transacción afecta el balance)
     if (balanceViewerRef.current && balanceViewerRef.current.refreshBalance) {
       balanceViewerRef.current.refreshBalance();
+    }
+    // Actualizar balances anteriores (nuevo método)
+    if (balanceViewerRef.current && balanceViewerRef.current.refreshBalances) {
+      balanceViewerRef.current.refreshBalances();
     }
     
     // Actualizar metas financieras (ya que el balance afecta el porcentaje de cumplimiento)
@@ -256,18 +259,9 @@ export default function Finanzas() {
       icon: <BarChartOutlined />,
       content: (
         <div style={{ padding: '20px' }}>
-          <ViewerBalance ref={balanceViewerRef} />
+        
+          <BalancesAnterioresViewer ref={balanceViewerRef} />
           
-        </div>
-      ),
-    },
-    {
-      key: '4',
-      label: 'Balances anteriores',
-      icon: <BarChartOutlined />,
-      content: (
-        <div style={{ padding: '20px' }}>
-          <BalancesAnterioresViewer />
         </div>
       ),
     },

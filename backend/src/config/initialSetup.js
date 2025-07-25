@@ -11,6 +11,7 @@ import Notificacion from "../entity/notificacion.entity.js";
 import Rol from "../entity/rol.entity.js";
 import EstudianteRol from "../entity/estudiante-rol.entity.js";
 import BalanceCee from "../entity/balance-cee.entity.js";
+import MetaFinanciera from "../entity/meta-financiera.entity.js";
 
 
 /**
@@ -208,6 +209,7 @@ async function createBalancesHistoricos() {
   try {
     console.log(" Iniciando creación de balances históricos...");
     const repo = AppDataSource.getRepository(BalanceCee);
+    const repoMeta = AppDataSource.getRepository(MetaFinanciera);
     const añoActual = new Date().getFullYear();
     
     // Verificar y crear balances para los últimos 5 años (excluyendo el año actual)
@@ -215,6 +217,23 @@ async function createBalancesHistoricos() {
       const año = añoActual - i;
       const periodoStr = año.toString();
       
+      // Crear meta financiera si no existe para ese año
+      let metaFinancieraValue = Math.floor(Math.random() * (2000000 - 500000 + 1)) + 500000;
+      let metaFinancieraEntity;
+      const existeMeta = await repoMeta.findOne({
+        where: { periodo: periodoStr }
+      });
+      if (!existeMeta) {
+        const nuevaMeta = {
+          metaFinanciera: metaFinancieraValue,
+          periodo: periodoStr,
+          descripcionMeta: "Meta histórica generada",
+          montoFullCrecimiento: 0
+        };
+        metaFinancieraEntity = await repoMeta.save(repoMeta.create(nuevaMeta));
+      } else {
+        metaFinancieraEntity = existeMeta;
+      }
       // Verificar si ya existe un balance para este año
       const existeBalance = await repo.findOne({
         where: { periodo: periodoStr }
@@ -236,6 +255,12 @@ async function createBalancesHistoricos() {
         };
         
         await repo.save(repo.create(nuevoBalance));
+
+        // Actualizar montoFullCrecimiento de la meta financiera de ese año
+        if (metaFinancieraEntity) {
+          metaFinancieraEntity.montoFullCrecimiento = montoActual;
+          await repoMeta.save(metaFinancieraEntity);
+        }
       } else {
         console.log(`Ya existe balance para el año ${año}, saltando...`);
       }

@@ -23,11 +23,11 @@ const MetaFinancieraViewer = forwardRef((props, ref) => {
     }
   }));
 
-  // Generar años disponibles (últimos 5 años + próximos 2 años)
+  // Generar años disponibles (últimos 5 años, solo hasta el actual)
   const generateAvailableYears = () => {
     const currentYear = new Date().getFullYear();
     const years = [];
-    for (let i = currentYear - 5; i <= currentYear + 2; i++) {
+    for (let i = currentYear - 5; i <= currentYear; i++) {
       years.push(i);
     }
     setAvailableYears(years);
