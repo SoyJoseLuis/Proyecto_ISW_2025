@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Calendar, Badge, Modal, List, Spin, message } from 'antd';
 import dayjs from 'dayjs';
+import 'dayjs/locale/es'; 
+import locale from 'antd/es/calendar/locale/es_ES'; // ✅ Localización de Ant Design
 import { getActividades } from '../services/actividad.service';
+
+dayjs.locale('es'); // ✅ Aplica idioma globalmente
 
 export default function CalendarioActividades() {
   const [actividades, setActividades] = useState([]);
@@ -23,13 +27,11 @@ export default function CalendarioActividades() {
     fetchData();
   }, []);
 
-  // Agrupa actividades por fecha (YYYY-MM-DD)
   function getListData(date) {
     const dateStr = date.format('YYYY-MM-DD');
     return actividades.filter(a => a.fechaActividad === dateStr);
   }
 
-  // Renderiza el contenido de cada celda del calendario
   function dateCellRender(date) {
     const listData = getListData(date);
     return (
@@ -43,21 +45,25 @@ export default function CalendarioActividades() {
     );
   }
 
-  // Cuando seleccionas un día, muestra un modal con detalles
   function onSelect(date) {
     const dateStr = date.format('YYYY-MM-DD');
     const actividadesDia = actividades.filter(a => a.fechaActividad === dateStr);
     setActividadesDelDia(actividadesDia);
-    setSelectedDate(dateStr);
+    setSelectedDate(dayjs(dateStr).format('D [de] MMMM [de] YYYY')); // Español
     setModalVisible(true);
   }
 
   return (
     <Spin spinning={loading}>
       <Calendar
+        locale={locale} // ✅ Configura idioma del calendario
         dateCellRender={dateCellRender}
         onSelect={onSelect}
-        style={{ background: "#fff", borderRadius: 12, boxShadow: "0 1.5px 6px 0 rgba(120,150,200,0.06)" }}
+        style={{
+          background: "#fff",
+          borderRadius: 12,
+          boxShadow: "0 1.5px 6px 0 rgba(120,150,200,0.06)"
+        }}
       />
 
       <Modal
@@ -79,16 +85,10 @@ export default function CalendarioActividades() {
                   description={
                     <>
                       <div><b>Descripción:</b> {item.descripcionActividad}</div>
-                      <div>
-                        <b>Hora:</b> {item.horaInicioActividad} - {item.horaTerminoActividad}
-                      </div>
+                      <div><b>Hora:</b> {item.horaInicioActividad} - {item.horaTerminoActividad}</div>
                       <div><b>Ubicación:</b> {item.ubicacionActividad}</div>
-                      <div>
-                        <b>Estado:</b> {item.estadoActividad?.descripcionEstadoActividad}
-                      </div>
-                      <div>
-                        <b>Tipo:</b> {item.tipoActividad?.descripcionTipoActividad}
-                      </div>
+                      <div><b>Estado:</b> {item.estadoActividad?.descripcionEstadoActividad}</div>
+                      <div><b>Tipo:</b> {item.tipoActividad?.descripcionTipoActividad}</div>
                     </>
                   }
                 />

@@ -30,12 +30,12 @@ const ROLES = {
 
 const ACCESS_BY_ROLE = {
   [ROLES.PRESIDENTE]: navItems.map(item => item.key), // TODOS los módulos
-  [ROLES.TESORERO]: ['finanzas','home','notificaciones'],
-  [ROLES.SECRETARIO]: ['asistencia','home','notificaciones'],
+  [ROLES.TESORERO]: ['finanzas','home','notificaciones','calendario'],
+  [ROLES.SECRETARIO]: ['asistencia','home','notificaciones','calendario'],
 };
 
 // Si quieres dejar algunos módulos “liberados” para quienes NO tienen ningún rol:
-const LIBERADOS = ['home', 'actividades', 'notificaciones'];
+const LIBERADOS = ['home', 'calendario', 'notificaciones'];
 
 export default function Sidebar() {
   const navigate = useNavigate();
