@@ -62,6 +62,8 @@ const TransaccionesViewerTable = forwardRef((props, ref) => {
       key: 'fechaTransaccion',
       width: 120,
       align: 'center',
+      sorter: (a, b) => dayjs(a.fechaTransaccion).unix() - dayjs(b.fechaTransaccion).unix(),
+      defaultSortOrder: 'descend',
     },
     {
       title: 'Estudiante',
