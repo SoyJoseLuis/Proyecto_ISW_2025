@@ -1,47 +1,24 @@
+// src/middlewares/authorization.middleware.js
 
-
-//Comentar por mientras
-
-/*
-import EstudianteSchema from "../entity/estudiante.entity.js";
-import { AppDataSource } from "../config/configDb.js";
-import { handleErrorClient, handleErrorServer } from "../handlers/responseHandlers.js";
-
-export async function isAdmin(req, res, next) {
-  try {
-    const estudianteRepository = AppDataSource.getRepository(EstudianteSchema);
-
-    const estudiante = await estudianteRepository.findOne({
-      where: { rutEstudiante: req.user.rutEstudiante },
-      relations: ["roles"], 
-    });
-
-    if (!estudiante) {
-      return handleErrorClient(
-        res,
-        404,
-        "Estudiante no encontrado en la base de datos"
-      );
+/**
+ * authorize(...allowedRoles)
+ * Permite el acceso si **alguno** de los roles del usuario
+ * aparece en la lista de `allowedRoles`.
+ */
+export function authorize(...allowedRoles) {
+  return (req, res, next) => {
+    // 1) Debe estar autenticado
+    if (!req.user) {
+      return res.status(401).json({ message: "No autenticado" });
     }
 
-    const roles = estudiante.roles.map((rol) => rol.nombreRol || rol.idRol); 
-
-    if (!roles.includes("administrador")) {
-      return handleErrorClient(
-        res,
-        403,
-        "Error al acceder al recurso",
-        "Se requiere un rol de administrador para realizar esta acción."
-      );
+    // 2) Extrae el array de strings
+    const { roles } = req.user;         // ej. ["Presidente","Secretario"]
+    if (!Array.isArray(roles) || !roles.some(r => allowedRoles.includes(r))) {
+      return res.status(403).json({ message: "Acceso denegado: rol insuficiente" });
     }
+
+    // 3) Pasa al controlador
     next();
-  } catch (error) {
-    handleErrorServer(
-      res,
-      500,
-      error.message
-    );
-  }
+  };
 }
-
-*/

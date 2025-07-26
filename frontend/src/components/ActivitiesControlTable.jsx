@@ -1,10 +1,7 @@
 // src/components/ActivitiesControlTable.jsx
 import { useEffect, useState } from 'react';
 import { Table, Button, Modal } from 'antd';
-import {
-  PlusOutlined,
-  EyeOutlined,
-  FormOutlined, UnorderedListOutlined,} from '@ant-design/icons';
+import {PlusOutlined,EyeOutlined,FormOutlined, UnorderedListOutlined,} from '@ant-design/icons';
 import { useVerActividades } from '../hooks/asistencia/useVerActividades';
 import {
   generateToken,
@@ -13,6 +10,7 @@ import {
   confirmAttendance,
   listAll,
 } from '../services/asistencia.service';
+
 import TokenModal from './TokenModal';
 import ConfirmAttendanceModal from './ConfirmAttendanceModal';
 import FinalListModal from './FinalListModal';
@@ -32,19 +30,19 @@ export default function ActivitiesControlTable() {
   });
   const [finalModal, setFinalModal] = useState({ visible: false, list: [] });
 
-  // Al montar o cambiar actividades, cargamos los tokens activos
+  // Cuando la página se recargue, se cargan los token que están activos
   useEffect(() => {
     actividades.forEach(async a => {
       try {
         const code = await getCurrentToken(a.idActividad);
         setTokens(t => ({ ...t, [a.idActividad]: code }));
       } catch {
-        // no hay token → ignorar
+        // Si no hay token se ignora 
       }
     });
   }, [actividades]);
-
-  // Abrir modal de pendientes para una actividad
+//-------------------------//
+  // El modal d pendientes en la lista final se abre
   const openPending = async actId => {
     try {
       const list = await listPending(actId);
@@ -59,6 +57,7 @@ export default function ActivitiesControlTable() {
     }
   };
 
+  //----------------//
   // Confirmar asistencia (dobleConfirmación) a los seleccionados
   const handlePendingOk = async () => {
     const { actId, checked } = pendingModal;
@@ -78,7 +77,8 @@ export default function ActivitiesControlTable() {
     setPendingModal(m => ({ ...m, visible: false, checked: {} }));
   };
 
-  // Abrir modal de lista final para una actividad
+  //---------------------------------//
+  // Se abre el modal de la lista final con los de dobleConfirmación en tru
   const openFinal = async actId => {
     try {
       const list = await listAll(actId);

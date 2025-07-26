@@ -1,10 +1,9 @@
-
-import axios from "axios";
- /*import { getCurrentRut } from "../helpers/auth.js";*/
+/*import axios from "axios";
+ /*import { getCurrentRut } from "../helpers/auth.js";
  import { getCurrentJwt } from "../helpers/auth.js";
 
 // Base c todos los endpoints de Asistencia
-const BASE_URL = "http://146.83.198.35:1293/api/asistencia";
+const BASE_URL = "http://localhost:4000/api/asistencia";
 
 
 // Crea una instancia de axios para Asistencia
@@ -14,17 +13,17 @@ const api = axios.create({
 
 api.interceptors.request.use(config => {
   const jwt = getCurrentJwt();
-  if (jwt) config.headers.Authorization = `Bearer ${jwt}`;
+  if (jwt) config.headers.Authorization = Bearer ${jwt};
   return config;
-});
+}); */
 
 
-
+import api from './api.js';
 /**
  * Genera un token de asistencia.
  */
 export async function generateToken(idActividad) {
-  const { data } = await api.post(`${BASE_URL}/${idActividad}/token`);
+  const { data } = await api.post(`/asistencia/${idActividad}/token`);
   // data === { token: 1234 }
   return data.token;
 }
@@ -35,7 +34,7 @@ export async function generateToken(idActividad) {
  * Pregunta al backend por el token activo */
  
 export async function getCurrentToken(idActividad) {
-  const { data } = await api.get(`${BASE_URL}/${idActividad}/token`);
+  const { data } = await api.get(`/asistencia/${idActividad}/token`);
   // data === { token: 1234 }
   return data.token;
 }   
@@ -45,8 +44,7 @@ export async function getCurrentToken(idActividad) {
  * Envía un token para marcar asistencia (estudiante)
  */
 export async function submitToken(idActividad, tokenCode) {
-  const { data } = await api.post(
-    `${BASE_URL}/${idActividad}/submit-token`,
+  const { data } = await api.post(`/asistencia/${idActividad}/submit-token`,
     { token: tokenCode }
   );
   // data === { message: "Token recibido, espera confirmación" }
@@ -57,7 +55,7 @@ export async function submitToken(idActividad, tokenCode) {
  * Obtiene la lista de envíos pendientes (dobleConfirmación = false)
  */
 export async function listPending(idActividad) {
-  const { data } = await api.get(`${BASE_URL}/${idActividad}/pending`);
+  const { data } = await api.get(`/asistencia/${idActividad}/pending`);
   // data === { pendientes: [...] }
   return data.pendientes;
 }
@@ -66,8 +64,7 @@ export async function listPending(idActividad) {
  * Confirma o no confirma la asistencia de un estudiante
  */
 export async function confirmAttendance(idActividad, rutEstudiante, confirm) {
-  const { data } = await api.patch(
-    `${BASE_URL}/${idActividad}/${rutEstudiante}`,
+  const { data } = await api.patch(`/asistencia/${idActividad}/${rutEstudiante}`,
     { confirm }
   );
   // data === { message, record }
@@ -78,7 +75,7 @@ export async function confirmAttendance(idActividad, rutEstudiante, confirm) {
  * Obtiene la lista definitiva de asistencias (dobleConfirmación = true).
  */
 export async function listAll(idActividad) {
-  const { data } = await api.get(`${BASE_URL}/${idActividad}`);
+  const { data } = await api.get(`/asistencia/${idActividad}`);
   // data === { asistencia: [...] }
   return data.asistencia;
 }
@@ -90,9 +87,7 @@ export async function listAll(idActividad) {
  */
 
 export async function submitTokenGlobal(tokenCode) {
-  const { data } = await api.post(
-    `/submit-token`,
-    { token: tokenCode }    // solo el token numérico
+  const { data } = await api.post(`/asistencia/submit-token`,{ token: tokenCode }    // solo el token numérico
   );
   return data.message;
 }

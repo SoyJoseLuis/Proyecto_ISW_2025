@@ -16,10 +16,22 @@ const opts = {
 passport.use(
   new JwtStrategy(opts, async (payload, done) => {
     try {
-      const repo       = AppDataSource.getRepository(Estudiante);
-      const estudiante = await repo.findOneBy({ rutEstudiante: payload.rutEstudiante });
-      if (estudiante) return done(null, estudiante);
-      return done(null, false);
+      // 1) Busca al estudiante **con** sus roles
+      const repo = AppDataSource.getRepository(Estudiante);
+      const estudiante = await repo.findOne({
+        where: { rutEstudiante: payload.rutEstudiante },
+        relations: ["roles"],    // << carga la relación many-to-many
+      });
+      if (!estudiante) return done(null, false);
+
+      // 2) Construye un objeto `user` ligero
+      const user = {
+        rutEstudiante: estudiante.rutEstudiante,
+        roles:         estudiante.roles.map(r => r.descripcionRol), 
+        // ej. ["Presidente","Tesorero"]
+      };
+
+      return done(null, user);
     } catch (err) {
       return done(err, false);
     }
