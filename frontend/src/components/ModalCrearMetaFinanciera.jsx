@@ -113,7 +113,7 @@ export default function ModalCrearMetaFinanciera({ visible, onClose, onMetaCreat
             { 
               type: 'number', 
               min: 50000, 
-              message: 'El monto debe ser mayor o igual a $50.000' 
+              message: '-' 
             },
             {
               validator: (_, value) => {

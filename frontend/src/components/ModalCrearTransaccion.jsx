@@ -1,12 +1,40 @@
 import { Modal, Form, Input, DatePicker, Select, InputNumber, message } from 'antd';
 import dayjs from 'dayjs';
 import { useCreateTransaccion } from '../hooks/transaccion/useCreateTransaccion';
-import { useGetCurrentBalance } from '../hooks/balance/useGetCurrentBalance.jsx';
+import { useGetBalancesByPeriod } from '../hooks/balance/useGetBalancesByPeriod.jsx';
+import { getBalanceByPeriod } from '../services/balance.service.js';
+import { useState, useEffect } from 'react';
 
-export default function ModalCrearTransaccion({ visible, onClose, onSuccess }) {
+export default function ModalCrearTransaccion({ visible, onClose, onSuccess, refreshKey, transacciones, refetchTransacciones }) {
   const [form] = Form.useForm();
   const { createTransaccion, isLoading } = useCreateTransaccion();
-  const { balance } = useGetCurrentBalance(false);
+  const currentYear = dayjs().year();
+  const previousYear = currentYear - 1;
+  const { balance } = useGetBalancesByPeriod(currentYear, false, undefined, refreshKey);
+  const [previousYearBalance, setPreviousYearBalance] = useState(null);
+  const [loadingPrevBalance, setLoadingPrevBalance] = useState(true);
+
+  useEffect(() => {
+    async function fetchPrevBalance() {
+      setLoadingPrevBalance(true);
+      const response = await getBalanceByPeriod(previousYear);
+      if (response.status === 'Success') {
+        // Puede ser array o objeto
+        const prev = Array.isArray(response.data) ? response.data[0] : response.data;
+        setPreviousYearBalance(prev?.montoActual || 0);
+      } else {
+        setPreviousYearBalance(0);
+      }
+      setLoadingPrevBalance(false);
+    }
+    fetchPrevBalance();
+  }, [previousYear]);
+
+  // Detectar si es la primera transacción del año actual
+  const transaccionesActualYear = transacciones.filter(
+    t => dayjs(t.fechaTransaccion, 'DD-MM-YYYY').year() === currentYear
+  );
+  const isFirstTransaction = transaccionesActualYear.length === 0;
 
   // Tipos de transacción (según tu API)
   const tiposTransaccion = [
@@ -14,7 +42,12 @@ export default function ModalCrearTransaccion({ visible, onClose, onSuccess }) {
     { id: 2, nombre: 'Salida' }
   ];
 
-
+  // Asegura que si es la primera transacción, el valor sea 1
+  useEffect(() => {
+    if (isFirstTransaction && !loadingPrevBalance) {
+      form.setFieldsValue({ idTipoTransaccion: 1 });
+    }
+  }, [isFirstTransaction, loadingPrevBalance, form]);
 
   // Función para validar que la fecha sea del año actual
   const validateFechaAñoActual = (_, value) => {
@@ -43,11 +76,25 @@ export default function ModalCrearTransaccion({ visible, onClose, onSuccess }) {
   // Validación personalizada para el monto según tipo de transacción y balance
   const validateMontoTransaccion = async (_, value) => {
     const tipo = form.getFieldValue('idTipoTransaccion');
+    if (isFirstTransaction) {
+      if (Number(value) !== Number(previousYearBalance)) {
+        return Promise.reject(
+          new Error(`Debe ingresar el monto final del balance anterior: $${Number(previousYearBalance).toLocaleString('es-CL')}`)
+        );
+      }
+      if (tipo !== 1) {
+        return Promise.reject(new Error('La primera transacción debe ser de tipo Ingreso.'));
+      }
+      return Promise.resolve();
+    }
     if (value && value <= 0) {
       return Promise.reject(new Error('El monto debe ser mayor a cero'));
     }
-    if (tipo === 2 && balance && value > balance.montoActual) {
-      return Promise.reject(new Error(`No hay fondos suficientes. El balance disponible es $${balance.montoActual.toLocaleString('es-CL')}`));
+    // Convertir ambos a número y proteger contra null/undefined/NaN
+    const montoActual = Number(balance?.montoActual) || 0;
+    const montoSalida = Number(value) || 0;
+    if (tipo === 2 && balance && montoSalida > montoActual) {
+      return Promise.reject(new Error(`No hay fondos suficientes. El balance disponible es $${montoActual.toLocaleString('es-CL')}`));
     }
     return Promise.resolve();
   };
@@ -67,8 +114,10 @@ export default function ModalCrearTransaccion({ visible, onClose, onSuccess }) {
         return;
       }
       // Validación extra por si el usuario manipula el DOM
-      if (values.idTipoTransaccion === 2 && balance && values.montoTransaccion > balance.montoActual) {
-        message.error(`No hay fondos suficientes. El balance disponible es $${balance.montoActual.toLocaleString('es-CL')}`);
+      const montoActual = Number(balance?.montoActual) || 0;
+      const montoSalida = Number(values.montoTransaccion) || 0;
+      if (values.idTipoTransaccion === 2 && balance && montoSalida > montoActual) {
+        message.error(`No hay fondos suficientes. El monto actual disponible es $${montoActual.toLocaleString('es-CL')}`);
         return;
       }
       const transaccionData = {
@@ -81,6 +130,7 @@ export default function ModalCrearTransaccion({ visible, onClose, onSuccess }) {
       };
 
       await createTransaccion(transaccionData);
+      await refetchTransacciones(); // Fuerza la actualización de la lista
       form.resetFields();
       onClose();
       if (onSuccess) onSuccess();
@@ -99,7 +149,7 @@ export default function ModalCrearTransaccion({ visible, onClose, onSuccess }) {
       cancelText="Cancelar"
       centered
       destroyOnClose
-      confirmLoading={isLoading}
+      confirmLoading={isLoading || loadingPrevBalance}
     >
       <Form
         form={form}
@@ -112,9 +162,13 @@ export default function ModalCrearTransaccion({ visible, onClose, onSuccess }) {
           label="Tipo de transacción" 
           name="idTipoTransaccion"
           rules={[{ required: true, message: 'Selecciona el tipo de transacción' }]}
+          initialValue={isFirstTransaction ? 1 : undefined}
         >
           <Select placeholder="Selecciona tipo">
-            {tiposTransaccion.map(t => (
+            {(isFirstTransaction
+              ? tiposTransaccion.filter(t => t.id === 1)
+              : tiposTransaccion
+            ).map(t => (
               <Select.Option key={t.id} value={t.id}>{t.nombre}</Select.Option>
             ))}
           </Select>
@@ -127,13 +181,15 @@ export default function ModalCrearTransaccion({ visible, onClose, onSuccess }) {
             { required: true, message: 'Ingresa el monto' },
             { validator: validateMontoTransaccion }
           ]}
+          extra={isFirstTransaction && !loadingPrevBalance ? `Debe ingresar el monto final del balance anterior: $${Number(previousYearBalance).toLocaleString('es-CL')}` : ''}
         >
           <InputNumber
-            placeholder="Ingresa el monto"
+            placeholder={isFirstTransaction && !loadingPrevBalance ? `Monto final del balance anterior` : 'Ingresa el monto'}
             style={{ width: '100%' }}
             min={0.01}
             formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
             parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
+            disabled={loadingPrevBalance}
           />
         </Form.Item>
 
