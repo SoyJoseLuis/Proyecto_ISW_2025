@@ -1,0 +1,31 @@
+.home-estudiante {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 24px 16px;
+  }
+  
+  .home-estudiante-title {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  
+  .home-estudiante-grid {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .home-estudiante-card {
+    border-radius: 12px;
+  }
+  
+  .home-estudiante-card-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .home-estudiante-card-label {
+    font-size: 18px;
+    font-weight: 500;
+  }
+  

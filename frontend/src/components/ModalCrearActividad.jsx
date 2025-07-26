@@ -1,10 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal, Form, Input, Select, DatePicker, TimePicker, message } from 'antd';
+import dayjs from 'dayjs';
+import 'dayjs/locale/es';
+import dateLocale from 'antd/es/date-picker/locale/es_ES';
+import timeLocale from 'antd/es/time-picker/locale/es_ES';
 import { crearActividad } from '../services/actividad.service';
+
+dayjs.locale('es');
 
 const estados = [
   { label: 'En proceso', value: 1 },
-  { label: 'Pendiente', value: 3 },
+  { label: 'Pendiente', value: 4 },
 ];
 
 const tipos = [
@@ -15,36 +21,62 @@ const tipos = [
 export default function ModalCrearActividad({ visible, onClose, onCreated }) {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [duracion, setDuracion] = useState('');
+
+  // Calcula duración estimada
+  const calcularDuracion = () => {
+    const inicio = form.getFieldValue('horaInicioActividad');
+    const fin    = form.getFieldValue('horaTerminoActividad');
+    if (inicio && fin) {
+      const diff = fin.diff(inicio, 'minute');
+      if (diff < 0) {
+        setDuracion('Inválida');
+      } else {
+        const horas   = Math.floor(diff / 60);
+        const minutos = diff % 60;
+        setDuracion(`${horas}h ${minutos}min`);
+      }
+    } else {
+      setDuracion('');
+    }
+  };
+
+  useEffect(() => {
+    calcularDuracion();
+  }, [
+    form.getFieldValue('horaInicioActividad'),
+    form.getFieldValue('horaTerminoActividad')
+  ]);
 
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
 
-      // Formatea valores
+      // Formatea payload usando la misma forma que antes (HH:mm:ss)
       const payload = {
-        descripcionActividad: values.descripcionActividad,
-        tituloActividad: values.tituloActividad,
-        fechaActividad: values.fechaActividad.format('YYYY-MM-DD'),
-        horaInicioActividad: values.horaInicioActividad.format('HH:mm:ss'),
-        horaTerminoActividad: values.horaTerminoActividad.format('HH:mm:ss'),
-        ubicacionActividad: values.ubicacionActividad,
-        idEstadoActividad: Number(values.idEstadoActividad),
-        idTipoActividad: Number(values.idTipoActividad),
+        descripcionActividad:  values.descripcionActividad,
+        tituloActividad:       values.tituloActividad,
+        fechaActividad:        values.fechaActividad.format('YYYY-MM-DD'),
+        horaInicioActividad:   values.horaInicioActividad.format('HH:mm:ss'),
+        horaTerminoActividad:  values.horaTerminoActividad.format('HH:mm:ss'),
+        ubicacionActividad:    values.ubicacionActividad,
+        idEstadoActividad:     Number(values.idEstadoActividad),
+        idTipoActividad:       Number(values.idTipoActividad),
       };
 
-      // Muestra en consola lo que vas a enviar
       console.log("Enviando a la API:", payload);
 
       setLoading(true);
       await crearActividad(payload);
       message.success('Actividad creada exitosamente');
       form.resetFields();
+      setDuracion('');
       setLoading(false);
       if (onCreated) onCreated(payload);
       onClose();
     } catch (err) {
       setLoading(false);
-      if (err?.errorFields) return; // Error de validación de formulario
+      if (err?.errorFields) return;
       message.error(err.message || 'Ocurrió un error');
     }
   };
@@ -64,8 +96,8 @@ export default function ModalCrearActividad({ visible, onClose, onCreated }) {
         form={form}
         layout="vertical"
         initialValues={{
-          idEstadoActividad: 3,
-          idTipoActividad: 1,
+          idEstadoActividad: 4,
+          idTipoActividad:   1,
         }}
       >
         <Form.Item
@@ -89,7 +121,12 @@ export default function ModalCrearActividad({ visible, onClose, onCreated }) {
           label="Fecha"
           rules={[{ required: true, message: 'Selecciona una fecha' }]}
         >
-          <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
+          <DatePicker
+            locale={dateLocale}
+            style={{ width: '100%' }}
+            format="YYYY-MM-DD"
+            disabledDate={current => current && current < dayjs().startOf('day')}
+          />
         </Form.Item>
 
         <Form.Item
@@ -97,15 +134,44 @@ export default function ModalCrearActividad({ visible, onClose, onCreated }) {
           label="Hora de inicio"
           rules={[{ required: true, message: 'Selecciona la hora de inicio' }]}
         >
-          <TimePicker format="HH:mm:ss" style={{ width: '100%' }} />
+          <TimePicker
+            locale={timeLocale}
+            format="HH:mm"
+            style={{ width: '100%' }}
+            placeholder="Hora de inicio"
+            onChange={calcularDuracion}
+          />
         </Form.Item>
 
         <Form.Item
           name="horaTerminoActividad"
           label="Hora de término"
-          rules={[{ required: true, message: 'Selecciona la hora de término' }]}
+          dependencies={['horaInicioActividad']}
+          rules={[
+            { required: true, message: 'Selecciona la hora de término' },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                const inicio = getFieldValue('horaInicioActividad');
+                if (!inicio || !value) return Promise.resolve();
+                if (value.isBefore(inicio)) {
+                  return Promise.reject('La hora de término debe ser posterior a la de inicio');
+                }
+                return Promise.resolve();
+              }
+            })
+          ]}
         >
-          <TimePicker format="HH:mm:ss" style={{ width: '100%' }} />
+          <TimePicker
+            locale={timeLocale}
+            format="HH:mm"
+            style={{ width: '100%' }}
+            placeholder="Hora de término"
+            onChange={calcularDuracion}
+          />
+        </Form.Item>
+
+        <Form.Item label="Duración estimada">
+          <Input value={duracion} disabled />
         </Form.Item>
 
         <Form.Item

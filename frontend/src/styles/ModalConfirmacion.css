@@ -1,0 +1,30 @@
+.ios-modal .ant-modal-content {
+    border-radius: 15px;
+    overflow: hidden;
+  }
+  
+  .ios-modal-header {
+    padding: 16px;
+    text-align: center;
+  }
+  
+  .ios-modal-title {
+    margin: 0;
+    font-weight: 600;
+    font-size: 17px;
+  }
+  
+  .ios-modal-body {
+    padding: 0 16px 16px;
+    text-align: center;
+    color: #8e8e93;
+    font-size: 14px;
+  }
+  
+  .ios-modal-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 16px 16px;
+  }
+  
