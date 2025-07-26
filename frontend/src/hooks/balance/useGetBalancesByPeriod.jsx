@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getBalanceByPeriod } from '../../services/balance.service.js';
 
-export function useGetBalancesByPeriod(periodo, autoRefresh = false, refreshInterval = 30000) {
+export function useGetBalancesByPeriod(periodo, autoRefresh = false, refreshInterval = 30000, refreshKey) {
   const [balance, setBalance] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -33,7 +33,7 @@ export function useGetBalancesByPeriod(periodo, autoRefresh = false, refreshInte
         return () => clearInterval(interval);
       }
     }
-  }, [fetchBalanceByPeriod, periodo, autoRefresh, refreshInterval]);
+  }, [fetchBalanceByPeriod, periodo, autoRefresh, refreshInterval, refreshKey]);
 
   return {
     balance,

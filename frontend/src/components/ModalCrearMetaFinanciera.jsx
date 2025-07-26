@@ -113,7 +113,7 @@ export default function ModalCrearMetaFinanciera({ visible, onClose, onMetaCreat
             { 
               type: 'number', 
               min: 50000, 
-              message: 'El monto debe ser mayor o igual a $50.000' 
+              message: '-' 
             },
             {
               validator: (_, value) => {
@@ -142,6 +142,7 @@ export default function ModalCrearMetaFinanciera({ visible, onClose, onMetaCreat
             { min: 10, message: 'La descripción debe tener al menos 10 caracteres' },
             { max: 120, message: 'La descripción no puede exceder 120 caracteres' }
           ]}
+          style={{ marginBottom: 32 }} 
         >
           <Input.TextArea 
             placeholder="Describe la meta financiera y su propósito (mín. 10 caracteres)" 

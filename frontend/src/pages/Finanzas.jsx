@@ -5,10 +5,9 @@ import ModalCrearTransaccion from '../components/ModalCrearTransaccion';
 import ModalCrearMetaFinanciera from '../components/ModalCrearMetaFinanciera';
 import MetaFinancieraViewer from '../components/MetaFinancieraViewer';
 import TransaccionesViewerTable from '../components/TransaccionesViewerTable';
-import ViewerBalance from '../components/ViewerBalance';
 import BalancesAnterioresViewer from '../components/BalancesAnterioresViewer';
 import useGetMetas from '../hooks/metaf/useGetMetas';
-import { showErrorAlert } from '../helpers/sweetAlert';
+import { useGetTransacciones } from '../hooks/transaccion/useGetTransacciones';
 import '../styles/Actividades.css';
 
 export default function Finanzas() {
@@ -16,14 +15,16 @@ export default function Finanzas() {
   const [modalMetaOpen, setModalMetaOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isMetaHovered, setIsMetaHovered] = useState(false);
+  const [balanceRefreshKey, setBalanceRefreshKey] = useState(0);
   
+  // Estado global de transacciones
+  const { transacciones, refetch: refetchTransacciones } = useGetTransacciones();
+
   // Referencias para coordinar actualizaciones entre componentes hermanos
   const metaViewerRef = useRef(null);
   const transaccionesViewerRef = useRef(null);
-  const balanceViewerRef = useRef(null);
-  
- 
-  const { metas, refreshMetas } = useGetMetas();
+  const balancesViewerRef = useRef(null);
+  const { refreshMetas } = useGetMetas();
 
   const handleMetaCreated = () => {
     // Refrescar el viewer cuando se crea una meta
@@ -35,6 +36,7 @@ export default function Finanzas() {
   };
 
   const handleTransaccionCreated = () => {
+    setBalanceRefreshKey(prev => prev + 1);
     // Actualizar TODOS los componentes afectados cuando se crea una transacción
     
     // Actualizar tabla de transacciones
@@ -43,8 +45,12 @@ export default function Finanzas() {
     }
     
     // Actualizar balance (ya que una nueva transacción afecta el balance)
-    if (balanceViewerRef.current && balanceViewerRef.current.refreshBalance) {
-      balanceViewerRef.current.refreshBalance();
+    if (balancesViewerRef.current && balancesViewerRef.current.refreshBalance) {
+      balancesViewerRef.current.refreshBalance();
+    }
+    // Actualizar balances anteriores (nuevo método)
+    if (balancesViewerRef.current && balancesViewerRef.current.refreshBalances) {
+      balancesViewerRef.current.refreshBalances();
     }
     
     // Actualizar metas financieras (ya que el balance afecta el porcentaje de cumplimiento)
@@ -56,17 +62,24 @@ export default function Finanzas() {
     refreshMetas();
   };
 
-  const handleOpenTransaccionModal = () => {
-    // Verificar si existen metas financieras
-    if (!metas || metas.length === 0) {
-      showErrorAlert(
-        'Meta financiera requerida',
-        'Debes registrar una meta financiera antes de poder crear transacciones.'
-      );
-      return;
+  const handleTransaccionDeleted = () => {
+    setBalanceRefreshKey(prev => prev + 1);
+    // Refresca el balance y las metas igual que cuando creas una transacción
+    if (balancesViewerRef.current && balancesViewerRef.current.refreshBalance) {
+      balancesViewerRef.current.refreshBalance();
     }
+    if (balancesViewerRef.current && balancesViewerRef.current.refreshBalances) {
+      balancesViewerRef.current.refreshBalances();
+    }
+    if (metaViewerRef.current && metaViewerRef.current.refreshMetas) {
+      metaViewerRef.current.refreshMetas();
+    }
+    refreshMetas();
+  };
+
+  const handleOpenTransaccionModal = () => {
     
-    // Si hay metas, abrir el modal
+
     setModalOpen(true);
   };
 
@@ -239,13 +252,21 @@ export default function Finanzas() {
             </div>
 
             {/* Tabla de transacciones */}
-            <TransaccionesViewerTable ref={transaccionesViewerRef} />
+            <TransaccionesViewerTable
+              ref={transaccionesViewerRef}
+              onDeleteSuccess={handleTransaccionDeleted}
+              transacciones={transacciones}
+              refetchTransacciones={refetchTransacciones}
+            />
           </div>
 
           <ModalCrearTransaccion
             visible={modalOpen}
             onClose={() => setModalOpen(false)}
             onSuccess={handleTransaccionCreated}
+            refreshKey={balanceRefreshKey}
+            transacciones={transacciones}
+            refetchTransacciones={refetchTransacciones}
           />
         </div>
       ),
@@ -256,18 +277,9 @@ export default function Finanzas() {
       icon: <BarChartOutlined />,
       content: (
         <div style={{ padding: '20px' }}>
-          <ViewerBalance ref={balanceViewerRef} />
+        
+          <BalancesAnterioresViewer ref={balancesViewerRef} />
           
-        </div>
-      ),
-    },
-    {
-      key: '4',
-      label: 'Balances anteriores',
-      icon: <BarChartOutlined />,
-      content: (
-        <div style={{ padding: '20px' }}>
-          <BalancesAnterioresViewer />
         </div>
       ),
     },

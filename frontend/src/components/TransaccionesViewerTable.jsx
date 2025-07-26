@@ -2,16 +2,15 @@ import { forwardRef, useImperativeHandle } from 'react';
 import { Table, Tag, Button, Popconfirm } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import { useGetTransacciones } from '../hooks/transaccion';
 import { useDeleteTransaccion } from '../hooks/transaccion';
 
 const TransaccionesViewerTable = forwardRef((props, ref) => {
-  const { transacciones, isLoading, refetch } = useGetTransacciones();
+  const { transacciones, refetchTransacciones, onDeleteSuccess } = props;
   const { deleteTransaccion, isLoading: deleteLoading } = useDeleteTransaccion();
 
   // Exponemos el método refresh para que el componente padre pueda llamarlo
   useImperativeHandle(ref, () => ({
-    refreshTransacciones: refetch
+    refreshTransacciones: refetchTransacciones
   }));
 
   // Función para verificar si una transacción puede ser eliminada (dentro de 5 minutos)
@@ -28,7 +27,8 @@ const TransaccionesViewerTable = forwardRef((props, ref) => {
   const handleDelete = async (record) => {
     try {
       await deleteTransaccion(record);
-      refetch(); // Actualizar la tabla después de eliminar
+      await refetchTransacciones(); // Fuerza la actualización de la lista
+      if (onDeleteSuccess) onDeleteSuccess(); // <-- Call the callback if provided
     } catch (error) {
       console.error('Error al eliminar transacción:', error);
     }
@@ -151,7 +151,7 @@ const TransaccionesViewerTable = forwardRef((props, ref) => {
         <Table
           columns={columnsTransacciones}
           dataSource={transacciones}
-          loading={isLoading}
+          loading={false} // isLoading is removed, so set to false or handle loading state if needed
           rowKey="id"
           size="small"
           pagination={{

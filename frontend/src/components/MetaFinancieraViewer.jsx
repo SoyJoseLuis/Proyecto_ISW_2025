@@ -23,11 +23,11 @@ const MetaFinancieraViewer = forwardRef((props, ref) => {
     }
   }));
 
-  // Generar años disponibles (últimos 5 años + próximos 2 años)
+  // Generar años disponibles (últimos 5 años, solo hasta el actual)
   const generateAvailableYears = () => {
     const currentYear = new Date().getFullYear();
     const years = [];
-    for (let i = currentYear - 5; i <= currentYear + 2; i++) {
+    for (let i = currentYear - 5; i <= currentYear; i++) {
       years.push(i);
     }
     setAvailableYears(years);
@@ -39,6 +39,20 @@ const MetaFinancieraViewer = forwardRef((props, ref) => {
     console.log('MetaFinancieraViewer - metas:', metas);
     console.log('MetaFinancieraViewer - loading:', loading);
     console.log('MetaFinancieraViewer - error:', error);
+    
+    // Console log específico para los valores cuando se filtran por año
+    if (selectedYear !== 'all' && metas.length > 0) {
+      console.log(`=== VALORES PARA AÑO ${selectedYear} ===`);
+      metas.forEach((meta, index) => {
+        console.log(`Meta ${index + 1}:`);
+        console.log(`  montoFullCrecimiento: ${meta.montoFullCrecimiento}`);
+        console.log(`  metaFinanciera: ${meta.metaFinanciera}`);
+        console.log(`  descripcionMeta: ${meta.descripcionMeta}`);
+        console.log(`  periodo: ${meta.periodo}`);
+        console.log(`  ---`);
+      });
+      console.log(`=== FIN VALORES AÑO ${selectedYear} ===`);
+    }
   }, [selectedYear, metas, loading, error]);
 
   useEffect(() => {
