@@ -8,7 +8,12 @@ export function useCreateTransaccion() {
   const createTransaccionHandler = async (transaccionData) => {
     setIsLoading(true);
     try {
-      const response = await createTransaccion(transaccionData);
+      // Asegurarse que el motivo vaya en mayúsculas
+      const dataToSend = {
+        ...transaccionData,
+        motivoTransaccion: transaccionData.motivoTransaccion?.toUpperCase() || ''
+      };
+      const response = await createTransaccion(dataToSend);
       
       if (response.status === 'Success') {
         showSuccessAlert('¡Éxito!', 'Transacción creada correctamente');

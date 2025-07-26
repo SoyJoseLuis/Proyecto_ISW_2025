@@ -8,7 +8,13 @@ export default function useCreateMeta(onSuccess) {
   const handleCreateMeta = async (data) => {
     setLoading(true);
     try {
-      const response = await createMeta(data);
+      // Si existe un campo motivo o motivoMeta, enviarlo en mayúsculas
+      const dataToSend = {
+        ...data,
+        ...(data.motivo && { motivo: data.motivo.toUpperCase() }),
+        ...(data.motivoMeta && { motivoMeta: data.motivoMeta.toUpperCase() })
+      };
+      const response = await createMeta(dataToSend);
       if (response.status === 'Success') {
         showSuccessAlert('Meta financiera creada', 'La meta financiera se ha creado exitosamente.');
         

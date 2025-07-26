@@ -211,61 +211,53 @@ async function createBalancesHistoricos() {
     const repo = AppDataSource.getRepository(BalanceCee);
     const repoMeta = AppDataSource.getRepository(MetaFinanciera);
     const añoActual = new Date().getFullYear();
-    
+
     // Verificar y crear balances para los últimos 5 años (excluyendo el año actual)
     for (let i = 5; i >= 1; i--) {
       const año = añoActual - i;
       const periodoStr = año.toString();
-      
-      // Crear meta financiera si no existe para ese año
-      let metaFinancieraValue = Math.floor(Math.random() * (2000000 - 500000 + 1)) + 500000;
-      let metaFinancieraEntity;
-      const existeMeta = await repoMeta.findOne({
-        where: { periodo: periodoStr }
-      });
-      if (!existeMeta) {
-        const nuevaMeta = {
-          metaFinanciera: metaFinancieraValue,
-          periodo: periodoStr,
-          descripcionMeta: "Meta histórica generada",
-          montoFullCrecimiento: 0
-        };
-        metaFinancieraEntity = await repoMeta.save(repoMeta.create(nuevaMeta));
-      } else {
-        metaFinancieraEntity = existeMeta;
-      }
-      // Verificar si ya existe un balance para este año
-      const existeBalance = await repo.findOne({
-        where: { periodo: periodoStr }
-      });
-      
-      if (!existeBalance) {
+
+      // Buscar o crear el balance para ese año
+      let balance = await repo.findOne({ where: { periodo: periodoStr } });
+      let montoActual;
+
+      if (!balance) {
         console.log(`Creando balance para el año ${año}...`);
-        
-        // Generar valores realistas asegurando que el balance sea positivo
         const totalIngresos = Math.floor(Math.random() * 500000) + 100000; // 100k - 600k
         const totalSalidas = Math.floor(Math.random() * (totalIngresos * 0.8)) + Math.floor(totalIngresos * 0.1);
-        const montoActual = totalIngresos - totalSalidas;
-        
+        montoActual = totalIngresos - totalSalidas;
+
         const nuevoBalance = {
           periodo: periodoStr,
           montoActual: montoActual,
           totalIngresos: totalIngresos,
-          totalSalidas: totalSalidas
+          totalSalidas: totalSalidas,
+          ingresoFullBalance: totalIngresos // Si quieres inicializarlo así
         };
-        
-        await repo.save(repo.create(nuevoBalance));
-
-        // Actualizar montoFullCrecimiento de la meta financiera de ese año
-        if (metaFinancieraEntity) {
-          metaFinancieraEntity.montoFullCrecimiento = montoActual;
-          await repoMeta.save(metaFinancieraEntity);
-        }
+        balance = await repo.save(repo.create(nuevoBalance));
       } else {
+        montoActual = balance.montoActual;
         console.log(`Ya existe balance para el año ${año}, saltando...`);
       }
+
+      // Buscar o crear la meta financiera para ese año
+      let metaFinancieraEntity = await repoMeta.findOne({ where: { periodo: periodoStr } });
+      if (!metaFinancieraEntity) {
+        const metaFinancieraValue = Math.floor(Math.random() * (2000000 - 700000 + 1)) + 700000;
+        const nuevaMeta = {
+          metaFinanciera: metaFinancieraValue,
+          periodo: periodoStr,
+          descripcionMeta: "Meta histórica generada",
+          montoFullCrecimiento: montoActual
+        };
+        metaFinancieraEntity = await repoMeta.save(repoMeta.create(nuevaMeta));
+      } else {
+        // Si ya existe la meta, actualiza su montoFullCrecimiento con el montoActual del balance
+        metaFinancieraEntity.montoFullCrecimiento = montoActual;
+        await repoMeta.save(metaFinancieraEntity);
+      }
     }
-    
+
     console.log("* => Balances históricos creados exitosamente");
   } catch (error) {
     console.error("Error al crear balances históricos:", error);

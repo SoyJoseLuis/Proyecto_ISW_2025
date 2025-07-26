@@ -1,10 +1,12 @@
-import { Modal, Form, Input, DatePicker, Select, InputNumber } from 'antd';
+import { Modal, Form, Input, DatePicker, Select, InputNumber, message } from 'antd';
 import dayjs from 'dayjs';
 import { useCreateTransaccion } from '../hooks/transaccion/useCreateTransaccion';
+import { useGetCurrentBalance } from '../hooks/balance/useGetCurrentBalance.jsx';
 
 export default function ModalCrearTransaccion({ visible, onClose, onSuccess }) {
   const [form] = Form.useForm();
   const { createTransaccion, isLoading } = useCreateTransaccion();
+  const { balance } = useGetCurrentBalance(false);
 
   // Tipos de transacción (según tu API)
   const tiposTransaccion = [
@@ -27,10 +29,27 @@ export default function ModalCrearTransaccion({ visible, onClose, onSuccess }) {
     return Promise.resolve();
   };
 
-  // Función para deshabilitar fechas que no sean del año actual
+  // Función para deshabilitar fechas que no sean del año actual ni posteriores al día actual
   const disabledDate = (current) => {
-    const currentYear = dayjs().year();
-    return current && current.year() !== currentYear;
+    const today = dayjs();
+    const currentYear = today.year();
+    // Deshabilita si no es el año actual o si es después de hoy
+    return (
+      (current && current.year() !== currentYear) ||
+      (current && current.isAfter(today, 'day'))
+    );
+  };
+
+  // Validación personalizada para el monto según tipo de transacción y balance
+  const validateMontoTransaccion = async (_, value) => {
+    const tipo = form.getFieldValue('idTipoTransaccion');
+    if (value && value <= 0) {
+      return Promise.reject(new Error('El monto debe ser mayor a cero'));
+    }
+    if (tipo === 2 && balance && value > balance.montoActual) {
+      return Promise.reject(new Error(`No hay fondos suficientes. El balance disponible es $${balance.montoActual.toLocaleString('es-CL')}`));
+    }
+    return Promise.resolve();
   };
 
   const handleSubmit = async (values) => {
@@ -44,8 +63,12 @@ export default function ModalCrearTransaccion({ visible, onClose, onSuccess }) {
         rut = '';
       }
       if (!rut) {
-        // Si no hay rut, mostrar error y no continuar
-        window?.message?.error?.("No se encontró usuario logueado.");
+        message.error("No se encontró usuario logueado.");
+        return;
+      }
+      // Validación extra por si el usuario manipula el DOM
+      if (values.idTipoTransaccion === 2 && balance && values.montoTransaccion > balance.montoActual) {
+        message.error(`No hay fondos suficientes. El balance disponible es $${balance.montoActual.toLocaleString('es-CL')}`);
         return;
       }
       const transaccionData = {
@@ -102,14 +125,7 @@ export default function ModalCrearTransaccion({ visible, onClose, onSuccess }) {
           name="montoTransaccion"
           rules={[
             { required: true, message: 'Ingresa el monto' },
-            { 
-              validator: (_, value) => {
-                if (value && value <= 0) {
-                  return Promise.reject(new Error('El monto debe ser mayor a cero'));
-                }
-                return Promise.resolve();
-              }
-            }
+            { validator: validateMontoTransaccion }
           ]}
         >
           <InputNumber

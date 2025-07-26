@@ -140,9 +140,8 @@ export async function getAllMetasService() {
       const balance = await balanceRepository.findOne({ where: { periodo: meta.periodo } });
       if (balance && balance.ingresoFullBalance != null) {
         meta.montoFullCrecimiento = balance.ingresoFullBalance;
-      } else {
-        meta.montoFullCrecimiento = 0;
       }
+      // Si no hay balance o ingresoFullBalance es null, dejar el valor original de la meta
     }
 
     return [metas, null];
@@ -157,6 +156,8 @@ export async function getMetasByYearService(year) {
     const metaRepository = AppDataSource.getRepository(MetaFinanciera);
     const balanceRepository = AppDataSource.getRepository(BalanceCEE);
 
+    console.log(`=== DEBUG getMetasByYearService - Año solicitado: ${year} ===`);
+
     const metas = await metaRepository.find({
       where: { periodo: year.toString() },
       order: {
@@ -164,20 +165,31 @@ export async function getMetasByYearService(year) {
       }
     });
 
+    console.log(`Metas encontradas para el año ${year}:`, metas.length);
+
     if (metas.length === 0) {
       return [null, `No se encontraron metas financieras para el año ${year}`];
     }
 
     // Para cada meta, actualizar el montoFullCrecimiento con el ingresoFullBalance del balance correspondiente
     for (const meta of metas) {
+      console.log(`--- Procesando meta ID: ${meta.idMetaFinanciera}, periodo: ${meta.periodo} ---`);
+      
       const balance = await balanceRepository.findOne({ where: { periodo: meta.periodo } });
+      console.log(`Balance encontrado para periodo ${meta.periodo}:`, balance);
+      
       if (balance && balance.ingresoFullBalance != null) {
+        console.log(`ingresoFullBalance del balance: ${balance.ingresoFullBalance}`);
         meta.montoFullCrecimiento = balance.ingresoFullBalance;
+        console.log(`montoFullCrecimiento asignado: ${meta.montoFullCrecimiento}`);
       } else {
+        console.log(`No se encontró balance o ingresoFullBalance es null para periodo ${meta.periodo}`);
         meta.montoFullCrecimiento = 0;
       }
+      console.log(`--- Fin procesamiento meta ID: ${meta.idMetaFinanciera} ---`);
     }
 
+    console.log(`=== FIN DEBUG getMetasByYearService - Año: ${year} ===`);
     return [metas, null];
   } catch (error) {
     console.error("Error al obtener las metas financieras por año:", error);
