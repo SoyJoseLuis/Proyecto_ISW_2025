@@ -215,7 +215,17 @@ export default function ModalCrearTransaccion({ visible, onClose, onSuccess, ref
           rules={[
             { required: true, message: 'Describe el motivo' },
             { min: 15, message: 'El motivo debe tener al menos 15 caracteres' },
-            { max: 70, message: 'El motivo no puede exceder 70 caracteres' }
+            { max: 70, message: 'El motivo no puede exceder 70 caracteres' },
+            {
+              validator: (_, value) => {
+                if (value) {
+                  if (!/\S+\s+\S+/.test(value.trim())) {
+                    return Promise.reject(new Error('El motivo debe contener al menos dos palabras.'));
+                  }
+                }
+                return Promise.resolve();
+              }
+            }
           ]}
           style={{ marginBottom: 32 }}
         >

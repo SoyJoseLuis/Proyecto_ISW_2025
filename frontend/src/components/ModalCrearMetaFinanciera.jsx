@@ -140,7 +140,17 @@ export default function ModalCrearMetaFinanciera({ visible, onClose, onMetaCreat
           rules={[
             { required: true, message: 'La descripción es requerida' },
             { min: 10, message: 'La descripción debe tener al menos 10 caracteres' },
-            { max: 120, message: 'La descripción no puede exceder 120 caracteres' }
+            { max: 120, message: 'La descripción no puede exceder 120 caracteres' },
+            {
+              validator: (_, value) => {
+                if (value) {
+                  if (!/\S+\s+\S+/.test(value.trim())) {
+                    return Promise.reject(new Error('La descripción debe contener al menos dos palabras.'));
+                  }
+                }
+                return Promise.resolve();
+              }
+            }
           ]}
           style={{ marginBottom: 32 }} 
         >
