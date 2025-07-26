@@ -32,6 +32,9 @@ import "./auth/jwtStrategy.auth.js";
 // y tmbn Agregamos para exponer el middleware de autenticación
 import { authenticateJwt } from "./middlewares/authentication.middleware.js";
 
+   // Middlware global de captura de errores:
+import { errorHandler } from "./middlewares/errorHandler.middleware.js";
+
 
 
 async function setupServer() {
@@ -77,14 +80,16 @@ async function setupServer() {
       }),
     );
 
-    //app.use(passport.initialize()); Ver si borrar o no... descomentaremos
+
     app.use(passport.initialize());
     
-    //app.use(passport.session()); Ver si borrar o no
 
-    //passportJwtSetup();
 
     app.use("/api", indexRoutes);
+
+   // Middlware global de captura de errores:
+   app.use(errorHandler);
+ // ────────────────────────────────────────────
 
 
     app.listen(PORT, () => {

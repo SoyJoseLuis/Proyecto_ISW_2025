@@ -11,7 +11,7 @@ export function useVerActividades() {
     actividadesService
       .listActividades()
       .then(all => {
-              // 1) `all` es el array completo de la API
+              // 1) "all" es el array completo de la API
       // 2) Filtramos solo las que tienen estado “En proceso”
         
         const enProceso = all.filter(

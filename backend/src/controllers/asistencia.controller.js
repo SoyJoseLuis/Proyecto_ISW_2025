@@ -10,7 +10,7 @@ const tokenRepo = AppDataSource.getRepository(TokenAsistencia);
 /**
  * POST /api/asistencia/:idActividad/token
  */
-export const generateToken = async (req, res) => {
+export const generateToken = async (req, res, next) => {
   const { idActividad } = req.params;
 
   try {
@@ -18,18 +18,7 @@ export const generateToken = async (req, res) => {
     return res.json({ token: code });
 
   } catch (err) {
-    if (err.message === "ACTIVIDAD_NOT_FOUND") {
-      return res.status(404).json({ error: "Actividad no existe" });
-    }
-    if (err.message === "TOKEN_ACTIVE_EXISTS") {
-      return res
-        .status(400)
-        .json({ error: "Ya existe un token activo para esta actividad" });
-    }
-    // Otros errores imprevistos
-    return res
-      .status(500)
-      .json({ error: "Error interno al generar token" });
+    next(err); // Pasamos el error al middleware de manejo de errores
   }
 };
 
@@ -37,20 +26,20 @@ export const generateToken = async (req, res) => {
 /**
  * GET /api/asistencia/:idActividad/pending
  */
-export const listPending = async (req, res) => {
+export const listPending = async (req, res, next) => {
   const { idActividad } = req.params;
   try {
     const pendientes = await asistenciaService.listPendingService(idActividad);
     return res.json({ pendientes });
-  } catch {
-    return res.status(500).json({ error: "Error interno al listar pendientes" });
+  } catch (err) {
+    next(err); // Pasamos el error al middleware de manejo de errores
   }
 };
 
 /**
  * PATCH /api/asistencia/:idActividad/:rutEstudiante
  */
-export const confirmAttendance = async (req, res) => {
+export const confirmAttendance = async (req, res, next) => {
   const { idActividad, rutEstudiante } = req.params;
   const { confirm } = req.body;
   try {
@@ -61,22 +50,20 @@ export const confirmAttendance = async (req, res) => {
     );
     return res.json({ message: "Asistencia confirmada", record });
   } catch (err) {
-    if (err.message === "RECORD_NOT_FOUND")
-      return res.status(404).json({ error: "Registro no encontrado" });
-    return res.status(500).json({ error: "Error interno al confirmar asistencia" });
+    next(err); // Pasamos el error al middleware de manejo de errores
   }
 };
 
 /**
  * GET /api/asistencia/:idActividad
  */
-export const listAll = async (req, res) => {
+export const listAll = async (req, res, next) => {
   const { idActividad } = req.params;
   try {
     const all = await asistenciaService.listAllService(idActividad);
     return res.json({ asistencia: all });
-  } catch {
-    return res.status(500).json({ error: "Error interno al listar asistencias" });
+  } catch (err) {
+    next(err); // Pasamos el error al middleware de manejo de errores
   }
 };
 
@@ -85,19 +72,14 @@ export const listAll = async (req, res) => {
   * GET /api/asistencia/:idActividad/token
   * Devuelve { token } o 404 si no hay token activo */
   
-export const getCurrentToken = async (req, res) => {
+export const getCurrentToken = async (req, res, next) => {
   const { idActividad } = req.params;
   try {
     const code = await getCurrentTokenService(idActividad);
     // Si existe, devolvemos el token
     return res.json({ token: code });
   } catch (err) {
-    if (err.message === "TOKEN_NOT_FOUND") {
-      // En lugar de 404, devolvemos 200 + token null
-      return res.json({ token: null });
-    }
-    // Otros errores siguen siendo 500
-    return res.status(500).json({ error: "Error interno al leer token" });
+    next(err); // Pasamos el error al middleware de manejo de errores
   }
 };
 
@@ -108,7 +90,7 @@ export const getCurrentToken = async (req, res) => {
  * Autenticado con req.user.rutEstudiante
  */
 
-export const submitTokenByCode = async (req, res) => {
+export const submitTokenByCode = async (req, res, next) => {
   const { token } = req.body;
   const { rutEstudiante } = req.user;                 // ← de Passport
 
@@ -120,8 +102,6 @@ export const submitTokenByCode = async (req, res) => {
     await asistenciaService.submitTokenByCodeService(token, rutEstudiante);
     return res.json({ message: "Asistencia marcada correctamente" });
   } catch (err) {
-    if (err.message === "INVALID_TOKEN")
-      return res.status(401).json({ error: "Token inválido o expirado" });
-    return res.status(500).json({ error: "Error interno al enviar token" });
+    next(err); // Pasamos el error al middleware de manejo de errores
   }
 };
