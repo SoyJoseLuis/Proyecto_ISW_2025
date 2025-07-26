@@ -1,0 +1,11 @@
+.student-page {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .student-page-title {
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  

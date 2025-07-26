@@ -1,0 +1,9 @@
+.student-layout {
+    padding: 16px;
+    max-width: 480px;
+    margin: 0 auto;
+    background: #fff;
+    min-height: 100vh;
+    box-shadow: 0 0 8px rgba(0,0,0,0.05);
+  }
+  

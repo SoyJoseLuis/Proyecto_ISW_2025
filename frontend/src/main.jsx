@@ -1,8 +1,9 @@
 import ReactDOM from 'react-dom/client';
-import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 
 // Páginas
 import Login from '@pages/Login';
+import HomeEstudiante from '@pages/HomeEstudiante';
 import Home from '@pages/Home';
 import Users from '@pages/Users';
 import Register from '@pages/Register';
@@ -14,6 +15,12 @@ import Finanzas from '@pages/Finanzas';
 import Notificaciones from '@pages/Notificaciones';
 import CalendarioPage from '@pages/CalendarioPage';
 
+// **Importaciones nuevas**
+import StudentLayout from '@components/StudentLayout';
+import CalendarioEstudiante from '@pages/CalendarioEstudiante';
+import AsistenciaEstudiante from '@pages/AsistenciaEstudiante';
+import NotificacionesEstudiante from '@pages/NotificacionesEstudiante';
+
 // Componentes
 import ProtectedRoute from '@components/ProtectedRoute';
 
@@ -22,6 +29,7 @@ import '@styles/styles.css';
 import '@styles/LoginScreen.css';
 
 const router = createBrowserRouter([
+  // Rutas “desktop” normales, con sidebar
   {
     path: '/',
     element: (
@@ -31,34 +39,13 @@ const router = createBrowserRouter([
     ),
     errorElement: <Error404 />,
     children: [
-      {
-        index: true,
-        element: <Navigate to="/auth" replace />
-      },
-      {
-        path: '/home',
-        element: <Home />
-      },
-      {
-        path: '/actividades',
-        element: <Actividades />
-      },
-      {
-        path: '/finanzas',
-        element: <Finanzas />
-      },
-      {
-        path: '/asistencia',
-        element: <Asistencias />
-      },
-      {
-        path: '/notificaciones',
-        element: <Notificaciones />
-      },
-      {
-        path: '/calendario',
-        element: <CalendarioPage />
-      },
+      { index: true, element: <Navigate to="/auth" replace /> },
+      { path: '/home', element: <Home /> },
+      { path: '/actividades', element: <Actividades /> },
+      { path: '/finanzas', element: <Finanzas /> },
+      { path: '/asistencia', element: <Asistencias /> },
+      { path: '/notificaciones', element: <Notificaciones /> },
+      { path: '/calendario', element: <CalendarioPage /> },
       {
         path: '/users',
         element: (
@@ -69,14 +56,26 @@ const router = createBrowserRouter([
       }
     ]
   },
+
+  // Rutas “mobile-student” (sin sidebar)
   {
-    path: '/auth',
-    element: <Login />
+    path: '/',
+    element: (
+      <ProtectedRoute>
+        <StudentLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      { path: '/home-estudiante', element: <HomeEstudiante /> },
+      { path: '/calendario-estudiante', element: <CalendarioEstudiante /> },
+      { path: '/asistencia-estudiante', element: <AsistenciaEstudiante /> },
+      { path: '/notificaciones-estudiante', element: <NotificacionesEstudiante /> },
+    ]
   },
-  {
-    path: '/register',
-    element: <Register />
-  }
+
+  // Auth / Registro
+  { path: '/auth', element: <Login /> },
+  { path: '/register', element: <Register /> }
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(

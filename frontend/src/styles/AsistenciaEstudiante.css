@@ -1,0 +1,48 @@
+/* src/styles/AsistenciaEstudiante.css */
+
+.asistencia-estudiante {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 16px;
+    background: #ffffff;
+    min-height: 100vh;
+  }
+  
+  .asistencia-header {
+    display: flex;
+    align-items: center;
+  }
+  
+  .asistencia-back {
+    font-size: 24px;
+    color: #007aff;
+    cursor: pointer;
+  }
+  
+  .asistencia-title {
+    flex: 1;
+    text-align: center;
+    margin: 0;
+    color: #000;
+  }
+  
+  .asistencia-input-wrapper {
+    margin-top: 24px;
+    background: #f2f2f7;
+    border-radius: 12px;
+    padding: 8px 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  
+  .asistencia-input {
+    background: transparent;
+    border: none;
+    width: 100%;
+    font-size: 18px;
+    color: #000;
+  }
+  
+  .asistencia-input:focus {
+    outline: none;
+  }
+  
