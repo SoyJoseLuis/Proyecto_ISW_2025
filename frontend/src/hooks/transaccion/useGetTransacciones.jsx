@@ -27,6 +27,7 @@ export function useGetTransacciones() {
           idBalance: transaccion.idBalance
         }));
         setTransacciones(transaccionesMapeadas);
+        console.log(transaccionesMapeadas);
       } else {
         // Identificar si es un error de "no hay datos" vs un error real
         const isNoDataError = response.message && (
