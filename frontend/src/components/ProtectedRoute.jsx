@@ -17,7 +17,7 @@ const ACCESS_BY_ROLE = {
     'home','actividades','calendario','finanzas','asistencia','notificaciones'
   ],
   [ROLES.TESORERO]: [
-    'finanzas','home','notificaciones','calendario'
+    'finanzas','home','notificaciones','calendario','asistencia'
   ],
   [ROLES.SECRETARIO]: [
     'asistencia','home','notificaciones','calendario'

@@ -1,22 +1,3 @@
-/*import axios from "axios";
- /*import { getCurrentRut } from "../helpers/auth.js";
- import { getCurrentJwt } from "../helpers/auth.js";
-
-// Base c todos los endpoints de Asistencia
-const BASE_URL = "http://localhost:4000/api/asistencia";
-
-
-// Crea una instancia de axios para Asistencia
-const api = axios.create({
-  baseURL: BASE_URL,
-});
-
-api.interceptors.request.use(config => {
-  const jwt = getCurrentJwt();
-  if (jwt) config.headers.Authorization = Bearer ${jwt};
-  return config;
-}); */
-
 
 import api from './api.js';
 /**

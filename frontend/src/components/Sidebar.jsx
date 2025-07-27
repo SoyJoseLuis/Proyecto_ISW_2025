@@ -30,7 +30,7 @@ const ROLES = {
 
 const ACCESS_BY_ROLE = {
   [ROLES.PRESIDENTE]: navItems.map(item => item.key), // TODOS los módulos
-  [ROLES.TESORERO]: ['finanzas','home','notificaciones','calendario'],
+  [ROLES.TESORERO]: ['finanzas','home','notificaciones','calendario', 'asistencia'],
   [ROLES.SECRETARIO]: ['asistencia','home','notificaciones','calendario'],
 };
 
