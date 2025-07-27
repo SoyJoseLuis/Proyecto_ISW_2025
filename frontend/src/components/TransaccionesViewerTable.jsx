@@ -1,7 +1,6 @@
 import { forwardRef, useImperativeHandle } from 'react';
 import { Table, Tag, Button, Popconfirm } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
-import dayjs from 'dayjs';
 import { useDeleteTransaccion } from '../hooks/transaccion';
 
 const TransaccionesViewerTable = forwardRef((props, ref) => {
@@ -17,9 +16,19 @@ const TransaccionesViewerTable = forwardRef((props, ref) => {
   const canDeleteTransaction = (fechaCreacion) => {
     if (!fechaCreacion) return false;
     
-    const creationDate = dayjs(fechaCreacion);
-    const now = dayjs();
-    const diffInMinutes = now.diff(creationDate, 'minute');
+    // Convertir la fecha de creación a timestamp (milisegundos)
+    const creationTimestamp = new Date(fechaCreacion).getTime();
+    // Obtener el timestamp actual
+    const nowTimestamp = Date.now();
+    // Calcular la diferencia en minutos
+    const diffInMinutes = (nowTimestamp - creationTimestamp) / (1000 * 60);
+    
+    // Debug temporal - puedes quitarlo después
+    console.log('fechaCreacion:', fechaCreacion);
+    console.log('creationTimestamp:', creationTimestamp);
+    console.log('nowTimestamp:', nowTimestamp);
+    console.log('Diferencia en minutos:', diffInMinutes);
+    
     return diffInMinutes <= 5;
   };
 
