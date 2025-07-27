@@ -137,12 +137,18 @@ export async function deleteTransaccionService(query) {
     if (!transaccion) return [null, "Transacción no encontrada o ya eliminada"];
 
     // Validar que la transacción se pueda eliminar (dentro de 5 minutos)
-    const fechaCreacion = new Date(transaccion.fechaCreacion);
-    const ahora = new Date();
-    const diferenciaMinutos = Math.floor((ahora - fechaCreacion) / (1000 * 60));
+    // PROBLEMA: Las fechas se guardan en zona horaria chilena pero con formato UTC (terminan en 'Z')
+    // SOLUCIÓN: Quitar la 'Z' para que se interprete como hora local chilena
+    const fechaCreacionString = transaccion.fechaCreacion.toString();
+    const fechaSinZ = fechaCreacionString.replace("Z", "");
+    const fechaCreacionTimestamp = new Date(fechaSinZ).getTime();
+    const ahoraTimestamp = Date.now();
+    const diferenciaMinutos = Math.floor((ahoraTimestamp - fechaCreacionTimestamp) / (1000 * 60));
     
-    console.log("Fecha creación:", fechaCreacion);
-    console.log("Fecha actual:", ahora);
+    console.log("Fecha creación original:", transaccion.fechaCreacion);
+    console.log("Fecha creación sin Z:", fechaSinZ);
+    console.log("Fecha creación timestamp:", fechaCreacionTimestamp);
+    console.log("Ahora timestamp:", ahoraTimestamp);
     console.log("Diferencia en minutos:", diferenciaMinutos);
     
     if (diferenciaMinutos > 5) {
