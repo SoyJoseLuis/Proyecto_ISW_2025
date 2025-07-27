@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { createTransaccion } from '../../services/transaccion.service.js';
 import { showSuccessAlert, showErrorAlert } from '../../helpers/sweetAlert.js';
+import { normalizarTitulo } from '../NormalizadorTitulo/useNormalizador.js';
 
 export function useCreateTransaccion() {
   const [isLoading, setIsLoading] = useState(false);
@@ -8,10 +9,10 @@ export function useCreateTransaccion() {
   const createTransaccionHandler = async (transaccionData) => {
     setIsLoading(true);
     try {
-      // Asegurarse que el motivo vaya en mayúsculas
+      // Normalizar motivoTransaccion
       const dataToSend = {
         ...transaccionData,
-        motivoTransaccion: transaccionData.motivoTransaccion?.toUpperCase() || ''
+        motivoTransaccion: normalizarTitulo(transaccionData.motivoTransaccion || '')
       };
       const response = await createTransaccion(dataToSend);
       

@@ -46,8 +46,7 @@ export function useGetTransacciones() {
         }
       }
     } catch (error) {
-      console.error('useGetTransacciones - Error:', error);
-      showErrorAlert('Error', error.message || 'Error al cargar las transacciones');
+      console.log(error);
       setTransacciones([]);
     } finally {
       setIsLoading(false);

@@ -43,10 +43,10 @@ export default function useGetMetasWithFilter(selectedYear) {
         }
       }
     } catch (error) {
-      console.error('useGetMetasWithFilter - Error:', error);
-      setError(error.message);
+      console.log(error);
+      
       setMetas([]);
-      showErrorAlert('Error', 'Error al obtener las metas financieras');
+      
     } finally {
       setLoading(false);
     }
