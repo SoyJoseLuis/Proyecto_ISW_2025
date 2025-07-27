@@ -1,7 +1,9 @@
 // src/components/ActivitiesControlTable.jsx
 import { useEffect, useState } from 'react';
-import { Table, Button, Modal } from 'antd';
-import {PlusOutlined,EyeOutlined,FormOutlined, UnorderedListOutlined,} from '@ant-design/icons';
+import { Table, Button, Modal, Card, Typography, Space  } from 'antd';
+ import { notification } from 'antd';
+import {PlusOutlined,EyeOutlined,FormOutlined, UnorderedListOutlined, ControlOutlined} from '@ant-design/icons';
+ const { Title, Text } = Typography;
 import { useVerActividades } from '../hooks/asistencia/useVerActividades';
 import {
   generateToken,
@@ -57,27 +59,30 @@ export default function ActivitiesControlTable() {
     }
   };
 
-  //----------------//
-  // Confirmar asistencia (dobleConfirmación) a los seleccionados
-  const handlePendingOk = async () => {
-    const { actId, checked } = pendingModal;
-    const toConfirm = Object.entries(checked)
-      // eslint-disable-next-line no-unused-vars
-      .filter(([_, v]) => v)
-      .map(([rut]) => rut);
+   // Confirma uno y refresca
+  const handleConfirmOne = async rut => {
+    try {
+      await confirmAttendance(pendingModal.actId, rut, true);
+      // recargar la lista para reflejar cambios
+      await openPending(pendingModal.actId);
+    } catch {
+      // ignora
+    }
+  };
 
-    for (let rut of toConfirm) {
+  // Confirma todos los seleccionados (usa el checked interno)
+  const handleConfirmMultiple = async selectedRuts => {
+    for (let rut of selectedRuts) {
       try {
-        await confirmAttendance(actId, rut, true);
+        await confirmAttendance(pendingModal.actId, rut, true);
       } catch {
         // ignorar errores individuales
       }
     }
-    // cerramos modal y limpiamos
+    // cierra modal
     setPendingModal(m => ({ ...m, visible: false, checked: {} }));
   };
 
-  //---------------------------------//
   // Se abre el modal de la lista final con los de dobleConfirmación en tru
   const openFinal = async actId => {
     try {
@@ -113,52 +118,97 @@ export default function ActivitiesControlTable() {
       dataIndex: 'horaInicioActividad',
       key: 'horaInicioActividad',
     },
-    {
-      title: 'Token',
-      key: 'token',
-      render: (_, record) => {
-        const tok = tokens[record.idActividad];
-        return tok ? (
+{
+  title: 'Token',
+  key: 'token',
+  align: 'center',
+  render: (_, record) => {
+    const tok = tokens[record.idActividad];
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        {tok ? (
           <Button
-            icon={<EyeOutlined />}
-            onClick={() => setTokenModal({ visible: true, token: tok })}
-          />
+           size="large"
+           shape="circle"
+           style={{
+             backgroundColor: '#69c0ff',
+            borderColor:     '#69c0ff',
+            color:           '#fff'
+           }}
+           icon={
+            <EyeOutlined
+               style={{ fontSize: 20, color: '#fff' }}
+             />
+          }
+           onClick={() =>
+             setTokenModal({ visible: true, token: tok })
+           }
+         />
         ) : (
-          <Button
-            icon={<PlusOutlined />}
-            onClick={async () => {
-              try {
-                const code = await generateToken(record.idActividad);
-                setTokens(t => ({ ...t, [record.idActividad]: code }));
-              } catch (err) {
-                Modal.error({
-                  title: 'Error al generar token',
-                  content: err.response?.data?.error || err.message,
-                });
-              }
-            }}
-          />
-        );
-      },
-    },
+<Button
+  size="large"
+  shape="circle"
+  type="primary"
+  icon={<PlusOutlined style={{ fontSize: 20 }} />}
+  onClick={async () => {
+    try {
+      const code = await generateToken(record.idActividad);
+      setTokens(t => ({ ...t, [record.idActividad]: code }));
+      notification.success({
+        message: 'Token creado',
+        description: `Código ${code} generado. Ahora puedes visualizarlo.`,
+      });
+    } catch (err) {
+      Modal.error({
+        title: 'Error al generar token',
+        content: err.response?.data?.message || err.message,
+      });
+    }
+  }}
+/>
+
+        )}
+      </div>
+    );
+  },
+},
+
     {
-      title: 'Pendientes',
+      title: 'Confirmar asistencia',
       key: 'pending',
+      align: 'center',
       render: (_, record) => (
-        <Button
-          icon={<FormOutlined />}
-          onClick={() => openPending(record.idActividad)}
-        />
+       <Button
+        size="large"
+         shape="circle"
+         style={{
+           backgroundColor: '#d9d9d9', // gris claro
+           borderColor:     '#000000', // borde negro
+         }}
+         icon={<FormOutlined style={{ fontSize: 18, color: '#000000' }} />} 
+         onClick={() => openPending(record.idActividad)}
+       />
       ),
     },
     {
-      title: 'Final',
+      title: 'Lista final',
       key: 'final',
+      align: 'center',
       render: (_, record) => (
-        <Button
-          icon={<UnorderedListOutlined />}
-          onClick={() => openFinal(record.idActividad)}
-        />
+       <Button
+         size="large"
+         shape="circle"
+         style={{
+           backgroundColor: '#ffffff', // fondo blanco
+           borderColor:     '#000000', // borde negro
+         }}
+         icon={
+           <UnorderedListOutlined
+             style={{ fontSize: 18, color: '#000000' }} // icono negro
+           />
+         }
+         onClick={() => openFinal(record.idActividad)}
+      />
       ),
     },
   ];
@@ -166,7 +216,24 @@ export default function ActivitiesControlTable() {
   if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
   return (
-    <>
+    
+       <>
+      {/* ── Encabezado Sala de Control ── */}
+      <Card className="control-header" bordered={false}>
+        <Space align="center">
+          <ControlOutlined style={{ fontSize: 32, color: '#1890ff' }} />
+          <div>
+            <Title level={4} style={{ margin: 0 }}>
+              Sala de Control de Asistencias
+            </Title>
+            <Text type="secondary">
+              Gestiona tokens y confirma asistencias rápidamente
+            </Text>
+          </div>
+        </Space>
+      </Card>
+
+      {/* ── Tabla principal ── */}
       <Table
         rowKey="idActividad"
         loading={loading}
@@ -181,24 +248,24 @@ export default function ActivitiesControlTable() {
         onClose={() => setTokenModal({ visible: false, token: '' })}
       />
 
+      {/* CONFIRM ATTENDANCE MODAL */}
       <ConfirmAttendanceModal
-        visible={pendingModal.visible}
-        list={pendingModal.list}
-        checked={pendingModal.checked}
-        onCheckChange={(rut, val) =>
-          setPendingModal(m => ({
-            ...m,
-            checked: { ...m.checked, [rut]: val },
-          }))
-        }
-        onCancel={() => setPendingModal(m => ({ ...m, visible: false }))}
-        onConfirm={handlePendingOk}
+        open={pendingModal.visible}               // 1) open en lugar de visible
+        pendingList={pendingModal.list}           // 2) pendingList en lugar de list
+        onClose={() =>
+          setPendingModal(m => ({ ...m, visible: false }))
+        }                                         // 6) onClose en lugar de onCancel
+        onConfirm={handleConfirmOne}              // 4) confirma uno
+        onConfirmMultiple={handleConfirmMultiple} // 5) confirma varios
       />
 
+      {/* FINAL LIST MODAL */}
       <FinalListModal
         visible={finalModal.visible}
         list={finalModal.list}
-        onClose={() => setFinalModal(m => ({ ...m, visible: false }))}
+        onClose={() =>
+          setFinalModal(m => ({ ...m, visible: false }))
+        }
       />
     </>
   );

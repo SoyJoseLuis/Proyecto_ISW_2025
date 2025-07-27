@@ -8,7 +8,7 @@ export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }) {
     const navigate = useNavigate();
-    const user = JSON.parse(sessionStorage.getItem('usuario')) || '';
+    const user = JSON.parse(sessionStorage.getItem('userData')) || '';
     const isAuthenticated = user ? true : false;
 
 useEffect(() => {
