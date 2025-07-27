@@ -3,18 +3,14 @@ import { Table, Tag, Button, Popconfirm } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { useDeleteTransaccion } from '../hooks/transaccion';
-import { useGetCurrentBalance } from '../hooks/balance';
-import { showErrorAlert } from '../helpers/sweetAlert';
 
 const TransaccionesViewerTable = forwardRef((props, ref) => {
   const { transacciones, refetchTransacciones, onDeleteSuccess } = props;
   const { deleteTransaccion, isLoading: deleteLoading } = useDeleteTransaccion();
-  const { balance: currentBalance, refetch: refetchBalance } = useGetCurrentBalance(false); // Desactivamos el autoRefresh
 
-  // Exponemos métodos para que el componente padre pueda llamarlos
+  // Exponemos el método refresh para que el componente padre pueda llamarlo
   useImperativeHandle(ref, () => ({
-    refreshTransacciones: refetchTransacciones,
-    refreshBalance: refetchBalance
+    refreshTransacciones: refetchTransacciones
   }));
 
   // Función para verificar si una transacción puede ser eliminada (dentro de 5 minutos)
@@ -27,65 +23,12 @@ const TransaccionesViewerTable = forwardRef((props, ref) => {
     return diffInMinutes <= 5;
   };
 
-  // Función para validar si el balance quedaría negativo al eliminar un ingreso
-  const validateBalanceAfterDelete = async (transaccion) => {
-    // Si no es un ingreso, no necesitamos validar
-    if (transaccion.idTipoTransaccion !== '1') return true;
-    
-    try {
-      // Si no tenemos balance cargado, intentar obtenerlo
-      if (!currentBalance) {
-        await refetchBalance();
-        // Si después del refetch seguimos sin balance, no podemos validar
-        if (!currentBalance) {
-          console.error('No se pudo obtener el balance actual');
-          // En caso de duda, permitir la eliminación para no bloquear al usuario
-          return true;
-        }
-      }
-      
-      console.log('Validando eliminación de transacción:', {
-        tipoTransaccion: transaccion.idTipoTransaccion,
-        montoTransaccion: transaccion.montoTransaccion,
-        balanceActual: currentBalance.montoActual,
-        balanceResultante: currentBalance.montoActual - transaccion.montoTransaccion
-      });
-      
-      // Calcular el balance resultante después de eliminar el ingreso
-      const balanceResultante = currentBalance.montoActual - transaccion.montoTransaccion;
-      
-      return balanceResultante >= 0;
-      
-    } catch (error) {
-      console.error('Error al validar balance:', error);
-      // En caso de error, permitir la eliminación para no bloquear al usuario
-      return true;
-    }
-  };
-
   // Función para manejar la eliminación
   const handleDelete = async (record) => {
     try {
-      // Validar si el balance quedaría negativo
-      const isValidDelete = await validateBalanceAfterDelete(record);
-      if (!isValidDelete) {
-        showErrorAlert(
-          'Error',
-          'No se puede eliminar esta transacción porque el balance quedaría negativo'
-        );
-        return;
-      }
-
       await deleteTransaccion(record);
-      
-      // Notificar al componente padre para que maneje todas las actualizaciones
-      if (onDeleteSuccess) {
-        await onDeleteSuccess();
-      }
-      
-      // Solo actualizar el balance interno del componente
-      await refetchBalance();
-
+      await refetchTransacciones(); // Fuerza la actualización de la lista
+      if (onDeleteSuccess) onDeleteSuccess(); // <-- Call the callback if provided
     } catch (error) {
       console.error('Error al eliminar transacción:', error);
     }
@@ -119,8 +62,6 @@ const TransaccionesViewerTable = forwardRef((props, ref) => {
       key: 'fechaTransaccion',
       width: 120,
       align: 'center',
-      sorter: (a, b) => dayjs(a.fechaTransaccion).unix() - dayjs(b.fechaTransaccion).unix(),
-      defaultSortOrder: 'descend',
     },
     {
       title: 'Estudiante',
