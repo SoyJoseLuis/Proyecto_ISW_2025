@@ -14,21 +14,44 @@ const TransaccionesViewerTable = forwardRef((props, ref) => {
 
   // Función para verificar si una transacción puede ser eliminada (dentro de 5 minutos)
   const canDeleteTransaction = (fechaCreacion) => {
+    // 1. Verificar que tengamos una fecha válida
     if (!fechaCreacion) return false;
     
-    // Convertir la fecha de creación a timestamp (milisegundos)
-    const creationTimestamp = new Date(fechaCreacion).getTime();
-    // Obtener el timestamp actual
-    const nowTimestamp = Date.now();
-    // Calcular la diferencia en minutos
-    const diffInMinutes = (nowTimestamp - creationTimestamp) / (1000 * 60);
+    // 2. PROBLEMA: El servidor envía fechas como "2025-07-27T15:03:03.336Z"
+    //    - La hora 15:03:03 es HORA CHILENA (local del servidor)
+    //    - Pero la "Z" le dice al navegador que es UTC
+    //    - Esto causa una diferencia de 3-4 horas
     
-    // Debug temporal - puedes quitarlo después
-    console.log('fechaCreacion:', fechaCreacion);
+    // 3. SOLUCIÓN: Quitar la "Z" para que JavaScript interprete como hora local
+    const fechaSinZ = fechaCreacion.replace('Z', '');
+    // Ejemplo: "2025-07-27T15:03:03.336Z" → "2025-07-27T15:03:03.336"
+    
+    // 4. Convertir la fecha corregida a timestamp (milisegundos desde 1970)
+    const creationTimestamp = new Date(fechaSinZ).getTime();
+    // Ejemplo: creationTimestamp = 1753628583336
+    
+    // 5. Obtener el timestamp actual (también en milisegundos)
+    const nowTimestamp = Date.now();
+    // Ejemplo: nowTimestamp = 1753628883336 (5 minutos después)
+    
+    // 6. Calcular cuántos minutos han pasado desde la creación
+    const diffInMinutes = (nowTimestamp - creationTimestamp) / (1000 * 60);
+    // ¿Por qué dividir entre (1000 * 60)?
+    // - Los timestamps están en milisegundos
+    // - 1000 ms = 1 segundo
+    // - 1000 * 60 = 60,000 ms = 1 minuto
+    // Ejemplo: (1753628883336 - 1753628583336) / 60000 = 5 minutos
+    
+    // 7. Debug temporal - ver qué valores estamos calculando
+    console.log('fechaCreacion original:', fechaCreacion);
+    console.log('fechaCreacion sin Z:', fechaSinZ);
     console.log('creationTimestamp:', creationTimestamp);
     console.log('nowTimestamp:', nowTimestamp);
     console.log('Diferencia en minutos:', diffInMinutes);
     
+    // 8. DECISIÓN FINAL: ¿Permitir eliminar?
+    // Si han pasado 5 minutos o menos → true (se puede eliminar)
+    // Si han pasado más de 5 minutos → false (no se puede eliminar)
     return diffInMinutes <= 5;
   };
 
