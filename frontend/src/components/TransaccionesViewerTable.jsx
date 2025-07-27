@@ -22,7 +22,7 @@ const TransaccionesViewerTable = forwardRef((props, ref) => {
     if (!fechaCreacion) return false;
     
     const creationDate = dayjs(fechaCreacion);
-    const now = dayjs();
+    const now = dayjs.utc();
     const diffInMinutes = now.diff(creationDate, 'minute');
     return diffInMinutes <= 5;
   };
