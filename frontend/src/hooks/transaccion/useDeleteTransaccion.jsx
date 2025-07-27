@@ -5,8 +5,8 @@ import { showSuccessAlert, showErrorAlert } from '../../helpers/sweetAlert.js';
 export function useDeleteTransaccion() {
   const [isLoading, setIsLoading] = useState(false);
 
-  const deleteTransaccionHandler = async (transaccion) => { // ✅ Recibir objeto completo
-    console.log('🗑️ ELIMINANDO TRANSACCIÓN:', {
+  const deleteTransaccionHandler = async (transaccion) => { // 
+    console.log('ELIMINANDO TRANSACCIÓN:', {
       id: transaccion.id,
       tipo: transaccion.idTipoTransaccion,
       tipoDescripcion: transaccion.tipoTransaccionDescripcion,

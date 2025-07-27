@@ -16,7 +16,7 @@ export function authorize(...allowedRoles) {
     const { roles } = req.user;         // ej. ["Presidente","Secretario"]
     if (!Array.isArray(roles) || !roles.some(r => allowedRoles.includes(r))) {
       return res.status(403).json({ message: "Acceso denegado: rol insuficiente" });
-    }
+    }403
 
     // 3) Pasa al controlador
     next();

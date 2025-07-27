@@ -85,10 +85,19 @@ export default function ModalCrearTransaccion({ visible, onClose, onSuccess, ref
       if (tipo !== 1) {
         return Promise.reject(new Error('La primera transacción debe ser de tipo Ingreso.'));
       }
+      if (Number(value) <= 10) {
+        return Promise.reject(new Error('El monto debe ser mayor a 10.'));
+      }
+      if (!Number.isInteger(Number(value))) {
+        return Promise.reject(new Error('El monto debe ser un número entero.'));
+      }
       return Promise.resolve();
     }
-    if (value && value <= 0) {
-      return Promise.reject(new Error('El monto debe ser mayor a cero'));
+    if (value && value <= 10) {
+      return Promise.reject(new Error('El monto debe ser mayor a 10.'));
+    }
+    if (value && !Number.isInteger(Number(value))) {
+      return Promise.reject(new Error('El monto debe ser un número entero.'));
     }
     // Convertir ambos a número y proteger contra null/undefined/NaN
     const montoActual = Number(balance?.montoActual) || 0;
@@ -186,7 +195,8 @@ export default function ModalCrearTransaccion({ visible, onClose, onSuccess, ref
           <InputNumber
             placeholder={isFirstTransaction && !loadingPrevBalance ? `Monto final del balance anterior` : 'Ingresa el monto'}
             style={{ width: '100%' }}
-            min={0.01}
+            min={11}
+            step={1}
             formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
             parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
             disabled={loadingPrevBalance}

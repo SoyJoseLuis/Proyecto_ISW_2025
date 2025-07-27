@@ -1,6 +1,7 @@
 "use strict";
 import { Router } from "express";
 import { authenticateJwt } from "../middlewares/authentication.middleware.js";
+import { authorize } from "../middlewares/authorization.middleware.js";
 import {
   createMeta,
   deleteMeta,
@@ -12,13 +13,22 @@ import {
 
 const router = Router();
 
+
+
+router.use(authenticateJwt);
+
+
+// Middleware de autorización
+router.use(authorize("Presidente", "Tesorero"));
+
 router
-  .post("/", createMeta)/*analizar el tema de cuando poder crear una meta financiera */ 
+  .post("/", createMeta)
   .get("/", getAllMetas)
   .get("/by-year/", getMetasByYear)
-  .get("/detail/", getMeta)/**/
-  .patch("/detail/", updateMeta)/* un presidente si puede ??actulizar la meta anual si se tiene  FE*/
-  .delete("/detail/", deleteMeta)
+  .get("/detail/", getMeta)
+  .patch("/detail/", updateMeta)
+  .delete("/detail/", deleteMeta);
+
 export default router; 
 
 

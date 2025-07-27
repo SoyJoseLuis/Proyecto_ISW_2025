@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { createMeta } from '../../services/metaf.service.js';
 import { showErrorAlert, showSuccessAlert } from '../../helpers/sweetAlert.js';
+import { normalizarTitulo } from '../NormalizadorTitulo/useNormalizador.js';
 
 export default function useCreateMeta(onSuccess) {
   const [loading, setLoading] = useState(false);
@@ -8,11 +9,11 @@ export default function useCreateMeta(onSuccess) {
   const handleCreateMeta = async (data) => {
     setLoading(true);
     try {
-      // Si existe un campo motivo o motivoMeta, enviarlo en mayúsculas
+      // Normalizar descripcionMeta y motivoMeta si existen
       const dataToSend = {
         ...data,
-        ...(data.motivo && { motivo: data.motivo.toUpperCase() }),
-        ...(data.motivoMeta && { motivoMeta: data.motivoMeta.toUpperCase() })
+        ...(data.descripcionMeta && { descripcionMeta: normalizarTitulo(data.descripcionMeta) }),
+        ...(data.motivoMeta && { motivoMeta: normalizarTitulo(data.motivoMeta) })
       };
       const response = await createMeta(dataToSend);
       if (response.status === 'Success') {
@@ -30,7 +31,7 @@ export default function useCreateMeta(onSuccess) {
       }
     } catch (error) {
       console.error('Error al crear meta financiera:', error);
-      showErrorAlert('Error', 'Error al crear la meta financiera');
+
       return { success: false, error: error.message };
     } finally {
       setLoading(false);

@@ -39,16 +39,24 @@ export default function Finanzas() {
     setBalanceRefreshKey(prev => prev + 1);
     // Actualizar TODOS los componentes afectados cuando se crea una transacción
     
-    // Actualizar tabla de transacciones
-    if (transaccionesViewerRef.current && transaccionesViewerRef.current.refreshTransacciones) {
-      transaccionesViewerRef.current.refreshTransacciones();
+    // Actualizar el estado global de transacciones en el padre
+    refetchTransacciones();
+    
+    // Actualizar tabla de transacciones Y su balance interno
+    if (transaccionesViewerRef.current) {
+      if (transaccionesViewerRef.current.refreshTransacciones) {
+        transaccionesViewerRef.current.refreshTransacciones();
+      }
+      if (transaccionesViewerRef.current.refreshBalance) {
+        transaccionesViewerRef.current.refreshBalance();
+      }
     }
     
-    // Actualizar balance (ya que una nueva transacción afecta el balance)
+    // Actualizar balance general
     if (balancesViewerRef.current && balancesViewerRef.current.refreshBalance) {
       balancesViewerRef.current.refreshBalance();
     }
-    // Actualizar balances anteriores (nuevo método)
+    // Actualizar balances anteriores
     if (balancesViewerRef.current && balancesViewerRef.current.refreshBalances) {
       balancesViewerRef.current.refreshBalances();
     }
@@ -64,13 +72,31 @@ export default function Finanzas() {
 
   const handleTransaccionDeleted = () => {
     setBalanceRefreshKey(prev => prev + 1);
-    // Refresca el balance y las metas igual que cuando creas una transacción
+    
+    // Actualizar TODOS los componentes afectados cuando se elimina una transacción
+    
+    // Actualizar el estado global de transacciones en el padre
+    refetchTransacciones();
+    
+    // Actualizar la tabla de transacciones Y su balance interno
+    if (transaccionesViewerRef.current) {
+      if (transaccionesViewerRef.current.refreshTransacciones) {
+        transaccionesViewerRef.current.refreshTransacciones();
+      }
+      if (transaccionesViewerRef.current.refreshBalance) {
+        transaccionesViewerRef.current.refreshBalance();
+      }
+    }
+    
+    // Actualizar balance general
     if (balancesViewerRef.current && balancesViewerRef.current.refreshBalance) {
       balancesViewerRef.current.refreshBalance();
     }
     if (balancesViewerRef.current && balancesViewerRef.current.refreshBalances) {
       balancesViewerRef.current.refreshBalances();
     }
+    
+    // Actualizar metas financieras (ya que el balance afecta el porcentaje de cumplimiento)
     if (metaViewerRef.current && metaViewerRef.current.refreshMetas) {
       metaViewerRef.current.refreshMetas();
     }

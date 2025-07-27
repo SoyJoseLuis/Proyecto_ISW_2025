@@ -1,37 +1,20 @@
-import axios from './root.service.js';
-
+import api from './api.js';
 export async function createTransaccion(data) {
-  try {
-    const response = await axios.post('/transaccion/', data);
-    return response.data;
-  } catch (error) {
-    return error.response.data;
-  }
+  const { data: response } = await api.post('/transaccion/', data);
+  return response;
 }
 
 export async function getTransacciones() {
-  try {
-    const response = await axios.get('/transaccion/');
-    return response.data;
-  } catch (error) {
-    return error.response.data;
-  }
+  const { data: response } = await api.get('/transaccion/');
+  return response;
 }
 
 export async function getTransaccion(id) {
-  try {
-    const response = await axios.get(`/transaccion/detail/?id=${id}`);
-    return response.data;
-  } catch (error) {
-    return error.response.data;
-  }
+  const { data: response } = await api.get(`/transaccion/detail/?id=${id}`);
+  return response;
 }
 
 export async function deleteTransaccion(id) {
-  try {
-    const response = await axios.delete(`/transaccion/detail/?id=${id}`);
-    return response.data;
-  } catch (error) {
-    return error.response.data;
-  }
+  const { data: response } = await api.delete(`/transaccion/detail/?id=${id}`);
+  return response;
 } 

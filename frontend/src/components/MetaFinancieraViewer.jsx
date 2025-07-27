@@ -92,7 +92,7 @@ const MetaFinancieraViewer = forwardRef((props, ref) => {
             size="small"
             disabled
           >
-            <Option value="all">Todos</Option>
+            {/* Eliminar opción 'Todos' */}
             {availableYears.map(year => (
               <Option key={year} value={year}>{year}</Option>
             ))}
@@ -119,7 +119,7 @@ const MetaFinancieraViewer = forwardRef((props, ref) => {
           size="small"
           suffixIcon={<CalendarOutlined />}
         >
-          <Option value="all">Todos</Option>
+          {/* Eliminar opción 'Todos' */}
           {availableYears.map(year => (
             <Option key={year} value={year}>{year}</Option>
           ))}
@@ -129,11 +129,7 @@ const MetaFinancieraViewer = forwardRef((props, ref) => {
       <div className="meta-viewer-content">
         {metas.length === 0 ? (
           <Empty
-            description={
-              selectedYear === 'all' 
-                ? "No hay metas financieras registradas"
-                : `No hay metas financieras para ${selectedYear}`
-            }
+            description={`No hay metas financieras para ${selectedYear}`}
             style={{ padding: '20px' }}
           />
         ) : (
@@ -146,7 +142,7 @@ const MetaFinancieraViewer = forwardRef((props, ref) => {
                 style={{ marginBottom: '16px', position: 'relative'}}
               >
                 {/* Botón eliminar solo si el año seleccionado es igual al año de la meta */}
-                {selectedYear !== 'all' && (Number(selectedYear) === new Date(meta.createdAt || Date.now()).getFullYear()) && (
+                {(Number(selectedYear) === new Date(meta.createdAt || Date.now()).getFullYear()) && (
                   <button
                     className="meta-delete-btn"
                     title="Eliminar meta financiera"
@@ -183,10 +179,7 @@ const MetaFinancieraViewer = forwardRef((props, ref) => {
                       {formatCurrency(meta.metaFinanciera)}
                     </div>
                     <div className="meta-period">
-                      {selectedYear === 'all' ? 
-                        new Date(meta.createdAt || Date.now()).getFullYear() : 
-                        selectedYear
-                      }
+                      {new Date(meta.createdAt || Date.now()).getFullYear()}
                     </div>
                   </div>
                 </div>
