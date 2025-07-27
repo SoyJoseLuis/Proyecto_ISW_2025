@@ -147,7 +147,7 @@ export async function deleteTransaccionService(query) {
     
     // Chile está UTC-3 (verano) o UTC-4 (invierno) 
     // Para simplificar, usamos UTC-3 (ajustar según la época del año si es necesario)
-    const offsetChileEnHoras = -3; // Chile está 3 horas detrás de UTC
+    const offsetChileEnHoras = -4; // Chile está 3 horas detrás de UTC
     const fechaCreacionUTC = new Date(fechaChilena.getTime() - (offsetChileEnHoras * 60 * 60 * 1000));
     
     const fechaCreacionTimestamp = fechaCreacionUTC.getTime();
