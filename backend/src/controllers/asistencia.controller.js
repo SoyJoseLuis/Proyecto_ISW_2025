@@ -79,6 +79,11 @@ export const getCurrentToken = async (req, res, next) => {
     // Si existe, devolvemos el token
     return res.json({ token: code });
   } catch (err) {
+    // Si no hay token activo, devolvemos token null en vez de error
+   if (err.statusCode === 404) {
+      return res.json({ token: null });
+    }
+    // Otros errores sí los propagamos
     next(err); // Pasamos el error al middleware de manejo de errores
   }
 };

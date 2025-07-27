@@ -46,7 +46,7 @@ router.post("/:idActividad/token", authorize("Presidente", "Secretario"), genera
  *    crea un registro en AsistenciaActividad con dobleConfirmacion =falso
  */
  // Nueva ruta “global”:
- router.post("/submit-token",authorize("Presidente", "Secretario"), submitTokenByCode);
+ router.post("/submit-token", submitTokenByCode); //Cualquiera puede enviar token, por lo que no necesita authorize
 
 /**
  * Presidente ve la lista de tokens entregados (pendientes de colocar true en dobleConfirmacio)

@@ -68,7 +68,6 @@ async function assignSampleRoles() {
       { rutEstudiante: "21457999-5", idRol: 2 }, // María Pérez - Presidente
       { rutEstudiante: "21332767-4", idRol: 1 }, // Juan Soto - Tesorero
       { rutEstudiante: "20123456-7", idRol: 3 }, // Lucía Fernández - Secretario
-      { rutEstudiante: "22334556-1", idRol: 4 }, // Carlos Gómez - Inactivo
     ];
 
     await Promise.all(

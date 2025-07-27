@@ -1,18 +1,35 @@
 // src/components/TokenModal.jsx
+import { Modal, Typography } from 'antd';
 
-import { Modal } from 'antd';
+const { Title, Text } = Typography;
 
 export default function TokenModal({ visible, token, onClose }) {
   return (
     <Modal
-      title="Token de Asistencia"
-      visible={visible}
-      onOk={onClose}
+      open={visible}
+      centered
+      width={500}
       onCancel={onClose}
-      okText="Cerrar"
-      cancelButtonProps={{ style: { display: 'none' } }}
+      footer={null}
+      bodyStyle={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: 40,
+      }}
     >
-      <p style={{ fontSize: 24, textAlign: 'center' }}>{token}</p>
+      <Title level={3} style={{ marginBottom: 24 }}>
+        Token de Asistencia
+      </Title>
+      <Text
+        style={{
+          fontSize: 64,
+          fontWeight: 'bold',
+          color: '#1890ff',
+        }}
+      >
+        {token}
+      </Text>
     </Modal>
   );
 }
