@@ -19,8 +19,8 @@ export default function ModalCrearActividad({ visible, onClose, onCreated }) {
   const [duracion, setDuracion] = useState('');
 
   // "Escuchamos" estos tres campos
-  const fecha   = Form.useWatch('fechaActividad', form);
-  const inicio  = Form.useWatch('horaInicioActividad', form);
+  const fecha = Form.useWatch('fechaActividad', form);
+  const inicio = Form.useWatch('horaInicioActividad', form);
   const termino = Form.useWatch('horaTerminoActividad', form);
 
   // Cada vez que cambian fecha/inicio/termino, recalculamos
@@ -75,14 +75,14 @@ export default function ModalCrearActividad({ visible, onClose, onCreated }) {
       }
 
       const payload = {
-        descripcionActividad:  values.descripcionActividad,
-        tituloActividad:       values.tituloActividad,
-        fechaActividad:        selectedDate.format('YYYY-MM-DD'),
-        horaInicioActividad:   selectedStart.format('HH:mm:ss'),
-        horaTerminoActividad:  values.horaTerminoActividad.format('HH:mm:ss'),
-        ubicacionActividad:    values.ubicacionActividad,
+        descripcionActividad: values.descripcionActividad,
+        tituloActividad: values.tituloActividad,
+        fechaActividad: selectedDate.format('YYYY-MM-DD'),
+        horaInicioActividad: selectedStart.format('HH:mm:ss'),
+        horaTerminoActividad: values.horaTerminoActividad.format('HH:mm:ss'),
+        ubicacionActividad: values.ubicacionActividad,
         idEstadoActividad,
-        idTipoActividad:       Number(values.idTipoActividad),
+        idTipoActividad: Number(values.idTipoActividad),
       };
 
       setLoading(true);
@@ -150,7 +150,7 @@ export default function ModalCrearActividad({ visible, onClose, onCreated }) {
             locale={dateLocale}
             style={{ width: '100%' }}
             format="YYYY-MM-DD"
-            disabledDate={d => d && d < ahora.startOf('day')}
+            disabledDate={(d) => d && d < ahora.startOf('day')}
           />
         </Form.Item>
 
