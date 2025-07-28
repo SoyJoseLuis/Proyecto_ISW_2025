@@ -12,6 +12,11 @@ const TransaccionesViewerTable = forwardRef((props, ref) => {
     refreshTransacciones: refetchTransacciones
   }));
 
+  // Debug: Ver estructura de datos
+  console.log('=== DATOS TRANSACCIONES ===');
+  console.log('Primeras 3 transacciones:', transacciones?.slice(0, 3));
+  console.log('===========================');
+
   // Función para verificar si una transacción puede ser eliminada (dentro de 5 minutos)
   const canDeleteTransaction = (fechaCreacion) => {
     // 1. Verificar que tengamos una fecha válida
@@ -48,6 +53,7 @@ const TransaccionesViewerTable = forwardRef((props, ref) => {
     console.log('creationTimestamp:', creationTimestamp);
     console.log('nowTimestamp:', nowTimestamp);
     console.log('Diferencia en minutos:', diffInMinutes);
+    
     
     // 8. DECISIÓN FINAL: ¿Permitir eliminar?
     // Si han pasado 5 minutos o menos → true (se puede eliminar)
@@ -113,7 +119,6 @@ const TransaccionesViewerTable = forwardRef((props, ref) => {
       },
       defaultSortOrder: 'descend',
  
-      },
     },
     {
       title: 'Estudiante',
