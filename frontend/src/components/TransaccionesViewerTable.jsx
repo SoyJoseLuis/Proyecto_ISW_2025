@@ -2,7 +2,6 @@ import { forwardRef, useImperativeHandle } from 'react';
 import { Table, Tag, Button, Popconfirm } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useDeleteTransaccion } from '../hooks/transaccion';
-import dayjs from 'dayjs';
 
 const TransaccionesViewerTable = forwardRef((props, ref) => {
   const { transacciones, refetchTransacciones, onDeleteSuccess } = props;
@@ -95,7 +94,7 @@ const TransaccionesViewerTable = forwardRef((props, ref) => {
       key: 'fechaTransaccion',
       width: 120,
       align: 'center',
-      sorter: (a, b) => dayjs(a.fechaTransaccion).unix() - dayjs(b.fechaTransaccion).unix(),
+      sorter: (a, b) => new Date(a.fechaTransaccion).getTime() - new Date(b.fechaTransaccion).getTime(),
       defaultSortOrder: 'descend',
     },
     {
