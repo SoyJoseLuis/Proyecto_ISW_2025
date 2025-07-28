@@ -3,7 +3,8 @@ import  { useState, useEffect } from 'react';
 import DashboardTabs from '../components/DashboardTabs';
 import SubmitTokenTab from '../components/SubmitTokenTab';
 import ActivitiesControlTable from '../components/ActivitiesControlTable';
-import { CheckCircleOutlined, KeyOutlined } from '@ant-design/icons';
+import ActivitiesHistoryTable from '../components/ActivitiesHistoryTable';
+import { CheckCircleOutlined, KeyOutlined,HistoryOutlined } from '@ant-design/icons';
 import { getStoredUserData } from '../helpers/auth.js';
 
 const BASE_URL =
@@ -74,6 +75,11 @@ export default function Asistencia() {
       ),
       content: <SubmitTokenTab />,
     },
+    {
+      key: '3',
+      label: (<><HistoryOutlined /> Historial asistencia</>),
+      content: <ActivitiesHistoryTable />
+    }
   ];
 
   // 7) Si es Tesorero, ocultamos la pestaña "Sala de control"
