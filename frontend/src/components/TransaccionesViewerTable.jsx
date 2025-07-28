@@ -96,6 +96,22 @@ const TransaccionesViewerTable = forwardRef((props, ref) => {
       align: 'center',
       sorter: (a, b) => new Date(a.fechaTransaccion).getTime() - new Date(b.fechaTransaccion).getTime(),
       defaultSortOrder: 'descend',
+     sorter: (a, b) => {
+        const parsearFecha = (fechaStr) => {
+          // Si viene en formato DD-MM-YYYY
+          if (fechaStr.includes('-') && fechaStr.length === 10) {
+            const [dia, mes, año] = fechaStr.split('-');
+            return new Date(parseInt(año), parseInt(mes) - 1, parseInt(dia));
+          }
+          // Si viene en otro formato
+          return new Date(fechaStr);
+        };
+        
+        const fechaA = parsearFecha(a.fechaTransaccion);
+        const fechaB = parsearFecha(b.fechaTransaccion);
+        
+        return fechaA.getTime() - fechaB.getTime();
+      },
       render: (fecha) => {
         console.log('fecha de transaccion <= 5:', fecha);
         return fecha;
