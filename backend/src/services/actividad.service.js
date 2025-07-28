@@ -7,7 +7,7 @@ import { getEstadoActividadByIdService } from "./estado-actividad.service.js";
 
 // Obtener todas las actividades (incluye relaciones)
 export async function getAllActividadesService() {
-  const repo = AppDataSource.getRepository(Actividad);
+  const repo = AppDataSource.getRepository(Actividad); 
   return await repo.find({
     relations: ["estadoActividad", "tipoActividad", "asistencias", "tokens"],
     order: { idActividad: "DESC" }

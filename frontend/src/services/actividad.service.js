@@ -1,76 +1,78 @@
-const BASE_URL = import.meta.env.VITE_BASE_URL || "http://146.83.198.35:1293/api";
+// src/services/actividades.service.js
 
-
+import api from './api.js';  // 1) Usamos el mismo api.js con baseURL + interceptor JWT
 import { normalizarTitulo } from '../hooks/NormalizadorTitulo/useNormalizador';
 
+/**
+ * Crea una nueva actividad.
+ */
 export async function crearActividad(data) {
-  const API_URL = `${BASE_URL}/actividades/`;
-
   const payload = {
     ...data,
-    tituloActividad: normalizarTitulo(data.tituloActividad)
+    tituloActividad: normalizarTitulo(data.tituloActividad),
   };
 
-  const response = await fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(payload)
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Error al crear actividad");
+  try {
+    // 2) POST /actividades
+    const { data: res } = await api.post('/actividades', payload);
+    // 3) Devolvemos el objeto creado que viene en res.data
+    return res.data;
+  } catch (err) {
+    // 4) Mismo manejo de error que antes
+    const msg = err.response?.data?.message || err.message;
+    throw new Error(msg);
   }
-
-  return await response.json();
 }
 
+/**
+ * Obtiene todas las actividades.
+ */
 export async function getActividades() {
-  const API_URL = `${BASE_URL}/actividades/`;
-  const response = await fetch(API_URL);
-  if (!response.ok) throw new Error("Error al obtener actividades");
-  const json = await response.json();
-  return json.data;
-}
-
-export async function actualizarEstadoActividad(idActividad, idEstadoActividad) {
-  const API_URL = `${BASE_URL}/actividades/${idActividad}/estado`;
-  const response = await fetch(API_URL, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ idEstadoActividad })
-  });
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Error al actualizar estado");
+  try {
+    // GET /actividades
+    const { data: res } = await api.get('/actividades');
+    // Devolvemos el array que está en res.data
+    return res.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || err.message);
   }
-  return await response.json();
 }
 
-export async function actualizarActividad(idActividad, data) {
-  const API_URL = `${BASE_URL}/actividades/${idActividad}`;
+/**
+ * Actualiza únicamente el estado de una actividad.
+ */
+export async function actualizarEstadoActividad(idActividad, idEstadoActividad) {
+  try {
+    // PATCH /actividades/:id/estado
+    const { data: res } = await api.patch(
+      `/actividades/${idActividad}/estado`,
+      { idEstadoActividad }
+    );
+    return res.data;
+  } catch (err) {
+    const msg = err.response?.data?.message || err.message;
+    throw new Error(msg);
+  }
+}
 
+/**
+ * Reemplaza completamente una actividad.
+ */
+export async function actualizarActividad(idActividad, data) {
   const payload = {
     ...data,
-    tituloActividad: normalizarTitulo(data.tituloActividad)
+    tituloActividad: normalizarTitulo(data.tituloActividad),
   };
 
-  const response = await fetch(API_URL, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(payload)
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Error al actualizar actividad");
+  try {
+    // PUT /actividades/:id
+    const { data: res } = await api.put(
+      `/actividades/${idActividad}`,
+      payload
+    );
+    return res.data;
+  } catch (err) {
+    const msg = err.response?.data?.message || err.message;
+    throw new Error(msg);
   }
-
-  return await response.json();
 }
