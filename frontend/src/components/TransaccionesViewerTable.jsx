@@ -96,6 +96,10 @@ const TransaccionesViewerTable = forwardRef((props, ref) => {
       align: 'center',
       sorter: (a, b) => new Date(a.fechaTransaccion).getTime() - new Date(b.fechaTransaccion).getTime(),
       defaultSortOrder: 'descend',
+      render: (fecha) => {
+        console.log('fecha de transaccion <= 5:', fecha);
+        return fecha;
+      },
     },
     {
       title: 'Estudiante',
