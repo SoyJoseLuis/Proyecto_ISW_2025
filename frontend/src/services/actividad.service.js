@@ -74,3 +74,17 @@ export async function actualizarActividad(idActividad, data) {
 
   return await response.json();
 }
+
+/**
+ * Nueva función para obtener UNA actividad por ID
+ */
+export async function getActividadById(idActividad) {
+  const API_URL = `${BASE_URL}/actividades/${idActividad}`;
+  const response = await fetch(API_URL);
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Error al obtener actividad");
+  }
+  const json = await response.json();
+  return json.data;
+}

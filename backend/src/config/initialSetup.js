@@ -175,10 +175,10 @@ async function createEstadoActividad() {
     if (count > 0) return;
 
     await Promise.all([
-      repo.save(repo.create({ descripcionEstadoActividad: "En proceso" })),
-      repo.save(repo.create({ descripcionEstadoActividad: "Archivada" })),
-      repo.save(repo.create({ descripcionEstadoActividad: "Pendiente" })),
-      repo.save(repo.create({ descripcionEstadoActividad: "Finalizada" }))
+      repo.save(repo.create({ idEstadoActividad: 1, descripcionEstadoActividad: "En proceso" })),
+      repo.save(repo.create({ idEstadoActividad: 2, descripcionEstadoActividad: "Archivada" })),
+      repo.save(repo.create({ idEstadoActividad: 3, descripcionEstadoActividad: "Finalizada" })),
+      repo.save(repo.create({ idEstadoActividad: 4, descripcionEstadoActividad: "Pendiente" }))
     ]);
     console.log("* => Estados de actividad creados exitosamente");
   } catch (error) {
