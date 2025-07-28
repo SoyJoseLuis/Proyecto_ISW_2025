@@ -8,11 +8,6 @@ import { crearActividad } from '../services/actividad.service';
 
 dayjs.locale('es');
 
-const estados = [
-  { label: 'En proceso', value: 1 },
-  { label: 'Pendiente', value: 4 },
-];
-
 const tipos = [
   { label: 'Sin venta', value: 1 },
   { label: 'Con venta', value: 2 },
@@ -23,61 +18,86 @@ export default function ModalCrearActividad({ visible, onClose, onCreated }) {
   const [loading, setLoading] = useState(false);
   const [duracion, setDuracion] = useState('');
 
-  // Calcula duración estimada
-  const calcularDuracion = () => {
-    const inicio = form.getFieldValue('horaInicioActividad');
-    const fin    = form.getFieldValue('horaTerminoActividad');
-    if (inicio && fin) {
-      const diff = fin.diff(inicio, 'minute');
+  // "Escuchamos" estos tres campos
+  const fecha   = Form.useWatch('fechaActividad', form);
+  const inicio  = Form.useWatch('horaInicioActividad', form);
+  const termino = Form.useWatch('horaTerminoActividad', form);
+
+  // Cada vez que cambian fecha/inicio/termino, recalculamos
+  useEffect(() => {
+    if (inicio && termino) {
+      const diff = termino.diff(inicio, 'minute');
       if (diff < 0) {
         setDuracion('Inválida');
       } else {
-        const horas   = Math.floor(diff / 60);
-        const minutos = diff % 60;
-        setDuracion(`${horas}h ${minutos}min`);
+        const h = Math.floor(diff / 60);
+        const m = diff % 60;
+        setDuracion(`${h}h ${m}min`);
       }
     } else {
       setDuracion('');
     }
-  };
+  }, [fecha, inicio, termino]);
 
-  useEffect(() => {
-    calcularDuracion();
-  }, [
-    form.getFieldValue('horaInicioActividad'),
-    form.getFieldValue('horaTerminoActividad')
-  ]);
+  // Obtenemos la hora actual para el bloqueo dinámico
+  const ahora = dayjs();
+  const isHoy = fecha?.isSame(ahora, 'day');
+
+  // Funciones de bloqueo
+  const disabledHours = () =>
+    isHoy
+      ? Array.from({ length: ahora.hour() }, (_, i) => i)
+      : [];
+  const disabledMinutes = (hr) =>
+    isHoy && hr === ahora.hour()
+      ? Array.from({ length: ahora.minute() }, (_, i) => i)
+      : [];
 
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
 
-      // Formatea payload usando la misma forma que antes (HH:mm:ss)
+      // Calculamos el estado automáticamente
+      const now = dayjs();
+      const selectedDate = values.fechaActividad;
+      const selectedStart = values.horaInicioActividad;
+      const selectedDateTime = selectedDate
+        .hour(selectedStart.hour())
+        .minute(selectedStart.minute())
+        .second(0);
+
+      const diffMinutes = selectedDateTime.diff(now, 'minute');
+      let idEstadoActividad;
+      if (selectedDate.isSame(now, 'day') && Math.abs(diffMinutes) <= 1) {
+        idEstadoActividad = 1; // En proceso
+      } else {
+        idEstadoActividad = 4; // Pendiente
+      }
+
       const payload = {
         descripcionActividad:  values.descripcionActividad,
         tituloActividad:       values.tituloActividad,
-        fechaActividad:        values.fechaActividad.format('YYYY-MM-DD'),
-        horaInicioActividad:   values.horaInicioActividad.format('HH:mm:ss'),
+        fechaActividad:        selectedDate.format('YYYY-MM-DD'),
+        horaInicioActividad:   selectedStart.format('HH:mm:ss'),
         horaTerminoActividad:  values.horaTerminoActividad.format('HH:mm:ss'),
         ubicacionActividad:    values.ubicacionActividad,
-        idEstadoActividad:     Number(values.idEstadoActividad),
+        idEstadoActividad,
         idTipoActividad:       Number(values.idTipoActividad),
       };
-
-      console.log("Enviando a la API:", payload);
 
       setLoading(true);
       await crearActividad(payload);
       message.success('Actividad creada exitosamente');
       form.resetFields();
       setDuracion('');
-      setLoading(false);
       if (onCreated) onCreated(payload);
       onClose();
     } catch (err) {
+      if (!err.errorFields) {
+        message.error(err.message || 'Ocurrió un error');
+      }
+    } finally {
       setLoading(false);
-      if (err?.errorFields) return;
-      message.error(err.message || 'Ocurrió un error');
     }
   };
 
@@ -89,21 +109,23 @@ export default function ModalCrearActividad({ visible, onClose, onCreated }) {
       onOk={handleOk}
       confirmLoading={loading}
       okText="Crear"
-      destroyOnClose
+      destroyOnClose={true}
       className="modal-crear-actividad"
     >
       <Form
         form={form}
         layout="vertical"
         initialValues={{
-          idEstadoActividad: 4,
-          idTipoActividad:   1,
+          idTipoActividad: 1,
         }}
       >
         <Form.Item
           name="tituloActividad"
           label="Título"
-          rules={[{ required: true, message: 'Ingresa un título' }]}
+          rules={[
+            { required: true, message: 'Ingresa un título' },
+            { max: 25, message: 'El título no puede exceder 25 caracteres' },
+          ]}
         >
           <Input maxLength={25} />
         </Form.Item>
@@ -111,7 +133,10 @@ export default function ModalCrearActividad({ visible, onClose, onCreated }) {
         <Form.Item
           name="descripcionActividad"
           label="Descripción"
-          rules={[{ required: true, message: 'Ingresa una descripción' }]}
+          rules={[
+            { required: true, message: 'Ingresa una descripción' },
+            { max: 50, message: 'La descripción no puede exceder 50 caracteres' },
+          ]}
         >
           <Input.TextArea rows={2} maxLength={50} />
         </Form.Item>
@@ -125,7 +150,7 @@ export default function ModalCrearActividad({ visible, onClose, onCreated }) {
             locale={dateLocale}
             style={{ width: '100%' }}
             format="YYYY-MM-DD"
-            disabledDate={current => current && current < dayjs().startOf('day')}
+            disabledDate={d => d && d < ahora.startOf('day')}
           />
         </Form.Item>
 
@@ -139,7 +164,9 @@ export default function ModalCrearActividad({ visible, onClose, onCreated }) {
             format="HH:mm"
             style={{ width: '100%' }}
             placeholder="Hora de inicio"
-            onChange={calcularDuracion}
+            showNow
+            disabledHours={disabledHours}
+            disabledMinutes={disabledMinutes}
           />
         </Form.Item>
 
@@ -150,15 +177,14 @@ export default function ModalCrearActividad({ visible, onClose, onCreated }) {
           rules={[
             { required: true, message: 'Selecciona la hora de término' },
             ({ getFieldValue }) => ({
-              validator(_, value) {
-                const inicio = getFieldValue('horaInicioActividad');
-                if (!inicio || !value) return Promise.resolve();
-                if (value.isBefore(inicio)) {
-                  return Promise.reject('La hora de término debe ser posterior a la de inicio');
-                }
-                return Promise.resolve();
-              }
-            })
+              validator(_, val) {
+                const ini = getFieldValue('horaInicioActividad');
+                if (!ini || !val) return Promise.resolve();
+                return val.isBefore(ini)
+                  ? Promise.reject('La hora debe ser posterior al inicio')
+                  : Promise.resolve();
+              },
+            }),
           ]}
         >
           <TimePicker
@@ -166,28 +192,23 @@ export default function ModalCrearActividad({ visible, onClose, onCreated }) {
             format="HH:mm"
             style={{ width: '100%' }}
             placeholder="Hora de término"
-            onChange={calcularDuracion}
+            showNow={false}
           />
         </Form.Item>
 
         <Form.Item label="Duración estimada">
-          <Input value={duracion} disabled />
+          <Input value={duracion} disabled placeholder="—" />
         </Form.Item>
 
         <Form.Item
           name="ubicacionActividad"
           label="Ubicación"
-          rules={[{ required: true, message: 'Ingresa la ubicación' }]}
+          rules={[
+            { required: true, message: 'Ingresa la ubicación' },
+            { max: 40, message: 'La ubicación no puede exceder 40 caracteres' },
+          ]}
         >
           <Input maxLength={40} />
-        </Form.Item>
-
-        <Form.Item
-          name="idEstadoActividad"
-          label="Estado"
-          rules={[{ required: true, message: 'Selecciona un estado' }]}
-        >
-          <Select options={estados} />
         </Form.Item>
 
         <Form.Item

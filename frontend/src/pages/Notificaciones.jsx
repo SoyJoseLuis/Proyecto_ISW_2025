@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { BellOutlined } from '@ant-design/icons';
 import { List, Avatar, Badge, Typography, Empty, Spin, message } from 'antd';
@@ -28,7 +29,8 @@ export default function Notificaciones() {
       .then(res => res.json())
       .then(res => {
         if (res.status === "Success" && Array.isArray(res.data)) {
-          setData(res.data);
+          // Invertir para que las más nuevas queden arriba
+          setData([...res.data].reverse());
         } else {
           setData([]);
         }
@@ -43,16 +45,24 @@ export default function Notificaciones() {
   function formatFecha(fecha) {
     if (!fecha) return "";
     const f = new Date(fecha);
-    return f.toLocaleDateString("es-CL", { year: 'numeric', month: '2-digit', day: '2-digit' });
+    return f.toLocaleDateString("es-CL", {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
   }
 
   return (
     <div className="notificaciones-main-bg">
       <div className="notificaciones-container">
         <Typography.Title level={2} className="notif-title">
+          Notificaciones
         </Typography.Title>
         {loading ? (
-          <Spin size="large" style={{ margin: "60px 0", display: "flex", justifyContent: "center" }} />
+          <Spin
+            size="large"
+            style={{ margin: "60px 0", display: "flex", justifyContent: "center" }}
+          />
         ) : (
           <List
             itemLayout="horizontal"
@@ -62,18 +72,25 @@ export default function Notificaciones() {
               const actividad = item.actividad || {};
               return (
                 <List.Item className="notif-item">
-                 
                   <div className="notif-content-section">
                     <div className="notif-title-row">
-                      <span className="notif-title-item">{actividad.tituloActividad || "Notificación"}</span>
+                      <span className="notif-title-item">
+                        {actividad.tituloActividad || "Notificación"}
+                      </span>
                     </div>
                     <span className="notif-desc-item">
                       {item.notificacion?.descripcionNotificacion || ""}
                     </span>
                     <div className="notif-extra-info">
-                      <div><strong>Fecha:</strong> {formatFecha(actividad.fechaActividad)}</div>
-                      <div><strong>Hora:</strong> {actividad.horaInicioActividad} - {actividad.horaTerminoActividad}</div>
-                      <div><strong>Ubicación:</strong> {actividad.ubicacionActividad}</div>
+                      <div>
+                        <strong>Fecha:</strong> {formatFecha(actividad.fechaActividad)}
+                      </div>
+                      <div>
+                        <strong>Hora:</strong> {actividad.horaInicioActividad} - {actividad.horaTerminoActividad}
+                      </div>
+                      <div>
+                        <strong>Ubicación:</strong> {actividad.ubicacionActividad}
+                      </div>
                     </div>
                   </div>
                   <div className="notif-avatar-section">
