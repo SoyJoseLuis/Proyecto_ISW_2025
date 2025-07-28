@@ -1,4 +1,4 @@
-// src/services/actividades.service.js
+
 
 import api from './api.js';  // 1) Usamos el mismo api.js con baseURL + interceptor JWT
 import { normalizarTitulo } from '../hooks/NormalizadorTitulo/useNormalizador';
@@ -76,17 +76,17 @@ export async function actualizarActividad(idActividad, data) {
     throw new Error(msg);
   }
 }
-
 /**
- * Nueva función para obtener UNA actividad por ID
+ * Obtener UNA actividad por ID
  */
 export async function getActividadById(idActividad) {
-  const API_URL = `${BASE_URL}/actividades/${idActividad}`;
-  const response = await fetch(API_URL);
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Error al obtener actividad");
+  try {
+    // GET /actividades/:id
+    const { data: res } = await api.get(`/actividades/${idActividad}`);
+    // res tiene la forma { status, message, data: { …actividad… } }
+    return res.data;
+  } catch (err) {
+    const msg = err.response?.data?.message || err.message;
+    throw new Error(msg);
   }
-  const json = await response.json();
-  return json.data;
 }
