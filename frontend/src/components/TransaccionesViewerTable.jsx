@@ -89,32 +89,30 @@ const TransaccionesViewerTable = forwardRef((props, ref) => {
       render: (monto) => `$${monto?.toLocaleString('es-CL')}`,
     },
     {
-      title: 'Fecha',
+      title: 'Fecha ',
       dataIndex: 'fechaTransaccion',
       key: 'fechaTransaccion',
       width: 120,
       align: 'center',
-      sorter: (a, b) => new Date(a.fechaTransaccion).getTime() - new Date(b.fechaTransaccion).getTime(),
-      defaultSortOrder: 'descend',
-     sorter: (a, b) => {
-        const parsearFecha = (fechaStr) => {
-          // Si viene en formato DD-MM-YYYY
-          if (fechaStr.includes('-') && fechaStr.length === 10) {
-            const [dia, mes, año] = fechaStr.split('-');
-            return new Date(parseInt(año), parseInt(mes) - 1, parseInt(dia));
-          }
-          // Si viene en otro formato
-          return new Date(fechaStr);
+      sorter: (a, b) => {
+        // Convertir DD-MM-YYYY a YYYYMMDD para comparación directa
+        const convertirParaComparar = (fechaStr) => {
+          if (!fechaStr) return '';
+          const [dia, mes, año] = fechaStr.split('-');
+          return `${año}${mes.padStart(2, '0')}${dia.padStart(2, '0')}`;
         };
         
-        const fechaA = parsearFecha(a.fechaTransaccion);
-        const fechaB = parsearFecha(b.fechaTransaccion);
+        const fechaA = convertirParaComparar(a.fechaTransaccion);
+        const fechaB = convertirParaComparar(b.fechaTransaccion);
         
-        return fechaA.getTime() - fechaB.getTime();
+        return fechaA.localeCompare(fechaB);
       },
       render: (fecha) => {
         console.log('fecha de transaccion <= 5:', fecha);
         return fecha;
+      },
+      defaultSortOrder: 'descend',
+ 
       },
     },
     {
