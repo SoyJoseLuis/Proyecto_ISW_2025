@@ -110,7 +110,7 @@ export async function getCurrentTokenService(idActividad) {
 export async function submitTokenByCodeService(tokenCode, rutEstudiante) {
   // 1) Busca token activo
   const tok = await tokenRepo.findOneBy({ codigoToken: tokenCode, estadoToken: true });
-  if (!tok) throw new AppError(404, "Token invalido");
+  if (!tok) throw new AppError(400, "Token invalido");
   // 2) Reutiliza el service existente
   await submitTokenService(tok.idActividad, rutEstudiante, tokenCode);
 }

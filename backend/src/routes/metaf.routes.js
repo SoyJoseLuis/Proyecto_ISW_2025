@@ -19,7 +19,7 @@ router.use(authenticateJwt);
 
 
 // Middleware de autorización
-router.use(authorize("Presidente", "Tesorero"));
+router.use(authorize("Presidente", "Tesorero","Secretario"));
 
 router
   .post("/", createMeta)

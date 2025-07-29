@@ -132,12 +132,6 @@ export default function LoginScreen() {
             />
           </Form.Item>
 
-          <div className="login-extra">
-            <a href="/forgetpassword" className="login-forgot">
-              ¿Olvidaste tu contraseña?
-            </a>
-          </div>
-
           <Form.Item>
             <Button
               type="primary"
@@ -150,9 +144,6 @@ export default function LoginScreen() {
             </Button>
           </Form.Item>
 
-          <div className="login-register">
-            O <a href="/register">Registrarse ahora!</a>
-          </div>
         </Form>
       </div>
     </div>

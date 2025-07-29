@@ -1,6 +1,6 @@
 // src/components/ActivitiesControlTable.jsx
 import { useEffect, useState } from 'react';
-import { Table, Button, Modal, Card, Typography, Space  } from 'antd';
+import { Table, Tooltip, Button, Modal, Card, Typography, Space  } from 'antd';
  import { notification } from 'antd';
 import {PlusOutlined,EyeOutlined,FormOutlined, UnorderedListOutlined, ControlOutlined} from '@ant-design/icons';
  const { Title, Text } = Typography;
@@ -105,7 +105,13 @@ export default function ActivitiesControlTable() {
       title: 'Descripción',
       dataIndex: 'descripcionActividad',
       key: 'descripcionActividad',
-      ellipsis: true,
+   render: text => (
+     <Tooltip title={text}>
+       <span style={{ display: 'inline-block', maxWidth: 200, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+         {text}
+       </span>
+     </Tooltip>
+   ),
     },
     {
       title: 'Fecha',

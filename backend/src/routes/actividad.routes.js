@@ -1,7 +1,7 @@
 "use strict";
 import { Router } from "express";
-// import { authenticateJwt } from "../middlewares/authentication.middleware.js";
-// import { isAdmin } from "../middlewares/authorization.middleware.js";
+import { authenticateJwt } from "../middlewares/authentication.middleware.js";
+import { authorize }       from "../middlewares/authorization.middleware.js";
 import {
   actualizarEstadoActividadController,
   createActividadController,
@@ -12,7 +12,7 @@ import {
 } from "../controllers/actividad.controller.js";
 
 const router = Router();
-
+router.use(authenticateJwt);
 
 // router
 //   .use(authenticateJwt)
@@ -21,9 +21,9 @@ const router = Router();
 router
   .get("/", getAllActividadesController)
   .get("/:id", getActividadByIdController)
-  .post("/", createActividadController)
-  .put("/:id", updateActividadController)
-  .delete("/:id", deleteActividadController)
-  .patch("/:id/estado", actualizarEstadoActividadController);
+  .post("/", authorize("Presidente", "Secretario"), createActividadController)
+  .put("/:id", authorize("Presidente", "Secretario"), updateActividadController)
+  .delete("/:id", authorize("Presidente", "Secretario"), deleteActividadController)
+  .patch("/:id/estado",authorize("Presidente", "Secretario"),  actualizarEstadoActividadController);
 
 export default router;

@@ -163,7 +163,7 @@ export async function deleteTransaccionService(query) {
    
     
     if (diferenciaMinutos > 5) {
-      return [null,  console.log("OJOOOODiferencia en minutos:", diferenciaMinutos)];
+      return [null,  console.log("OJOOOO Diferencia en minutos:", diferenciaMinutos)];
     }
 
     const balance = transaccion.balance;
@@ -224,4 +224,3 @@ export async function getTransaccionesEliminadasService() {
     return [null, "Error interno del servidor"];
   }
 }
-
