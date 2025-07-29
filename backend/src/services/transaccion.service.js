@@ -224,4 +224,3 @@ export async function getTransaccionesEliminadasService() {
     return [null, "Error interno del servidor"];
   }
 }
-
