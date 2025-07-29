@@ -12,6 +12,11 @@ const TransaccionesViewerTable = forwardRef((props, ref) => {
     refreshTransacciones: refetchTransacciones
   }));
 
+  // Debug: Ver estructura de datos
+  console.log('=== DATOS TRANSACCIONES ===');
+  console.log('Primeras 3 transacciones:', transacciones?.slice(0, 3));
+  console.log('===========================');
+
   // Función para verificar si una transacción puede ser eliminada (dentro de 5 minutos)
   const canDeleteTransaction = (fechaCreacion) => {
     // 1. Verificar que tengamos una fecha válida
@@ -48,6 +53,7 @@ const TransaccionesViewerTable = forwardRef((props, ref) => {
     console.log('creationTimestamp:', creationTimestamp);
     console.log('nowTimestamp:', nowTimestamp);
     console.log('Diferencia en minutos:', diffInMinutes);
+    
     
     // 8. DECISIÓN FINAL: ¿Permitir eliminar?
     // Si han pasado 5 minutos o menos → true (se puede eliminar)
@@ -89,11 +95,30 @@ const TransaccionesViewerTable = forwardRef((props, ref) => {
       render: (monto) => `$${monto?.toLocaleString('es-CL')}`,
     },
     {
-      title: 'Fecha',
+      title: 'Fecha ',
       dataIndex: 'fechaTransaccion',
       key: 'fechaTransaccion',
       width: 120,
       align: 'center',
+      sorter: (a, b) => {
+        // Convertir DD-MM-YYYY a YYYYMMDD para comparación directa
+        const convertirParaComparar = (fechaStr) => {
+          if (!fechaStr) return '';
+          const [dia, mes, año] = fechaStr.split('-');
+          return `${año}${mes.padStart(2, '0')}${dia.padStart(2, '0')}`;
+        };
+        
+        const fechaA = convertirParaComparar(a.fechaTransaccion);
+        const fechaB = convertirParaComparar(b.fechaTransaccion);
+        
+        return fechaA.localeCompare(fechaB);
+      },
+      render: (fecha) => {
+        console.log('fecha de transaccion <= 5:', fecha);
+        return fecha;
+      },
+      defaultSortOrder: 'descend',
+ 
     },
     {
       title: 'Estudiante',

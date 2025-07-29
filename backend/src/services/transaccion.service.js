@@ -137,22 +137,33 @@ export async function deleteTransaccionService(query) {
     if (!transaccion) return [null, "Transacción no encontrada o ya eliminada"];
 
     // Validar que la transacción se pueda eliminar (dentro de 5 minutos)
-    // PROBLEMA: Las fechas se guardan en zona horaria chilena pero con formato UTC (terminan en 'Z')
-    // SOLUCIÓN: Quitar la 'Z' para que se interprete como hora local chilena
+    // PROBLEMA: Servidor en UTC, pero fechas de transacciones en hora chilena con formato UTC
+    // SOLUCIÓN: Convertir la fecha chilena a UTC real para comparar correctamente
+    
     const fechaCreacionString = transaccion.fechaCreacion.toString();
+    // Quitar la 'Z' y interpretar como hora chilena
     const fechaSinZ = fechaCreacionString.replace("Z", "");
-    const fechaCreacionTimestamp = new Date(fechaSinZ).getTime();
-    const ahoraTimestamp = Date.now();
+    const fechaChilena = new Date(fechaSinZ);
+    
+    // Chile está UTC-3 (verano) o UTC-4 (invierno) 
+    // Para simplificar, usamos UTC-3 (ajustar según la época del año si es necesario)
+    const offsetChileEnHoras = -4; // Chile está 3 horas detrás de UTC
+    const fechaCreacionUTC = new Date(fechaChilena.getTime() - (offsetChileEnHoras * 60 * 60 * 1000));
+    
+    const fechaCreacionTimestamp = fechaCreacionUTC.getTime();
+    const ahoraTimestamp = Date.now(); // Hora actual del servidor en UTC
     const diferenciaMinutos = Math.floor((ahoraTimestamp - fechaCreacionTimestamp) / (1000 * 60));
     
     console.log("Fecha creación original:", transaccion.fechaCreacion);
-    console.log("Fecha creación sin Z:", fechaSinZ);
+    console.log("Fecha creación sin Z (chilena):", fechaSinZ);
+    console.log("Fecha chilena:", fechaChilena);
+    console.log("Fecha creación UTC convertida:", fechaCreacionUTC);
     console.log("Fecha creación timestamp:", fechaCreacionTimestamp);
-    console.log("Ahora timestamp:", ahoraTimestamp);
-    console.log("Diferencia en minutos:", diferenciaMinutos);
+    console.log("Ahora timestamp (servidor UTC):", ahoraTimestamp);
+   
     
     if (diferenciaMinutos > 5) {
-      return [null, "Solo se pueden eliminar transacciones dentro de los primeros 5 minutos después de su creación"];
+      return [null,  console.log("OJOOOODiferencia en minutos:", diferenciaMinutos)];
     }
 
     const balance = transaccion.balance;

@@ -15,7 +15,7 @@ import {
 const router = Router();
 // Aplicar ambos middlewares a nivel de router
 router.use(authenticateJwt);
-router.use(authorize("Presidente", "Tesorero")); // Protege todas las rutas de una vez
+router.use(authorize("Presidente", "Tesorero","Secretario")); // Protege todas las rutas de una vez
 
 router
   .get("/", getAllBalances)
